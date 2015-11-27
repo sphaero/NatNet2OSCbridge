@@ -8,12 +8,15 @@ void ofApp::setup()
     setupNatNet();
     setupClients();
     visible = true;
+    numRigidBody = 0;
+    numSkeleton = 0;
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
     natnet.update();
+    //somethingChanged(); must be checked
     sendOSC();
 }
 
@@ -84,6 +87,19 @@ void ofApp::setupClients()
     }
 }
 
+void ofApp::somethingChanged()
+{
+    if (natnet.getNumRigidBody() != numRigidBody)
+    {
+        natnet.sendRequestDescription();
+        numRigidBody = natnet.getNumRigidBody();
+    }
+    if (natnet.getNumSkeleton() != numSkeleton)
+    {
+        natnet.sendRequestDescription();
+        numSkeleton = natnet.getNumSkeleton();
+    }
+}
 
 void ofApp::sendOSC()
 {
@@ -190,12 +206,12 @@ void ofApp::sendAllSkeletons()
         for (int j = 0;  j < natnet.getNumSkeleton(); j++) {
             const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
             vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
-
+            
             ofxOscMessage m;
             m.setAddress("/skeleton");
+            m.addIntArg(S.id);
             m.addStringArg(ofToString(sd[j].name));
 
-            vector<ofVec3f> positions;
             for (int i = 0; i < S.joints.size(); i++)
             {
                 const ofxNatNet::RigidBody &RB = S.joints[i];
@@ -218,9 +234,6 @@ void ofApp::sendAllSkeletons()
                 m.addFloatArg(rotation.y());
                 m.addFloatArg(rotation.z());
                 m.addFloatArg(rotation.w());
-                
-                
-                positions.push_back(position);
             }
             
             for (int j = 0; j < clients.size(); j++)

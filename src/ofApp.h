@@ -30,6 +30,7 @@ public:
     void sendOSC();
     
     void saveClientsState();
+    void somethingChanged();
     
     
 private:
@@ -44,4 +45,6 @@ private:
     string folder;
     
     bool visible;
+    int numRigidBody;
+    int numSkeleton;
 };
