@@ -10,13 +10,6 @@
 class ofApp : public ofBaseApp{
     
 public:
-    struct description
-    {
-        //map<int, string>    skelDesc;
-        //map<int, string>    rigidDesc;
-    };
-
-    
     void setup();
     void update();
     void draw();
@@ -35,7 +28,8 @@ public:
     void setupNatNet();
     void setupClients();
     void sendOSC();
-    void getDescription();
+    
+    void saveClientsState();
     
     
 private:
@@ -46,12 +40,8 @@ private:
     ofxNatNet               natnet;
     
     vector<client>          clients;
-    map<int, string>        skelDesc;
-    map<int, string>        rigidDesc;
-
-
-    int testID;
-    bool IdOrName;// false = id , true = name
     
     string folder;
+    
+    bool visible;
 };

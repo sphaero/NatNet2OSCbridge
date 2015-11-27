@@ -5,17 +5,16 @@ void ofApp::setup()
 {
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
-    
     setupNatNet();
     setupClients();
-    IdOrName = false;
-
+    visible = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
     natnet.update();
+    sendOSC();
 }
 
 //--------------------------------------------------------------
@@ -27,23 +26,25 @@ void ofApp::draw()
         clients[i].draw();
     }
     
-    sendOSC();
-    
-    string info;
-    info += "natnet tracking informations: \n";
-    info += "frames: " + ofToString(natnet.getFrameNumber()) + "\n";
-    info += "data rate: " + ofToString(natnet.getDataRate()) + "\n";
-    info += string("connected: ") + (natnet.isConnected() ? "YES" : "NO") + "\n";
-    info += "num markers set: " + ofToString(natnet.getNumMarkersSet()) + "\n";
-    info += "num marker: " + ofToString(natnet.getNumMarker()) + "\n";
-    info += "num filterd (non regidbodies) marker: " +
-    ofToString(natnet.getNumFilterdMarker()) + "\n";
-    info += "num rigidbody: " + ofToString(natnet.getNumRigidBody()) + "\n";
-    info += "num skeleton: " + ofToString(natnet.getNumSkeleton()) + "\n";
-    
-    ofSetColor(255);
-    ofDrawBitmapString(info, 400, 20);
-
+    if (visible)
+    {
+        string info;
+        info += "natnet tracking informations: \n";
+        info += "frames: " + ofToString(natnet.getFrameNumber()) + "\n";
+        info += "data rate: " + ofToString(natnet.getDataRate()) + "\n";
+        info += string("connected: ") + (natnet.isConnected() ? "YES" : "NO") + "\n";
+        info += "num markers set: " + ofToString(natnet.getNumMarkersSet()) + "\n";
+        info += "num marker: " + ofToString(natnet.getNumMarker()) + "\n";
+        info += "num filterd (non regidbodies) marker: " +
+        ofToString(natnet.getNumFilterdMarker()) + "\n";
+        info += "num rigidbody: " + ofToString(natnet.getNumRigidBody()) + "\n";
+        info += "num skeleton: " + ofToString(natnet.getNumSkeleton()) + "\n";
+        info += "press s to save clients \n";
+        info += "press h to hide the informations \n";
+        
+        ofSetColor(255);
+        ofDrawBitmapString(info, 700, 20);
+    }
 }
 
 void ofApp::setupNatNet()
@@ -52,13 +53,12 @@ void ofApp::setupNatNet()
     ofxXmlSettings natnetsettings("NatNetSetup.xml");
     int fps = natnetsettings.getValue("fps", 30);
     string interface = natnetsettings.getValue("interface", "en0");
-    string natnetip = natnetsettings.getValue("ip", "10.200.200.14");
+    string natnetip = natnetsettings.getValue("ip", "10.200.200.13");
     natnet.setup(interface, natnetip);  // interface name, server ip
     natnet.setScale(100);
     natnet.setDuplicatedPointRemovalDistance(20);
-    
+    natnet.sendRequestDescription();
     ofSetFrameRate(fps);
-
 }
 
 void ofApp::setupClients()
@@ -91,7 +91,6 @@ void ofApp::sendOSC()
     sendAllRigidBodys();
     sendAllSkeletons();
 }
-
 
 void ofApp::sendAllMarkers()
 {
@@ -137,10 +136,10 @@ void ofApp::sendAllRigidBodys()
 
     if (isUsed)
     {
+        vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
         for (int i = 0; i < natnet.getNumRigidBody(); i++)
         {
             const ofxNatNet::RigidBody &RB = natnet.getRigidBodyAt(i);
-            
             // Get the matirx
             ofMatrix4x4 matrix = RB.matrix;
             
@@ -156,6 +155,7 @@ void ofApp::sendAllRigidBodys()
             ofxOscMessage m;
             m.setAddress("/rigidBody");
             m.addIntArg(RB.id);
+            m.addStringArg(ofToString(rbd[i].name));
             m.addFloatArg(position.x);
             m.addFloatArg(position.y);;
             m.addFloatArg(position.z);
@@ -186,26 +186,17 @@ void ofApp::sendAllSkeletons()
 
     if (isUsed)
     {
+        vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
         for (int j = 0;  j < natnet.getNumSkeleton(); j++) {
             const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
+            vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
+
             ofxOscMessage m;
-            if(IdOrName)
-            {
-                m.setAddress("/skeleton" + skelDesc[S.id]);
-            }
-            else
-            {
-                m.setAddress("/skeleton" + ofToString(S.id));
-            }
-            
-            testID = S.id;
-            // loop through joints
-            //cout << "joints" << S.joints.size() << endl;
+            m.setAddress("/skeleton");
+            m.addStringArg(ofToString(sd[j].name));
 
             vector<ofVec3f> positions;
-
             for (int i = 0; i < S.joints.size(); i++)
-            //for (int i = 0; i < 21; i++)
             {
                 const ofxNatNet::RigidBody &RB = S.joints[i];
                 
@@ -219,14 +210,7 @@ void ofApp::sendAllSkeletons()
                 ofVec3f scale;
                 ofQuaternion so;
                 matrix.decompose(position, rotation, scale, so);
-                if (IdOrName)
-                {
-                    m.addStringArg(rigidDesc[i]);
-                }
-                else
-                {
-                    m.addIntArg(i);
-                }
+                m.addStringArg(ofToString(rbd[i].name));
                 m.addFloatArg(position.x);
                 m.addFloatArg(position.y);
                 m.addFloatArg(position.z);
@@ -247,33 +231,11 @@ void ofApp::sendAllSkeletons()
     }
 }
 
-void ofApp::getDescription()
-{
-    natnet.sendRequestDescription();
-    vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
-    for (int j = 0; j < sd.size(); j++)
-    {
-        skelDesc[sd[j].id] = sd[j].name;
-        cout << "id " << sd[j].id << " name " << sd[j].name << endl;
-        vector<ofxNatNet::RigidBodyDescription> rb = sd[j].joints;
-        for (int i = 0; i < rb.size(); i++)
-        {
-            rigidDesc[rb[i].id] = rb[i].name;
-            cout << "id " << rb[i].id << " name " << rb[i].name << endl;
-        }
-    }
-}
-
-
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    if (key == ' ') getDescription();
-    if (key == 'n')
-    {
-        IdOrName = !IdOrName;
-        cout << "id or name " << IdOrName << endl;
-    }
+    if (key == 'h') visible = !visible;
+    if (key == 's') saveClientsState();
 }
 
 //--------------------------------------------------------------
@@ -326,22 +288,26 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
 
-void ofApp::exit()
+void ofApp::saveClientsState()
 {
-    //save the client xml
     ofxXmlSettings save;
     for (int i = 0; i < clients.size(); i++)
     {
-        save.addTag("client");
-        save.pushTag("client",i);
-        save.addValue("ip", clients[i].getIP());
-        save.addValue("port", clients[i].getPort());
-        save.addValue("name", clients[i].getName());
-        save.addValue("rigid", clients[i].getRigid());
-        save.addValue("marker", clients[i].getMarker());
-        save.addValue("skeleton", clients[i].getSkeleton());
-        save.popTag();
+         save.addTag("client");
+         save.pushTag("client",i);
+         save.addValue("ip", clients[i].getIP());
+         save.addValue("port", clients[i].getPort());
+         save.addValue("name", clients[i].getName());
+         save.addValue("rigid", clients[i].getRigid());
+         save.addValue("marker", clients[i].getMarker());
+         save.addValue("skeleton", clients[i].getSkeleton());
+         save.popTag();
     }
     save.save("clients.xml");
+}
+
+
+void ofApp::exit()
+{
 }
 

@@ -10,6 +10,7 @@
 
 client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
 {
+    //arange them gridwise
     index = ind;
     ip = i;
     port = p;
@@ -18,7 +19,9 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
     isMarker = m;
     isSkeleton = s;
     int width = 30;
-    area = ofRectangle(0,index * (width * 2), 330, width * 2);
+    int x = 340 * (index%2);
+    int row = (index / 2);
+    area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
     rigButton = ofRectangle(0, width, width, width);
     markButton = ofRectangle(100, width, width, width);
     skelButton = ofRectangle(200, width, width, width);
