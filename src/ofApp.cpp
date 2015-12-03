@@ -5,19 +5,88 @@ void ofApp::setup()
 {
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
-    setupNatNet();
-    setupClients();
+    setupInputfields();
+    setupData();
     visible = true;
     numRigidBody = 0;
     numSkeleton = 0;
+    running = true;
+    font.loadFont("verdana.ttf", 12);
+    addButton.setup(ofRectangle(960, 260, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
+    connect.setup(ofRectangle(960, 110, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
 }
+
+void ofApp::setupData()
+{
+    ofxXmlSettings data("setup.xml");
+    data.pushTag("setup",0);
+    int fRate = data.getValue("fps", 30);
+    string interface = data.getValue("interface", "en0");
+    string natnetip = data.getValue("ip", "10.200.200.13");
+    interfaceName.setText(interface);
+    interfaceIP.setText(natnetip);
+    fps.setText(ofToString(fRate));
+    
+/*    natnet.setup(interface, natnetip);  // interface name, server ip
+    if(natnet.isConnected())
+    {
+        natnet.setScale(100);
+        natnet.setDuplicatedPointRemovalDistance(20);
+        natnet.sendRequestDescription();
+    }*/
+    ofSetFrameRate(fRate);
+    data.popTag();
+
+    int numClients = data.getNumTags("client");
+    for (int i = 0; i < numClients; i++)
+    {
+        data.pushTag("client",i);
+        string ip = data.getValue("ip", "127.0.0.1");
+        int port = data.getValue("port", 1234);
+        string name = data.getValue("name", "unknown");
+        bool r = data.getValue("rigid", 0);
+        bool m = data.getValue("marker", 0);
+        bool s = data.getValue("skeleton", 0);
+        addClient(i,ip,port,name,r,m,s);
+        data.popTag();
+    }
+}
+
+
+void ofApp::setupInputfields()
+{
+    interfaceName.setup(ofRectangle(700, 50, 140, 20), 10, "en0","Interface");
+    interfaceIP.setup(ofRectangle(700, 80, 140, 20), 10, "127.0.0.1","Natnet IP");
+    fps.setup(ofRectangle(700, 110, 140, 20), 10, "30","FPS");
+
+    newName.setup(ofRectangle(700, 200, 140, 20), 10, "New Client","Client Name");
+    newIP.setup(ofRectangle(700, 230, 140, 20), 10, "127.0.0.1","Client IP");
+    newPort.setup(ofRectangle(700, 260, 140, 20), 10, "6200","Client Port");
+}
+
+bool ofApp::connectNatnet()
+{
+    cout << "connect to natnet" << endl;
+    natnet.setup(interfaceName.getText(), interfaceIP.getText());  // interface name, server ip
+    if(natnet.isConnected())
+    {
+        natnet.setScale(100);
+        natnet.setDuplicatedPointRemovalDistance(20);
+        natnet.sendRequestDescription();
+        return true;
+    }
+    return false;
+}
+
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    natnet.update();
-    //somethingChanged(); must be checked
-    sendOSC();
+    if(running)
+    {
+        natnet.update();
+        sendOSC();
+    }
 }
 
 //--------------------------------------------------------------
@@ -26,11 +95,25 @@ void ofApp::draw()
     string msg;
     for (int i = 0; i < clients.size(); i++)
     {
-        clients[i].draw();
+        clients[i]->draw();
     }
     
     if (visible)
     {
+        font.drawString("Global Settings", 700, 30);
+        interfaceName.draw();
+        interfaceIP.draw();
+        fps.draw();
+        connect.draw();
+
+        font.drawString("New User", 700, 180);
+        
+        newName.draw();
+        newIP.draw();
+        newPort.draw();
+        
+        addButton.draw();
+        
         string info;
         info += "natnet tracking informations: \n";
         info += "frames: " + ofToString(natnet.getFrameNumber()) + "\n";
@@ -42,63 +125,20 @@ void ofApp::draw()
         ofToString(natnet.getNumFilterdMarker()) + "\n";
         info += "num rigidbody: " + ofToString(natnet.getNumRigidBody()) + "\n";
         info += "num skeleton: " + ofToString(natnet.getNumSkeleton()) + "\n";
+        info += string("press p to pause clients, is paused: ") + (running ? "NO" : "YES") + "\n";
         info += "press s to save clients \n";
         info += "press h to hide the informations \n";
         
         ofSetColor(255);
-        ofDrawBitmapString(info, 700, 20);
+        ofDrawBitmapString(info, 700, 350);
     }
 }
 
-void ofApp::setupNatNet()
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s)
 {
-    
-    ofxXmlSettings natnetsettings("NatNetSetup.xml");
-    int fps = natnetsettings.getValue("fps", 30);
-    string interface = natnetsettings.getValue("interface", "en0");
-    string natnetip = natnetsettings.getValue("ip", "10.200.200.13");
-    natnet.setup(interface, natnetip);  // interface name, server ip
-    natnet.setScale(100);
-    natnet.setDuplicatedPointRemovalDistance(20);
-    natnet.sendRequestDescription();
-    ofSetFrameRate(fps);
-}
-
-void ofApp::setupClients()
-{
-    ofxXmlSettings settings;
-    settings.load("clients.xml");
-    int numClients = settings.getNumTags("client");
-    for (int i = 0; i < numClients; i++)
-    {
-        settings.pushTag("client",i);
-        string ip = settings.getValue("ip", "127.0.0.1");
-        int port = settings.getValue("port", 1234);
-        string name = settings.getValue("name", "unknown");
-        bool r = settings.getValue("rigid", 0);
-        bool m = settings.getValue("marker", 0);
-        bool s = settings.getValue("skeleton", 0);
-        clients.push_back(client(i,ip,port,name,r,m,s));
-        settings.popTag();
-    }
-    for (int i = 0; i < numClients; i++)
-    {
-        clients[i].setupSender();
-    }
-}
-
-void ofApp::somethingChanged()
-{
-    if (natnet.getNumRigidBody() != numRigidBody)
-    {
-        natnet.sendRequestDescription();
-        numRigidBody = natnet.getNumRigidBody();
-    }
-    if (natnet.getNumSkeleton() != numSkeleton)
-    {
-        natnet.sendRequestDescription();
-        numSkeleton = natnet.getNumSkeleton();
-    }
+    client *c = new client(i,ip,p,n,r,m,s);
+    ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
+    clients.push_back(c);
 }
 
 void ofApp::sendOSC()
@@ -113,7 +153,7 @@ void ofApp::sendAllMarkers()
     bool isUsed = false;
     for (int i = 0; i < clients.size(); i++)
     {
-        if (clients[i].getMarker())
+        if (clients[i]->getMarker())
         {
             isUsed = true;
             break;
@@ -132,7 +172,7 @@ void ofApp::sendAllMarkers()
             
             for (int j = 0; j < clients.size(); j++)
             {
-                if(clients[j].getMarker()) clients[j].sendData(m);
+                if(clients[j]->getMarker()) clients[j]->sendData(m);
             }
         }
     }
@@ -143,7 +183,7 @@ void ofApp::sendAllRigidBodys()
     bool isUsed = false;
     for (int i = 0; i < clients.size(); i++)
     {
-        if (clients[i].getRigid())
+        if (clients[i]->getRigid())
         {
             isUsed = true;
             break;
@@ -182,7 +222,7 @@ void ofApp::sendAllRigidBodys()
             
             for (int j = 0; j < clients.size(); j++)
             {
-                if(clients[j].getRigid()) clients[j].sendData(m);
+                if(clients[j]->getRigid()) clients[j]->sendData(m);
             }
         }
     }
@@ -193,7 +233,7 @@ void ofApp::sendAllSkeletons()
     bool isUsed = false;
     for (int i = 0; i < clients.size(); i++)
     {
-        if (clients[i].getSkeleton())
+        if (clients[i]->getSkeleton())
         {
             isUsed = true;
             break;
@@ -238,17 +278,78 @@ void ofApp::sendAllSkeletons()
             
             for (int j = 0; j < clients.size(); j++)
             {
-                if(clients[j].getSkeleton()) clients[j].sendData(m);
+                if(clients[j]->getSkeleton()) clients[j]->sendData(m);
             }
         }
     }
 }
 
+void ofApp::deactivateInputs()
+{
+    //deactivate all inputfields
+    interfaceName.deactivate();
+    interfaceIP.deactivate();
+    fps.deactivate();
+    newName.deactivate();
+    newIP.deactivate();
+    newPort.deactivate();
+}
+
+void ofApp::deleteClient(int &index)
+{
+    cout << "delete " << index << endl;
+    ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
+    delete clients[index];
+    clients.erase(clients.begin() + index);
+    for (int i = 0; i < clients.size(); i++)
+    {
+        clients[i]->rearangePosition(i);
+    }    
+}
+
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
+    //first check the input fields
+    if (interfaceName.getState())
+    {
+        interfaceName.addKey(key);
+        return;
+    }
+    if (interfaceIP.getState())
+    {
+        interfaceIP.addKey(key);
+        return;
+    }
+    if (fps.getState())
+    {
+        fps.addKey(key);
+        return;
+    }
+    if (newName.getState())
+    {
+        newName.addKey(key);
+        return;
+    }
+    if (newIP.getState())
+    {
+        newIP.addKey(key);
+        return;
+    }
+    if (newPort.getState())
+    {
+        newPort.addKey(key);
+        return;
+    }
+    
     if (key == 'h') visible = !visible;
-    if (key == 's') saveClientsState();
+    if (key == 's') saveData();
+    if (key == 'p')
+    {
+        running = !running;
+        if (running) natnet.sendRequestDescription();
+    }
 }
 
 //--------------------------------------------------------------
@@ -271,14 +372,27 @@ void ofApp::mousePressed(int x, int y, int button)
 {
     for (int i = 0; i < clients.size(); i++)
     {
-        bool isInside = clients[i].getArea().inside(x, y);
+        bool isInside = clients[i]->getArea().inside(x, y);
         if (isInside)
         {
-            clients[i].isInside(x, y);
-            break;
+            clients[i]->isInside(x, y);
+            return;
         }
     }
-    
+    if(interfaceName.isInside(x, y)) return;
+    if(interfaceIP.isInside(x, y)) return;
+    if(fps.isInside(x, y)) return;
+    if(newName.isInside(x, y)) return;
+    if(newIP.isInside(x, y)) return;
+    if(newPort.isInside(x, y)) return;
+    if(addButton.isInside(x, y))
+    {
+        deactivateInputs();
+        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false);
+        return;
+    }
+    if (connect.isInside(x, y)) connectNatnet();
+    deactivateInputs();
 }
 
 //--------------------------------------------------------------
@@ -301,26 +415,36 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
 
-void ofApp::saveClientsState()
+void ofApp::saveData()
 {
     ofxXmlSettings save;
+    save.addTag("setup");
+    save.pushTag("setup",0);
+    save.addValue("fps", ofToInt(fps.getText()));
+    save.addValue("interface", interfaceName.getText());
+    save.addValue("ip", interfaceIP.getText());
+    save.popTag();
     for (int i = 0; i < clients.size(); i++)
     {
-         save.addTag("client");
-         save.pushTag("client",i);
-         save.addValue("ip", clients[i].getIP());
-         save.addValue("port", clients[i].getPort());
-         save.addValue("name", clients[i].getName());
-         save.addValue("rigid", clients[i].getRigid());
-         save.addValue("marker", clients[i].getMarker());
-         save.addValue("skeleton", clients[i].getSkeleton());
-         save.popTag();
+        save.addTag("client");
+        save.pushTag("client",i);
+        save.addValue("ip", clients[i]->getIP());
+        save.addValue("port", clients[i]->getPort());
+        save.addValue("name", clients[i]->getName());
+        save.addValue("rigid", clients[i]->getRigid());
+        save.addValue("marker", clients[i]->getMarker());
+        save.addValue("skeleton", clients[i]->getSkeleton());
+        save.popTag();
     }
-    save.save("clients.xml");
+    save.save("setup.xml");
 }
 
 
 void ofApp::exit()
 {
+    for (int i = 0; i < clients.size(); i++)
+    {
+        delete clients[i];
+    }
 }
 

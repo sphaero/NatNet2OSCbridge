@@ -5,6 +5,8 @@
 #include "ofxNatNet.h"
 #include "ofxXmlSettings.h"
 #include "client.h"
+#include "ofxTextInputField.h"
+#include "ofxTextButton.h"
 
 
 class ofApp : public ofBaseApp{
@@ -25,13 +27,16 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    void setupNatNet();
-    void setupClients();
+    void setupInputfields();
+    void setupData();
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s);
     void sendOSC();
     
-    void saveClientsState();
-    void somethingChanged();
+    bool connectNatnet();
     
+    void deactivateInputs();
+    void saveData();
+    void deleteClient(int &index);
     
 private:
     void                    sendAllMarkers();
@@ -40,11 +45,26 @@ private:
 
     ofxNatNet               natnet;
     
-    vector<client>          clients;
+    vector<client*>         clients;
     
     string folder;
     
     bool visible;
     int numRigidBody;
     int numSkeleton;
+    bool running;
+    
+    ofTrueTypeFont      font;
+    //gui stuff
+    
+    ofxTextInputField   interfaceName;
+    ofxTextInputField   interfaceIP;
+    ofxTextInputField   fps;
+    
+    ofxTextInputField   newName;
+    ofxTextInputField   newIP;
+    ofxTextInputField   newPort;
+    
+    ofxTextButton       addButton;
+    ofxTextButton       connect;
 };

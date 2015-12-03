@@ -1,3 +1,8 @@
+<setup>
+    <fps>30</fps>
+    <interface>en1</interface>
+    <ip>10.200.200.43</ip>
+</setup>
 <client>
     <ip>127.0.0.1</ip>
     <port>1234</port>
