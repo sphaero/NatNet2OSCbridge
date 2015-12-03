@@ -66,23 +66,20 @@ void ofApp::setupInputfields()
 
 bool ofApp::connectNatnet()
 {
-    cout << "connect to natnet" << endl;
     natnet.setup(interfaceName.getText(), interfaceIP.getText());  // interface name, server ip
     if(natnet.isConnected())
     {
         natnet.setScale(100);
         natnet.setDuplicatedPointRemovalDistance(20);
         natnet.sendRequestDescription();
-        return true;
     }
-    return false;
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    if(running)
+    if(running && natnet.isConnected())
     {
         natnet.update();
         sendOSC();
@@ -100,11 +97,14 @@ void ofApp::draw()
     
     if (visible)
     {
+        ofSetColor(255, 255, 255);
         font.drawString("Global Settings", 700, 30);
         interfaceName.draw();
         interfaceIP.draw();
         fps.draw();
         connect.draw();
+
+        ofSetColor(255, 255, 255);
 
         font.drawString("New User", 700, 180);
         
@@ -113,6 +113,9 @@ void ofApp::draw()
         newPort.draw();
         
         addButton.draw();
+        
+        ofSetColor(255, 255, 255);
+        font.drawString("Informations", 700, 320);
         
         string info;
         info += "natnet tracking informations: \n";

@@ -21,11 +21,17 @@ void ofxTextButton::setup(ofRectangle a,string description,int tS,ofColor tC,ofC
     tCol = tC;
     bCol = bC;
     tPos = textPosition();
+    clicked = false;
 }
 
 bool ofxTextButton::isInside(int &x,int &y)
 {
-    if (area.inside(x, y)) return true;
+    if (area.inside(x, y))
+    {
+        clicked = true;
+        clickCount = 0;
+        return true;
+    }
     return false;
 }
 
@@ -33,6 +39,12 @@ void ofxTextButton::draw()
 {
     ofFill();
     ofSetColor(bCol);
+    if (clicked)
+    {
+        ofSetColor(255,0,0);
+        clickCount++;
+        if (clickCount > 5) clicked = false;
+    }
     ofRect(area);
     ofSetColor(tCol);
     font.drawString(text, tPos.x,tPos.y);

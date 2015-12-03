@@ -32,6 +32,8 @@ private:
     ofColor         bCol;
     ofVec2f         tPos;
     int             tSize;
+    bool            clicked;
+    int             clickCount;
 };
 
 #endif /* defined(__NatNet2OSCbridge__ofxTextButton__) */
