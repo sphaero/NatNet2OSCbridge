@@ -64,6 +64,7 @@ void client::sendData(ofxOscMessage &m)
 
 void client::draw()
 {
+    ofSetLineWidth(1);
     ofPushMatrix();
     ofTranslate(area.getX(),area.getY());
     drawGUI();

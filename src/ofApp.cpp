@@ -373,6 +373,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
+    deactivateInputs();
     for (int i = 0; i < clients.size(); i++)
     {
         bool isInside = clients[i]->getArea().inside(x, y);
@@ -390,12 +391,10 @@ void ofApp::mousePressed(int x, int y, int button)
     if(newPort.isInside(x, y)) return;
     if(addButton.isInside(x, y))
     {
-        deactivateInputs();
         addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false);
         return;
     }
     if (connect.isInside(x, y)) connectNatnet();
-    deactivateInputs();
 }
 
 //--------------------------------------------------------------

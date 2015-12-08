@@ -85,7 +85,7 @@ void ofxTextInputField::addKey(int key)
                 --cIndex;
         
         if (key == OF_KEY_RIGHT)
-            if (cIndex < text.size() + 1)
+            if (cIndex < text.size())
                 ++cIndex;
         
         calculateDrawIndices();
