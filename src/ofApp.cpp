@@ -31,13 +31,6 @@ void ofApp::setupData()
     interfaceIP.setText(natnetip);
     fps.setText(ofToString(fRate));
     
-/*    natnet.setup(interface, natnetip);  // interface name, server ip
-    if(natnet.isConnected())
-    {
-        natnet.setScale(100);
-        natnet.setDuplicatedPointRemovalDistance(20);
-        natnet.sendRequestDescription();
-    }*/
     ofSetFrameRate(fRate);
     data.popTag();
 
@@ -211,7 +204,6 @@ void ofApp::sendAllRigidBodys()
         if (size != rigidBodySize)
         {
             natnet.sendRequestDescription();
-            cout << "request description" << endl;
             rigidBodySize = size;
             return;
         }

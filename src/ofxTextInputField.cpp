@@ -31,7 +31,6 @@ bool ofxTextInputField::isInside(int &x, int &y)
     if(bounds.inside(x, y))
     {
         activate();
-        //cIndex = text.size();
         cIndex = calCPos(x);
         return true;
     }
