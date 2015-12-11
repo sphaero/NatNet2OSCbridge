@@ -27,6 +27,7 @@ public:
     void setBounds(ofRectangle area);
     void setText(string text);
     void setColor(ofColor c);
+    int calCPos(int &x);
     
     void calculateDrawIndices();
     string getText();

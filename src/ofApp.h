@@ -49,10 +49,13 @@ private:
     
     string folder;
     
-    bool visible;
-    int numRigidBody;
-    int numSkeleton;
-    bool running;
+    bool                visible;
+    bool                connected;
+    int                 numRigidBody;
+    int                 numSkeleton;
+    bool                running;
+    int                 rigidBodySize;
+    int                 skeletonSize;
     
     ofTrueTypeFont      font;
     //gui stuff
@@ -66,5 +69,6 @@ private:
     ofxTextInputField   newPort;
     
     ofxTextButton       addButton;
+    ofxTextButton       saveButton;
     ofxTextButton       connect;
 };

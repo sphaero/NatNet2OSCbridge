@@ -12,8 +12,12 @@ void ofApp::setup()
     numSkeleton = 0;
     running = true;
     font.loadFont("verdana.ttf", 12);
-    addButton.setup(ofRectangle(960, 260, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
-    connect.setup(ofRectangle(960, 110, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
+    connect.setup(ofRectangle(700, 140, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
+    addButton.setup(ofRectangle(700, 310, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
+    saveButton.setup(ofRectangle(700, 370, 80, 20), "Save Setup", 12, ofColor(0,0,0), ofColor(255,255,255));
+    rigidBodySize = -1;
+    skeletonSize = -1;
+    connected = false;
 }
 
 void ofApp::setupData()
@@ -59,9 +63,9 @@ void ofApp::setupInputfields()
     interfaceIP.setup(ofRectangle(700, 80, 140, 20), 10, "127.0.0.1","Natnet IP");
     fps.setup(ofRectangle(700, 110, 140, 20), 10, "30","FPS");
 
-    newName.setup(ofRectangle(700, 200, 140, 20), 10, "New Client","Client Name");
-    newIP.setup(ofRectangle(700, 230, 140, 20), 10, "127.0.0.1","Client IP");
-    newPort.setup(ofRectangle(700, 260, 140, 20), 10, "6200","Client Port");
+    newName.setup(ofRectangle(700, 220, 140, 20), 10, "New Client","Client Name");
+    newIP.setup(ofRectangle(700, 250, 140, 20), 10, "127.0.0.1","Client IP");
+    newPort.setup(ofRectangle(700, 280, 140, 20), 10, "6200","Client Port");
 }
 
 bool ofApp::connectNatnet()
@@ -84,6 +88,8 @@ void ofApp::update()
         natnet.update();
         sendOSC();
     }
+    if(natnet.isConnected()) connected = true;
+    else connected = false;
 }
 
 //--------------------------------------------------------------
@@ -103,10 +109,14 @@ void ofApp::draw()
         interfaceIP.draw();
         fps.draw();
         connect.draw();
+        if (connected) ofSetColor(0, 255, 0);
+        else ofSetColor(255, 0, 0);
+        ofCircle(800, 150, 10);
+        
 
         ofSetColor(255, 255, 255);
 
-        font.drawString("New User", 700, 180);
+        font.drawString("New User", 700, 200);
         
         newName.draw();
         newIP.draw();
@@ -114,8 +124,10 @@ void ofApp::draw()
         
         addButton.draw();
         
+        saveButton.draw();
+        
         ofSetColor(255, 255, 255);
-        font.drawString("Informations", 700, 320);
+        font.drawString("Informations", 700, 420);
         
         string info;
         info += "natnet tracking informations: \n";
@@ -129,11 +141,10 @@ void ofApp::draw()
         info += "num rigidbody: " + ofToString(natnet.getNumRigidBody()) + "\n";
         info += "num skeleton: " + ofToString(natnet.getNumSkeleton()) + "\n";
         info += string("press p to pause clients, is paused: ") + (running ? "NO" : "YES") + "\n";
-        info += "press s to save clients \n";
         info += "press h to hide the informations \n";
         
         ofSetColor(255);
-        ofDrawBitmapString(info, 700, 350);
+        ofDrawBitmapString(info, 700, 440);
     }
 }
 
@@ -196,6 +207,14 @@ void ofApp::sendAllRigidBodys()
     if (isUsed)
     {
         vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
+        int size = rbd.size();
+        if (size != rigidBodySize)
+        {
+            natnet.sendRequestDescription();
+            cout << "request description" << endl;
+            rigidBodySize = size;
+            return;
+        }
         for (int i = 0; i < natnet.getNumRigidBody(); i++)
         {
             const ofxNatNet::RigidBody &RB = natnet.getRigidBodyAt(i);
@@ -246,6 +265,15 @@ void ofApp::sendAllSkeletons()
     if (isUsed)
     {
         vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
+        int size = sd.size();
+        if (size != skeletonSize)
+        {
+            natnet.sendRequestDescription();
+            cout << "request description" << endl;
+            skeletonSize = size;
+            return;
+        }
+
         for (int j = 0;  j < natnet.getNumSkeleton(); j++) {
             const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
             vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
@@ -300,7 +328,6 @@ void ofApp::deactivateInputs()
 
 void ofApp::deleteClient(int &index)
 {
-    cout << "delete " << index << endl;
     ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
     delete clients[index];
     clients.erase(clients.begin() + index);
@@ -347,7 +374,6 @@ void ofApp::keyPressed(int key)
     }
     
     if (key == 'h') visible = !visible;
-    if (key == 's') saveData();
     if (key == 'p')
     {
         running = !running;
@@ -394,6 +420,7 @@ void ofApp::mousePressed(int x, int y, int button)
         addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false);
         return;
     }
+    if(saveButton.isInside(x, y)) saveData();
     if (connect.isInside(x, y)) connectNatnet();
 }
 
