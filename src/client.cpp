@@ -10,6 +10,7 @@
 
 client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
 {
+    //arange them gridwise
     index = ind;
     ip = i;
     port = p;
@@ -18,20 +19,37 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
     isMarker = m;
     isSkeleton = s;
     int width = 30;
-    area = ofRectangle(0,index * (width * 2), 330, width * 2);
+    int x = 340 * (index%2);
+    int row = (index / 2);
+    area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
     rigButton = ofRectangle(0, width, width, width);
     markButton = ofRectangle(100, width, width, width);
     skelButton = ofRectangle(200, width, width, width);
+    delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
     
     ofTrueTypeFont::setGlobalDpi(72);
     
     verdana14.loadFont("verdana.ttf", 14, true, true);
     verdana14.setLineHeight(18.0f);
     verdana14.setLetterSpacing(1.037);
-    
+    setupSender();
 }
 
 client::~client(){}
+
+void client::rearangePosition(int ind)
+{
+    index = ind;
+    int width = 30;
+    int x = 340 * (index%2);
+    int row = (index / 2);
+    area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
+    rigButton = ofRectangle(0, width, width, width);
+    markButton = ofRectangle(100, width, width, width);
+    skelButton = ofRectangle(200, width, width, width);
+    delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
+}
+
 
 void client::setupSender()
 {
@@ -46,6 +64,7 @@ void client::sendData(ofxOscMessage &m)
 
 void client::draw()
 {
+    ofSetLineWidth(1);
     ofPushMatrix();
     ofTranslate(area.getX(),area.getY());
     drawGUI();
@@ -80,6 +99,12 @@ void client::drawGUI()
     if (!isSkeleton) ofSetColor(255, 0, 0);
     else ofSetColor(0,255,0);
     ofRect(skelButton);
+    
+    ofSetColor(255, 255, 255);
+    ofRect(delButton);
+    ofSetColor(0, 0, 0);
+    ofLine(delButton.x, delButton.y, delButton.x + delButton.width, delButton.y + delButton.height);
+    ofLine(delButton.x + delButton.width, delButton.y, delButton.x, delButton.y + delButton.height);
 }
 
 void client::isInside(int & xp, int & yp)
@@ -90,6 +115,7 @@ void client::isInside(int & xp, int & yp)
     bool rig = rigButton.inside(x, y);
     bool mark = markButton.inside(x, y);
     bool skel = skelButton.inside(x, y);
+    bool del = delButton.inside(x, y);
 
     if (rig) isRigid = !isRigid;
     
@@ -97,8 +123,7 @@ void client::isInside(int & xp, int & yp)
     
     else if (skel) isSkeleton = !isSkeleton;
     
-    //else area.setPosition(x, y);
-    
+    else if (del) ofNotifyEvent(deleteClient,index);
 }
 
 string &client::getName()

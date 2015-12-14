@@ -30,6 +30,7 @@ public:
     ofRectangle &getArea();
     void isInside(int & x, int & y);
     void moveArea(int & x, int & y);
+    void rearangePosition(int ind);
 
     
     int &getID();
@@ -40,6 +41,7 @@ public:
     bool &getMarker();
     bool &getSkeleton();
     
+    ofEvent<int> deleteClient;
     
 private:
     ofVec2f         position;
@@ -56,6 +58,7 @@ private:
     ofRectangle     rigButton;
     ofRectangle     markButton;
     ofRectangle     skelButton;
+    ofRectangle     delButton;
     
     ofTrueTypeFont	verdana14;
     
