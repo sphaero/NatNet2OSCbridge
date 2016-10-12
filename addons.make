@@ -1,4 +1,4 @@
 ofxGui
+ofxNatNet
 ofxOsc
 ofxXmlSettings
-ofxNatNet
