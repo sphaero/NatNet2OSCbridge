@@ -17,7 +17,7 @@ void ofxTextButton::setup(ofRectangle a,string description,int tS,ofColor tC,ofC
     area = a;
     text = description;
     tSize = tS;
-    font.loadFont("verdana.ttf", tSize);
+    font.load("verdana.ttf", tSize);
     tCol = tC;
     bCol = bC;
     tPos = textPosition();
@@ -45,7 +45,7 @@ void ofxTextButton::draw()
         clickCount++;
         if (clickCount > 5) clicked = false;
     }
-    ofRect(area);
+    ofDrawRectangle(area);
     ofSetColor(tCol);
     font.drawString(text, tPos.x,tPos.y);
 }

@@ -18,7 +18,7 @@ void ofxTextInputField::setup(ofRectangle area, int fS, string t, string d)
     fSize = fS;
     text = t;
     description = d;
-    font.loadFont("verdana.ttf", fSize);
+    font.load("verdana.ttf", fSize);
     col = ofColor(255,255,255);
     float y = +((area.height - fSize) / 2) + fSize;
     tPos = ofVec2f(4,y);
@@ -159,7 +159,7 @@ void ofxTextInputField::draw()
     ofSetLineWidth(1);
     ofSetColor(col);
     ofNoFill();
-    ofRect(bounds);
+    ofDrawRectangle(bounds);
     font.drawString(description, bounds.x + bounds.width + 5, bounds.y + tPos.y);
     //check if it is inside boundaries
     if(active) font.drawString(text.substr(firstDrawIndex,text.size()), bounds.x + tPos.x, bounds.y + tPos.y);
@@ -173,7 +173,7 @@ void ofxTextInputField::draw()
         float y2 = bounds.y + bounds.height - 3;
         float alpha = (sin(ofGetElapsedTimef() * 5) + 1) * 127;
         ofSetColor(col,alpha);
-        ofLine(x1,y1,x2,y2);
+        ofDrawLine(x1,y1,x2,y2);
     }
 }
 

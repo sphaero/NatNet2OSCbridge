@@ -11,7 +11,7 @@ void ofApp::setup()
     numRigidBody = 0;
     numSkeleton = 0;
     running = true;
-    font.loadFont("verdana.ttf", 12);
+    font.load("verdana.ttf", 12);
     connect.setup(ofRectangle(700, 140, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
     addButton.setup(ofRectangle(700, 310, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
     saveButton.setup(ofRectangle(700, 370, 80, 20), "Save Setup", 12, ofColor(0,0,0), ofColor(255,255,255));
@@ -104,7 +104,7 @@ void ofApp::draw()
         connect.draw();
         if (connected) ofSetColor(0, 255, 0);
         else ofSetColor(255, 0, 0);
-        ofCircle(800, 150, 10);
+        ofDrawCircle(800, 150, 10);
         
 
         ofSetColor(255, 255, 255);

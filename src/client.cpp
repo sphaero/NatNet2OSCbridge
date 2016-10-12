@@ -29,7 +29,7 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
     
     ofTrueTypeFont::setGlobalDpi(72);
     
-    verdana14.loadFont("verdana.ttf", 14, true, true);
+    verdana14.load("verdana.ttf", 14, true, true);
     verdana14.setLineHeight(18.0f);
     verdana14.setLetterSpacing(1.037);
     setupSender();
@@ -86,25 +86,25 @@ void client::drawGUI()
 {
     ofNoFill();
     ofSetColor(255, 255, 255);
-    ofRect(0,0,area.getWidth(),area.getHeight());
+    ofDrawRectangle(0,0,area.getWidth(),area.getHeight());
     ofFill();
     if (!isRigid) ofSetColor(255, 0, 0);
     else ofSetColor(0,255,0);
-    ofRect(rigButton);
+    ofDrawRectangle(rigButton);
     
     if (!isMarker) ofSetColor(255, 0, 0);
     else ofSetColor(0,255,0);
-    ofRect(markButton);
+    ofDrawRectangle(markButton);
 
     if (!isSkeleton) ofSetColor(255, 0, 0);
     else ofSetColor(0,255,0);
-    ofRect(skelButton);
+    ofDrawRectangle(skelButton);
     
     ofSetColor(255, 255, 255);
-    ofRect(delButton);
+    ofDrawRectangle(delButton);
     ofSetColor(0, 0, 0);
-    ofLine(delButton.x, delButton.y, delButton.x + delButton.width, delButton.y + delButton.height);
-    ofLine(delButton.x + delButton.width, delButton.y, delButton.x, delButton.y + delButton.height);
+    ofDrawLine(delButton.x, delButton.y, delButton.x + delButton.width, delButton.y + delButton.height);
+    ofDrawLine(delButton.x + delButton.width, delButton.y, delButton.x, delButton.y + delButton.height);
 }
 
 void client::isInside(int & xp, int & yp)
