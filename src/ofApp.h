@@ -8,6 +8,19 @@
 #include "ofxTextInputField.h"
 #include "ofxTextButton.h"
 
+//for velocity, defines how many layers to apply (2 * layers + 1 frames)
+#define SMOOTHING 3
+
+class RigidBodyHistory {
+public:
+    int                 rigidBodyId;
+    ofVec3f             velocities[2 * SMOOTHING + 1];
+    int                 currentDataPoint;
+    ofVec3f             previousPosition;
+    bool                firstRun;
+    
+    RigidBodyHistory( int rigidBodyId, ofVec3f position );
+};
 
 class ofApp : public ofBaseApp{
     
@@ -45,7 +58,8 @@ private:
 
     ofxNatNet               natnet;
     
-    vector<client*>         clients;
+    vector<client*>             clients;
+    vector<RigidBodyHistory>    rbHistory;
     
     string folder;
     
@@ -71,4 +85,6 @@ private:
     ofxTextButton       addButton;
     ofxTextButton       saveButton;
     ofxTextButton       connect;
+    
+    float               invFPS;
 };

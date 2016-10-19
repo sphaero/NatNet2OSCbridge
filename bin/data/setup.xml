@@ -1,29 +1,5 @@
 <setup>
     <fps>30</fps>
     <interface>en0</interface>
-    <ip>145.107.192.150</ip>
+    <ip>10.200.200.46</ip>
 </setup>
-<client>
-    <ip>127.0.0.1</ip>
-    <port>1234</port>
-    <name>Max</name>
-    <rigid>1</rigid>
-    <marker>0</marker>
-    <skeleton>0</skeleton>
-</client>
-<client>
-    <ip>127.0.0.1</ip>
-    <port>12345</port>
-    <name>Max</name>
-    <rigid>0</rigid>
-    <marker>0</marker>
-    <skeleton>0</skeleton>
-</client>
-<client>
-    <ip>127.0.0.1</ip>
-    <port>12344</port>
-    <name>Max</name>
-    <rigid>0</rigid>
-    <marker>1</marker>
-    <skeleton>0</skeleton>
-</client>

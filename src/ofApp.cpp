@@ -1,5 +1,14 @@
 #include "ofApp.h"
 
+RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p )
+{
+    previousPosition = p;
+    rigidBodyId = id;
+    
+    currentDataPoint = 0;
+    firstRun = TRUE;
+}
+
 //--------------------------------------------------------------
 void ofApp::setup()
 {
@@ -18,6 +27,7 @@ void ofApp::setup()
     rigidBodySize = -1;
     skeletonSize = -1;
     connected = false;
+    invFPS = 1.0f / ofToInt(fps.getText());
 }
 
 void ofApp::setupData()
@@ -220,19 +230,87 @@ void ofApp::sendAllRigidBodys()
             ofQuaternion so;
             matrix.decompose(position, rotation, scale, so);
             
+            //we're going to fetch or create this
+            RigidBodyHistory *rb;
             
+            //Get or create rigidbodyhistory
+            bool found = false;
+            for( int r = 0; r < rbHistory.size(); ++r )
+            {
+                if ( rbHistory[r].rigidBodyId == i )
+                {
+                    rb = &rbHistory[r];
+                    found = true;
+                }
+            }
+            
+            if ( !found )
+            {
+                rb = new RigidBodyHistory( i, position );
+                rbHistory.push_back(*rb);
+            }
+            
+            ofVec3f velocity;
+            
+            if ( rb->firstRun == TRUE )
+            {
+                rb->currentDataPoint = 0;
+                rb->firstRun = FALSE;
+            }
+            else
+            {
+                if ( rb->currentDataPoint < 2 * SMOOTHING + 1 )
+                {
+                    rb->velocities[rb->currentDataPoint] = ( position - rb->previousPosition ) * invFPS;
+                    rb->currentDataPoint++;
+                }
+                else
+                {
+                    int count = 0;
+                    int maxDist = SMOOTHING;
+                    ofVec3f totalVelocity;
+                    //calculate smoothed velocity
+                    for( int x = 0; x < SMOOTHING * 2 + 1; ++x )
+                    {
+                        //calculate integer distance from "center"
+                        //above - maxDist = influence of data point
+                        int dist = abs( x - SMOOTHING );
+                        int infl = ( maxDist - dist ) + 1;
+                        
+                        //add all
+                        totalVelocity += rb->velocities[x] * infl;
+                        //count "influences"
+                        count += infl;
+                    }
+                    
+                    //divide by total data point influences
+                    velocity = totalVelocity / count;
+                    
+                    for( int x = 0; x < rb->currentDataPoint - 1; ++x )
+                    {
+                        rb->velocities[x] = rb->velocities[x+1];
+                    }
+                    rb->velocities[rb->currentDataPoint-1] = ( position - rb->previousPosition ) * invFPS;
+                }
+                
+                rb->previousPosition = position;
+            }
             
             ofxOscMessage m;
             m.setAddress("/rigidBody");
             m.addIntArg(RB.id);
             m.addStringArg(ofToString(rbd[i].name));
             m.addFloatArg(position.x);
-            m.addFloatArg(position.y);;
+            m.addFloatArg(position.y);
             m.addFloatArg(position.z);
             m.addFloatArg(rotation.x());
             m.addFloatArg(rotation.y());
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
+            //velocity over SMOOTHING * 2 + 1 frames
+            m.addFloatArg(velocity.x);
+            m.addFloatArg(velocity.y);
+            m.addFloatArg(velocity.z);
             
             for (int j = 0; j < clients.size(); j++)
             {
