@@ -15,11 +15,13 @@ class RigidBodyHistory {
 public:
     int                 rigidBodyId;
     ofVec3f             velocities[2 * SMOOTHING + 1];
+    ofVec3f             angularVelocities[2 * SMOOTHING + 1];
     int                 currentDataPoint;
     ofVec3f             previousPosition;
+    ofQuaternion        previousOrientation;
     bool                firstRun;
     
-    RigidBodyHistory( int rigidBodyId, ofVec3f position );
+    RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };
 
 class ofApp : public ofBaseApp{
@@ -55,6 +57,9 @@ private:
     void                    sendAllMarkers();
     void                    sendAllRigidBodys();
     void                    sendAllSkeletons();
+    
+    void                    fixRanges( ofVec3f *euler );
+    ofVec3f                 shortestRotation( ofVec3f euler );
 
     ofxNatNet               natnet;
     

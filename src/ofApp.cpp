@@ -1,13 +1,16 @@
 #include "ofApp.h"
 
-RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p )
+//additions for velocities / angular velocity
+RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 {
     previousPosition = p;
+    previousOrientation = r;
     rigidBodyId = id;
     
     currentDataPoint = 0;
     firstRun = TRUE;
 }
+//end
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -246,11 +249,12 @@ void ofApp::sendAllRigidBodys()
             
             if ( !found )
             {
-                rb = new RigidBodyHistory( i, position );
+                rb = new RigidBodyHistory( i, position, rotation );
                 rbHistory.push_back(*rb);
             }
             
             ofVec3f velocity;
+            ofVec3f angularVelocity;
             
             if ( rb->firstRun == TRUE )
             {
@@ -262,6 +266,10 @@ void ofApp::sendAllRigidBodys()
                 if ( rb->currentDataPoint < 2 * SMOOTHING + 1 )
                 {
                     rb->velocities[rb->currentDataPoint] = ( position - rb->previousPosition ) * invFPS;
+                    
+                    ofVec3f diff = ( rb->previousOrientation * rotation.inverse() ).getEuler();
+                    rb->angularVelocities[rb->currentDataPoint] = ( diff * invFPS );
+                    
                     rb->currentDataPoint++;
                 }
                 else
@@ -269,6 +277,7 @@ void ofApp::sendAllRigidBodys()
                     int count = 0;
                     int maxDist = SMOOTHING;
                     ofVec3f totalVelocity;
+                    ofVec3f totalAngularVelocity;
                     //calculate smoothed velocity
                     for( int x = 0; x < SMOOTHING * 2 + 1; ++x )
                     {
@@ -279,21 +288,28 @@ void ofApp::sendAllRigidBodys()
                         
                         //add all
                         totalVelocity += rb->velocities[x] * infl;
+                        totalAngularVelocity += rb->angularVelocities[x] * infl;
                         //count "influences"
                         count += infl;
                     }
                     
                     //divide by total data point influences
                     velocity = totalVelocity / count;
+                    angularVelocity = totalAngularVelocity / count;
                     
                     for( int x = 0; x < rb->currentDataPoint - 1; ++x )
                     {
                         rb->velocities[x] = rb->velocities[x+1];
+                        rb->angularVelocities[x] = rb->angularVelocities[x+1];
                     }
                     rb->velocities[rb->currentDataPoint-1] = ( position - rb->previousPosition ) * invFPS;
+                    
+                    ofVec3f diff = ( rb->previousOrientation * rotation.inverse() ).getEuler();
+                    rb->angularVelocities[rb->currentDataPoint-1] = ( diff * invFPS );
                 }
                 
                 rb->previousPosition = position;
+                rb->previousOrientation = rotation;
             }
             
             ofxOscMessage m;
@@ -311,6 +327,10 @@ void ofApp::sendAllRigidBodys()
             m.addFloatArg(velocity.x);
             m.addFloatArg(velocity.y);
             m.addFloatArg(velocity.z);
+            //angular velocity (euler), also smoothed
+            m.addFloatArg(angularVelocity.x);
+            m.addFloatArg(angularVelocity.y);
+            m.addFloatArg(angularVelocity.z);
             
             for (int j = 0; j < clients.size(); j++)
             {
@@ -318,6 +338,24 @@ void ofApp::sendAllRigidBodys()
             }
         }
     }
+}
+
+void ofApp::fixRanges( ofVec3f *euler )
+{
+    if (euler->x < -180.0f)
+        euler->x += 360.0f;
+    else if (euler->x > 180.0f)
+        euler->x -= 360.0f;
+    
+    if (euler->y < -180.0f)
+        euler->y += 360.0f;
+    else if (euler->y > 180.0f)
+        euler->y -= 360.0f;
+    
+    if (euler->z < -180.0f)
+        euler->z += 360.0f;
+    else if (euler->z > 180.0f)
+        euler->z -= 360.0f;
 }
 
 void ofApp::sendAllSkeletons()
@@ -343,8 +381,8 @@ void ofApp::sendAllSkeletons()
             skeletonSize = size;
             return;
         }
-
-        for (int j = 0;  j < natnet.getNumSkeleton(); j++) {
+        
+        for (int j = 0; j < natnet.getNumSkeleton(); j++) {
             const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
             vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
             
@@ -352,15 +390,14 @@ void ofApp::sendAllSkeletons()
             m.setAddress("/skeleton");
             m.addIntArg(S.id);
             m.addStringArg(ofToString(sd[j].name));
-
+            
             for (int i = 0; i < S.joints.size(); i++)
             {
                 const ofxNatNet::RigidBody &RB = S.joints[i];
                 
-                
                 // Get the matirx
                 ofMatrix4x4 matrix = RB.matrix;
-                
+            
                 // Decompose to get the different elements
                 ofVec3f position;
                 ofQuaternion rotation;
