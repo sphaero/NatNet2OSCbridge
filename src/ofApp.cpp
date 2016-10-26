@@ -401,6 +401,7 @@ void ofApp::sendAllSkeletons()
                 {
                     if ( clients[c]->getHierarchy())
                     {
+                        ofxOscBundle b;
                         for (int i = 0; i < S.joints.size(); i++)
                         {
                             const ofxNatNet::RigidBody &RB = S.joints[i];
@@ -427,8 +428,10 @@ void ofApp::sendAllSkeletons()
                             m.addFloatArg(rotation.z());
                             m.addFloatArg(rotation.w());
                             
-                            clients[c]->sendData(m);
+                            b.addMessage(m);
                         }
+                        
+                        clients[c]->sendBundle(b);
                     }
                     else
                     {

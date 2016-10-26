@@ -67,6 +67,10 @@ void client::sendData(ofxOscMessage &m)
     sender.sendMessage(m);
 }
 
+void client::sendBundle(ofxOscBundle &b)
+{
+    sender.sendBundle(b);
+}
 
 void client::draw()
 {

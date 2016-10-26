@@ -21,6 +21,7 @@ public:
     
     void setupSender();
     void sendData(ofxOscMessage &m);
+    void sendBundle(ofxOscBundle &b);
     
     void setRigid(bool value);
     void setMarker(bool value);
