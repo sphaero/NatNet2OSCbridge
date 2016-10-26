@@ -338,7 +338,7 @@ void ofApp::sendAllRigidBodys()
                 if(clients[j]->getRigid())
                 {
                     if ( clients[j]->getHierarchy())
-                        m.setAddress("/rigidBody/"+ofToString(RB.id));
+                        m.setAddress("/rigidBody/"+ofToString(rbd[i].name));
                     else
                         m.setAddress("/rigidBody");
                     clients[j]->sendData(m);
@@ -394,37 +394,75 @@ void ofApp::sendAllSkeletons()
             const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
             vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
             
-            ofxOscMessage m;
-            m.setAddress("/skeleton");
-            m.addIntArg(S.id);
-            m.addStringArg(ofToString(sd[j].name));
-            
-            for (int i = 0; i < S.joints.size(); i++)
-            {
-                const ofxNatNet::RigidBody &RB = S.joints[i];
-                
-                // Get the matirx
-                ofMatrix4x4 matrix = RB.matrix;
-            
-                // Decompose to get the different elements
-                ofVec3f position;
-                ofQuaternion rotation;
-                ofVec3f scale;
-                ofQuaternion so;
-                matrix.decompose(position, rotation, scale, so);
-                m.addStringArg(ofToString(rbd[i].name));
-                m.addFloatArg(position.x);
-                m.addFloatArg(position.y);
-                m.addFloatArg(position.z);
-                m.addFloatArg(rotation.x());
-                m.addFloatArg(rotation.y());
-                m.addFloatArg(rotation.z());
-                m.addFloatArg(rotation.w());
-            }
             
             for (int j = 0; j < clients.size(); j++)
             {
-                if(clients[j]->getSkeleton()) clients[j]->sendData(m);
+                if(clients[j]->getSkeleton())
+                {
+                    if ( clients[j]->getHierarchy())
+                    {
+                        for (int i = 0; i < S.joints.size(); i++)
+                        {
+                            const ofxNatNet::RigidBody &RB = S.joints[i];
+                            
+                            ofxOscMessage m;
+                            m.setAddress("/skeleton/" + ofToString(sd[j].name) + "/" +
+                                         ofToString(ofToString(rbd[i].name)));
+                            
+                            // Get the matirx
+                            ofMatrix4x4 matrix = RB.matrix;
+                            
+                            // Decompose to get the different elements
+                            ofVec3f position;
+                            ofQuaternion rotation;
+                            ofVec3f scale;
+                            ofQuaternion so;
+                            matrix.decompose(position, rotation, scale, so);
+                            //m.addStringArg(ofToString(rbd[i].name));
+                            m.addFloatArg(position.x);
+                            m.addFloatArg(position.y);
+                            m.addFloatArg(position.z);
+                            m.addFloatArg(rotation.x());
+                            m.addFloatArg(rotation.y());
+                            m.addFloatArg(rotation.z());
+                            m.addFloatArg(rotation.w());
+                            
+                            clients[j]->sendData(m);
+                        }
+                    }
+                    else
+                    {
+                        ofxOscMessage m;
+                        m.setAddress("/skeleton");
+                        m.addIntArg(S.id);
+                        m.addStringArg(ofToString(sd[j].name));
+                        
+                        for (int i = 0; i < S.joints.size(); i++)
+                        {
+                            const ofxNatNet::RigidBody &RB = S.joints[i];
+                            
+                            // Get the matirx
+                            ofMatrix4x4 matrix = RB.matrix;
+                            
+                            // Decompose to get the different elements
+                            ofVec3f position;
+                            ofQuaternion rotation;
+                            ofVec3f scale;
+                            ofQuaternion so;
+                            matrix.decompose(position, rotation, scale, so);
+                            m.addStringArg(ofToString(rbd[i].name));
+                            m.addFloatArg(position.x);
+                            m.addFloatArg(position.y);
+                            m.addFloatArg(position.z);
+                            m.addFloatArg(rotation.x());
+                            m.addFloatArg(rotation.y());
+                            m.addFloatArg(rotation.z());
+                            m.addFloatArg(rotation.w());
+                        }
+                        
+                        clients[j]->sendData(m);
+                    }
+                }
             }
         }
     }
