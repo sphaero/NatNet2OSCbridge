@@ -8,7 +8,7 @@
 
 #include "client.h"
 
-client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
+client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier)
 {
     //arange them gridwise
     index = ind;
@@ -18,13 +18,17 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s)
     isRigid = r;
     isMarker = m;
     isSkeleton = s;
+    isLive = live;
+    deepHierarchy = hier;
     int width = 30;
     int x = 340 * (index%2);
     int row = (index / 2);
     area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
     rigButton = ofRectangle(0, width, width, width);
-    markButton = ofRectangle(100, width, width, width);
-    skelButton = ofRectangle(200, width, width, width);
+    markButton = ofRectangle(70, width, width, width);
+    skelButton = ofRectangle(140, width, width, width);
+    hierarchyButton = ofRectangle(270, width, width, width);
+    liveButton = ofRectangle(300, width, width, width);
     delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
     
     ofTrueTypeFont::setGlobalDpi(72);
@@ -45,8 +49,10 @@ void client::rearangePosition(int ind)
     int row = (index / 2);
     area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
     rigButton = ofRectangle(0, width, width, width);
-    markButton = ofRectangle(100, width, width, width);
-    skelButton = ofRectangle(200, width, width, width);
+    markButton = ofRectangle(70, width, width, width);
+    skelButton = ofRectangle(140, width, width, width);
+    hierarchyButton = ofRectangle(270, width, width, width);
+    liveButton = ofRectangle(300, width, width, width);
     delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
 }
 
@@ -74,10 +80,10 @@ void client::draw()
 
     ofSetColor(255,255,255);
     verdana14.drawString(msg, 20, 20);
-    verdana14.drawString("Rigid", 40, 50);
-    verdana14.drawString("Markers", 140, 50);
-    verdana14.drawString("Skeleton", 240, 50);
-
+    verdana14.drawString("Rigid", 30, 50);
+    verdana14.drawString("Mark", 100, 50);
+    verdana14.drawString("Skel", 170, 50);
+    verdana14.drawString("H/L", 240, 50);
     
     ofPopMatrix();
 }
@@ -100,6 +106,14 @@ void client::drawGUI()
     else ofSetColor(0,255,0);
     ofDrawRectangle(skelButton);
     
+    if (!isLive) ofSetColor(255, 0, 0);
+    else ofSetColor(0,255,0);
+    ofDrawRectangle(liveButton);
+    
+    if (!deepHierarchy) ofSetColor(255, 0, 0);
+    else ofSetColor(0,255,0);
+    ofDrawRectangle(hierarchyButton);
+    
     ofSetColor(255, 255, 255);
     ofDrawRectangle(delButton);
     ofSetColor(0, 0, 0);
@@ -115,6 +129,8 @@ void client::isInside(int & xp, int & yp)
     bool rig = rigButton.inside(x, y);
     bool mark = markButton.inside(x, y);
     bool skel = skelButton.inside(x, y);
+    bool live = liveButton.inside(x, y);
+    bool hierarchy = hierarchyButton.inside(x, y);
     bool del = delButton.inside(x, y);
 
     if (rig) isRigid = !isRigid;
@@ -122,6 +138,10 @@ void client::isInside(int & xp, int & yp)
     else if (mark) isMarker = !isMarker;
     
     else if (skel) isSkeleton = !isSkeleton;
+    
+    else if (live) isLive = !isLive;
+    
+    else if (hierarchy) deepHierarchy = !deepHierarchy;
     
     else if (del) ofNotifyEvent(deleteClient,index);
 }
@@ -181,4 +201,14 @@ bool &client::getMarker()
 bool &client::getSkeleton()
 {
     return isSkeleton;
+}
+
+bool &client::getLive()
+{
+    return isLive;
+}
+
+bool &client::getHierarchy()
+{
+    return deepHierarchy;
 }

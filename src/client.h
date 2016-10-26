@@ -16,7 +16,7 @@
 class client
 {
 public:
-    client(int ind,string i,int p,string n,bool r,bool m,bool s);
+    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier);
     ~client();
     
     void setupSender();
@@ -40,6 +40,8 @@ public:
     bool &getRigid();
     bool &getMarker();
     bool &getSkeleton();
+    bool &getLive();
+    bool &getHierarchy();
     
     ofEvent<int> deleteClient;
     
@@ -52,12 +54,16 @@ private:
     bool            isRigid;
     bool            isMarker;
     bool            isSkeleton;
+    bool            isLive;
+    bool            deepHierarchy;
     
     
     ofRectangle     area;
     ofRectangle     rigButton;
     ofRectangle     markButton;
     ofRectangle     skelButton;
+    ofRectangle     liveButton;
+    ofRectangle     hierarchyButton;
     ofRectangle     delButton;
     
     ofTrueTypeFont	verdana14;

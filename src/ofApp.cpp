@@ -57,7 +57,9 @@ void ofApp::setupData()
         bool r = data.getValue("rigid", 0);
         bool m = data.getValue("marker", 0);
         bool s = data.getValue("skeleton", 0);
-        addClient(i,ip,port,name,r,m,s);
+        bool live = data.getValue("live", 0);
+        bool hier = data.getValue("hierarchy", 0);
+        addClient(i,ip,port,name,r,m,s,live,hier);
         data.popTag();
     }
 }
@@ -154,9 +156,9 @@ void ofApp::draw()
     }
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy)
 {
-    client *c = new client(i,ip,p,n,r,m,s);
+    client *c = new client(i,ip,p,n,r,m,s,live, hierarchy);
     ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
     clients.push_back(c);
 }
@@ -313,7 +315,6 @@ void ofApp::sendAllRigidBodys()
             }
             
             ofxOscMessage m;
-            m.setAddress("/rigidBody");
             m.addIntArg(RB.id);
             m.addStringArg(ofToString(rbd[i].name));
             m.addFloatArg(position.x);
@@ -334,7 +335,14 @@ void ofApp::sendAllRigidBodys()
             
             for (int j = 0; j < clients.size(); j++)
             {
-                if(clients[j]->getRigid()) clients[j]->sendData(m);
+                if(clients[j]->getRigid())
+                {
+                    if ( clients[j]->getHierarchy())
+                        m.setAddress("/rigidBody");
+                    else
+                        m.setAddress("/rigidBody/"+ofToString(RB.id));
+                    clients[j]->sendData(m);
+                }
             }
         }
     }
@@ -524,7 +532,7 @@ void ofApp::mousePressed(int x, int y, int button)
     if(newPort.isInside(x, y)) return;
     if(addButton.isInside(x, y))
     {
-        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false);
+        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false, true, false);
         return;
     }
     if(saveButton.isInside(x, y)) saveData();
@@ -570,6 +578,8 @@ void ofApp::saveData()
         save.addValue("rigid", clients[i]->getRigid());
         save.addValue("marker", clients[i]->getMarker());
         save.addValue("skeleton", clients[i]->getSkeleton());
+        save.addValue("live", clients[i]->getLive());
+        save.addValue("hierarchy", clients[i]->getHierarchy());
         save.popTag();
     }
     save.save("setup.xml");
