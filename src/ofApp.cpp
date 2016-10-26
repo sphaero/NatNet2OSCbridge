@@ -324,13 +324,13 @@ void ofApp::sendAllRigidBodys()
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
             //velocity over SMOOTHING * 2 + 1 frames
-            m.addFloatArg(velocity.x);
-            m.addFloatArg(velocity.y);
-            m.addFloatArg(velocity.z);
+            m.addFloatArg(velocity.x * 1000);
+            m.addFloatArg(velocity.y * 1000);
+            m.addFloatArg(velocity.z * 1000);
             //angular velocity (euler), also smoothed
-            m.addFloatArg(angularVelocity.x);
-            m.addFloatArg(angularVelocity.y);
-            m.addFloatArg(angularVelocity.z);
+            m.addFloatArg(angularVelocity.x * 1000);
+            m.addFloatArg(angularVelocity.y * 1000);
+            m.addFloatArg(angularVelocity.z * 1000);
             
             for (int j = 0; j < clients.size(); j++)
             {
