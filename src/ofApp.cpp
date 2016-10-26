@@ -395,11 +395,11 @@ void ofApp::sendAllSkeletons()
             vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
             
             
-            for (int j = 0; j < clients.size(); j++)
+            for (int c = 0; c < clients.size(); c++)
             {
-                if(clients[j]->getSkeleton())
+                if(clients[c]->getSkeleton())
                 {
-                    if ( clients[j]->getHierarchy())
+                    if ( clients[c]->getHierarchy())
                     {
                         for (int i = 0; i < S.joints.size(); i++)
                         {
@@ -427,7 +427,7 @@ void ofApp::sendAllSkeletons()
                             m.addFloatArg(rotation.z());
                             m.addFloatArg(rotation.w());
                             
-                            clients[j]->sendData(m);
+                            clients[c]->sendData(m);
                         }
                     }
                     else
@@ -460,7 +460,7 @@ void ofApp::sendAllSkeletons()
                             m.addFloatArg(rotation.w());
                         }
                         
-                        clients[j]->sendData(m);
+                        clients[c]->sendData(m);
                     }
                 }
             }
