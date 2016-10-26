@@ -418,7 +418,7 @@ void ofApp::sendAllSkeletons()
                             ofVec3f scale;
                             ofQuaternion so;
                             matrix.decompose(position, rotation, scale, so);
-                            //m.addStringArg(ofToString(rbd[i].name));
+                            m.addStringArg(ofToString(rbd[i].name));
                             m.addFloatArg(position.x);
                             m.addFloatArg(position.y);
                             m.addFloatArg(position.z);
