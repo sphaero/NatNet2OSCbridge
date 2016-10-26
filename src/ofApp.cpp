@@ -338,9 +338,9 @@ void ofApp::sendAllRigidBodys()
                 if(clients[j]->getRigid())
                 {
                     if ( clients[j]->getHierarchy())
-                        m.setAddress("/rigidBody");
-                    else
                         m.setAddress("/rigidBody/"+ofToString(RB.id));
+                    else
+                        m.setAddress("/rigidBody");
                     clients[j]->sendData(m);
                 }
             }
