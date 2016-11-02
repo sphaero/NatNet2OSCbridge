@@ -165,23 +165,54 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
 
 void ofApp::sendOSC()
 {
-    sendAllMarkers();
-    sendAllRigidBodys();
-    sendAllSkeletons();
+    //TODO: Change this to create a bundle per client
+    ofxOscBundle bundle;
+    
+    //set to false if number of skels/rb's needs updating
+    bool rigidbodiesReady = true;
+    bool skeletonsReady = true;
+    bool sentRequest = false;
+    
+    //get & check rigidbodies size
+    vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
+    int size = rbd.size();
+    if (size != rigidBodySize)
+    {
+        natnet.sendRequestDescription();
+        rigidBodySize = size;
+        rigidbodiesReady = false;
+        sentRequest = true;
+    }
+    
+    //get & check skeletons size
+    vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
+    size = sd.size();
+    if (size != skeletonSize)
+    {
+        if ( !sentRequest ) natnet.sendRequestDescription();
+        skeletonSize = size;
+        skeletonsReady = false;
+    }
+    
+    for( int i = 0; i < clients.size(); ++i )
+    {
+        bundle.clear();
+        
+        //markers
+        getMarkers( clients[i], &bundle );
+        //rigidbodies
+        if ( rigidbodiesReady )             getRigidbodies( clients[i], &bundle, rbd );
+        //skeletons
+        if ( skeletonsReady )               getSkeletons( clients[i], &bundle, sd );
+        //check if not empty & send
+        if ( bundle.getMessageCount() > 0 ) clients[i]->sendBundle(bundle);
+    }
 }
 
-void ofApp::sendAllMarkers()
+
+void ofApp::getMarkers(client *c, ofxOscBundle *bundle)
 {
-    bool isUsed = false;
-    for (int i = 0; i < clients.size(); i++)
-    {
-        if (clients[i]->getMarker())
-        {
-            isUsed = true;
-            break;
-        }
-    }
-    if (isUsed)
+    if (c->getMarker())
     {
         for (int i = 0; i < natnet.getNumFilterdMarker(); i++)
         {
@@ -192,36 +223,15 @@ void ofApp::sendAllMarkers()
             m.addFloatArg(natnet.getFilterdMarker(i).y);
             m.addFloatArg(natnet.getFilterdMarker(i).z);
             
-            for (int j = 0; j < clients.size(); j++)
-            {
-                if(clients[j]->getMarker()) clients[j]->sendData(m);
-            }
+            bundle->addMessage(m);
         }
     }
 }
 
-void ofApp::sendAllRigidBodys()
+void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::RigidBodyDescription> rbd )
 {
-    bool isUsed = false;
-    for (int i = 0; i < clients.size(); i++)
+    if ( c->getRigid() )
     {
-        if (clients[i]->getRigid())
-        {
-            isUsed = true;
-            break;
-        }
-    }
-
-    if (isUsed)
-    {
-        vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
-        int size = rbd.size();
-        if (size != rigidBodySize)
-        {
-            natnet.sendRequestDescription();
-            rigidBodySize = size;
-            return;
-        }
         for (int i = 0; i < natnet.getNumRigidBody(); i++)
         {
             const ofxNatNet::RigidBody &RB = natnet.getRigidBodyAt(i);
@@ -333,17 +343,85 @@ void ofApp::sendAllRigidBodys()
             m.addFloatArg(angularVelocity.y * 1000);
             m.addFloatArg(angularVelocity.z * 1000);
             
-            for (int j = 0; j < clients.size(); j++)
+            if ( c->getHierarchy())
+                m.setAddress("/rigidBody/"+ofToString(rbd[i].name));
+            else
+                m.setAddress("/rigidBody");
+            
+            bundle->addMessage(m);
+        }
+    }
+}
+
+void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::SkeletonDescription> sd)
+{
+    for (int j = 0; j < natnet.getNumSkeleton(); j++)
+    {
+        const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
+        vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
+        
+        if ( c->getHierarchy())
+        {
+            for (int i = 0; i < S.joints.size(); i++)
             {
-                if(clients[j]->getRigid())
-                {
-                    if ( clients[j]->getHierarchy())
-                        m.setAddress("/rigidBody/"+ofToString(rbd[i].name));
-                    else
-                        m.setAddress("/rigidBody");
-                    clients[j]->sendData(m);
-                }
+                const ofxNatNet::RigidBody &RB = S.joints[i];
+                
+                ofxOscMessage m;
+                m.setAddress("/skeleton/" + ofToString(sd[j].name) + "/" +
+                                ofToString(ofToString(rbd[i].name)));
+                        
+                // Get the matirx
+                ofMatrix4x4 matrix = RB.matrix;
+                
+                // Decompose to get the different elements
+                ofVec3f position;
+                ofQuaternion rotation;
+                ofVec3f scale;
+                ofQuaternion so;
+                matrix.decompose(position, rotation, scale, so);
+                m.addStringArg(ofToString(rbd[i].name));
+                m.addFloatArg(position.x);
+                m.addFloatArg(position.y);
+                m.addFloatArg(position.z);
+                m.addFloatArg(rotation.x());
+                m.addFloatArg(rotation.y());
+                m.addFloatArg(rotation.z());
+                m.addFloatArg(rotation.w());
+                        
+                bundle->addMessage(m);
             }
+        }
+        else
+        {
+            ofxOscMessage m;
+            m.setAddress("/skeleton");
+            m.addIntArg(S.id);
+            m.addStringArg(ofToString(sd[j].name));
+                    
+            for (int i = 0; i < S.joints.size(); i++)
+            {
+                const ofxNatNet::RigidBody &RB = S.joints[i];
+                        
+                // Get the matirx
+                ofMatrix4x4 matrix = RB.matrix;
+                
+                // Decompose to get the different elements
+                ofVec3f position;
+                ofQuaternion rotation;
+                ofVec3f scale;
+                ofQuaternion so;
+                matrix.decompose(position, rotation, scale, so);
+                m.addStringArg(ofToString(rbd[i].name));
+                m.addFloatArg(position.x);
+                m.addFloatArg(position.y);
+                m.addFloatArg(position.z);
+                m.addFloatArg(rotation.x());
+                m.addFloatArg(rotation.y());
+                m.addFloatArg(rotation.z());
+                m.addFloatArg(rotation.w());
+            }
+            
+            bundle->addMessage(m);
         }
     }
 }

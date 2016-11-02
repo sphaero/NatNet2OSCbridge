@@ -58,6 +58,12 @@ private:
     void                    sendAllRigidBodys();
     void                    sendAllSkeletons();
     
+    void                    getMarkers(         client *c, ofxOscBundle *bundle );
+    void                    getRigidbodies(     client *c, ofxOscBundle *bundle,
+                                                    vector<ofxNatNet::RigidBodyDescription> rbd );
+    void                    getSkeletons(       client *c, ofxOscBundle *bundle,
+                                                    vector<ofxNatNet::SkeletonDescription> sd );
+    
     void                    fixRanges( ofVec3f *euler );
     ofVec3f                 shortestRotation( ofVec3f euler );
 
