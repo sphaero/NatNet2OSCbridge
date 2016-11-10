@@ -13,6 +13,21 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 
+//TODO: replace with filters!
+enum ClientMode
+{
+    ClientMode_Default  = 0,
+    ClientMode_GearVR   = 1,
+    ClientMode_END      = 2
+};
+
+static const char* ClientModeNames[] =
+{
+    "Default",
+    "Gear VR",
+    "INVALID"
+};
+
 class client
 {
 public:
@@ -43,6 +58,7 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
+    ClientMode &getMode();
     
     ofEvent<int> deleteClient;
     
@@ -57,6 +73,7 @@ private:
     bool            isSkeleton;
     bool            isLive;
     bool            deepHierarchy;
+    ClientMode      mode;
     
     
     ofRectangle     area;
@@ -66,6 +83,7 @@ private:
     ofRectangle     liveButton;
     ofRectangle     hierarchyButton;
     ofRectangle     delButton;
+    ofRectangle     modeButton;
     
     ofTrueTypeFont	verdana14;
     

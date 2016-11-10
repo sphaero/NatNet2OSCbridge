@@ -165,9 +165,6 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
 
 void ofApp::sendOSC()
 {
-    //TODO: Change this to create a bundle per client
-    ofxOscBundle bundle;
-    
     //set to false if number of skels/rb's needs updating
     bool rigidbodiesReady = true;
     bool skeletonsReady = true;
@@ -196,16 +193,25 @@ void ofApp::sendOSC()
     
     for( int i = 0; i < clients.size(); ++i )
     {
-        bundle.clear();
+        ofxOscBundle bundle;
         
         //markers
-        getMarkers( clients[i], &bundle );
+        if ( clients[i]->getMarker() )
+            getMarkers( clients[i], &bundle );
+        
         //rigidbodies
-        if ( rigidbodiesReady )             getRigidbodies( clients[i], &bundle, rbd );
+        if ( rigidbodiesReady && clients[i]->getRigid() )
+            getRigidbodies( clients[i], &bundle, rbd );
+        
         //skeletons
-        if ( skeletonsReady )               getSkeletons( clients[i], &bundle, sd );
+        if ( skeletonsReady && clients[i]->getSkeleton() )
+            getSkeletons( clients[i], &bundle, sd );
+        
         //check if not empty & send
-        if ( bundle.getMessageCount() > 0 ) clients[i]->sendBundle(bundle);
+        if ( bundle.getMessageCount() > 0 )
+        {
+            clients[i]->sendBundle(bundle);
+        }
     }
 }
 
@@ -334,14 +340,18 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             m.addFloatArg(rotation.y());
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
-            //velocity over SMOOTHING * 2 + 1 frames
-            m.addFloatArg(velocity.x * 1000);
-            m.addFloatArg(velocity.y * 1000);
-            m.addFloatArg(velocity.z * 1000);
-            //angular velocity (euler), also smoothed
-            m.addFloatArg(angularVelocity.x * 1000);
-            m.addFloatArg(angularVelocity.y * 1000);
-            m.addFloatArg(angularVelocity.z * 1000);
+            
+            if ( c->getMode() != ClientMode_GearVR )
+            {
+                //velocity over SMOOTHING * 2 + 1 frames
+                m.addFloatArg(velocity.x * 1000);
+                m.addFloatArg(velocity.y * 1000);
+                m.addFloatArg(velocity.z * 1000);
+                //angular velocity (euler), also smoothed
+                m.addFloatArg(angularVelocity.x * 1000);
+                m.addFloatArg(angularVelocity.y * 1000);
+                m.addFloatArg(angularVelocity.z * 1000);
+            }
             
             if ( c->getHierarchy())
                 m.setAddress("/rigidBody/"+ofToString(rbd[i].name));
@@ -395,9 +405,9 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
         {
             ofxOscMessage m;
             m.setAddress("/skeleton");
-            m.addIntArg(S.id);
             m.addStringArg(ofToString(sd[j].name));
-                    
+            m.addIntArg(S.id);
+            
             for (int i = 0; i < S.joints.size(); i++)
             {
                 const ofxNatNet::RigidBody &RB = S.joints[i];
@@ -442,111 +452,6 @@ void ofApp::fixRanges( ofVec3f *euler )
         euler->z += 360.0f;
     else if (euler->z > 180.0f)
         euler->z -= 360.0f;
-}
-
-void ofApp::sendAllSkeletons()
-{
-    bool isUsed = false;
-    for (int i = 0; i < clients.size(); i++)
-    {
-        if (clients[i]->getSkeleton())
-        {
-            isUsed = true;
-            break;
-        }
-    }
-
-    if (isUsed)
-    {
-        vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
-        int size = sd.size();
-        if (size != skeletonSize)
-        {
-            natnet.sendRequestDescription();
-            cout << "request description" << endl;
-            skeletonSize = size;
-            return;
-        }
-        
-        for (int j = 0; j < natnet.getNumSkeleton(); j++) {
-            const ofxNatNet::Skeleton &S = natnet.getSkeletonAt(j);
-            vector<ofxNatNet::RigidBodyDescription> rbd = sd[j].joints;
-            
-            
-            for (int c = 0; c < clients.size(); c++)
-            {
-                if(clients[c]->getSkeleton())
-                {
-                    if ( clients[c]->getHierarchy())
-                    {
-                        ofxOscBundle b;
-                        for (int i = 0; i < S.joints.size(); i++)
-                        {
-                            const ofxNatNet::RigidBody &RB = S.joints[i];
-                            
-                            ofxOscMessage m;
-                            m.setAddress("/skeleton/" + ofToString(sd[j].name) + "/" +
-                                         ofToString(ofToString(rbd[i].name)));
-                            
-                            // Get the matirx
-                            ofMatrix4x4 matrix = RB.matrix;
-                            
-                            // Decompose to get the different elements
-                            ofVec3f position;
-                            ofQuaternion rotation;
-                            ofVec3f scale;
-                            ofQuaternion so;
-                            matrix.decompose(position, rotation, scale, so);
-                            m.addStringArg(ofToString(rbd[i].name));
-                            m.addFloatArg(position.x);
-                            m.addFloatArg(position.y);
-                            m.addFloatArg(position.z);
-                            m.addFloatArg(rotation.x());
-                            m.addFloatArg(rotation.y());
-                            m.addFloatArg(rotation.z());
-                            m.addFloatArg(rotation.w());
-                            
-                            b.addMessage(m);
-                        }
-                        
-                        clients[c]->sendBundle(b);
-                    }
-                    else
-                    {
-                        ofxOscMessage m;
-                        m.setAddress("/skeleton");
-                        m.addIntArg(S.id);
-                        m.addStringArg(ofToString(sd[j].name));
-                        
-                        for (int i = 0; i < S.joints.size(); i++)
-                        {
-                            const ofxNatNet::RigidBody &RB = S.joints[i];
-                            
-                            // Get the matirx
-                            ofMatrix4x4 matrix = RB.matrix;
-                            
-                            // Decompose to get the different elements
-                            ofVec3f position;
-                            ofQuaternion rotation;
-                            ofVec3f scale;
-                            ofQuaternion so;
-                            matrix.decompose(position, rotation, scale, so);
-                            m.addStringArg(ofToString(rbd[i].name));
-                            m.addFloatArg(position.x);
-                            m.addFloatArg(position.y);
-                            m.addFloatArg(position.z);
-                            m.addFloatArg(rotation.x());
-                            m.addFloatArg(rotation.y());
-                            m.addFloatArg(rotation.z());
-                            m.addFloatArg(rotation.w());
-                        }
-                        
-                        clients[c]->sendData(m);
-                    }
-                }
-            }
-        }
-    }
 }
 
 void ofApp::deactivateInputs()

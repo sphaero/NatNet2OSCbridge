@@ -20,16 +20,9 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isSkeleton = s;
     isLive = live;
     deepHierarchy = hier;
-    int width = 30;
-    int x = 340 * (index%2);
-    int row = (index / 2);
-    area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
-    rigButton = ofRectangle(0, width, width, width);
-    markButton = ofRectangle(70, width, width, width);
-    skelButton = ofRectangle(140, width, width, width);
-    hierarchyButton = ofRectangle(270, width, width, width);
-    liveButton = ofRectangle(300, width, width, width);
-    delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
+    mode = ClientMode_Default;
+    
+    rearangePosition(ind);
     
     ofTrueTypeFont::setGlobalDpi(72);
     
@@ -47,13 +40,17 @@ void client::rearangePosition(int ind)
     int width = 30;
     int x = 340 * (index%2);
     int row = (index / 2);
-    area = ofRectangle(x,row * (width * 2) + (row * 10), 330, width * 2);
+    int height = width * 3;
+    area = ofRectangle(x,row * height + (row * 10), 330, height);
     rigButton = ofRectangle(0, width, width, width);
     markButton = ofRectangle(70, width, width, width);
     skelButton = ofRectangle(140, width, width, width);
-    hierarchyButton = ofRectangle(270, width, width, width);
-    liveButton = ofRectangle(300, width, width, width);
+    hierarchyButton = ofRectangle(300, width, width, width);
+    liveButton = ofRectangle(300, width*2, width, width);
     delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
+    
+    //todo: add some kind of "mode" setup for gears, or which things we want to send or not send?
+    modeButton = ofRectangle(0, width*2+5, 200, width-10);
 }
 
 
@@ -87,7 +84,12 @@ void client::draw()
     verdana14.drawString("Rigid", 30, 50);
     verdana14.drawString("Mark", 100, 50);
     verdana14.drawString("Skel", 170, 50);
-    verdana14.drawString("H/L", 240, 50);
+    verdana14.drawString("Hierarchy", 230, 50);
+    verdana14.drawString("Live", 270, 80);
+    
+    
+    //mode
+    verdana14.drawString(ClientModeNames[(int)mode], 30, 80 );
     
     ofPopMatrix();
 }
@@ -118,6 +120,9 @@ void client::drawGUI()
     else ofSetColor(0,255,0);
     ofDrawRectangle(hierarchyButton);
     
+    ofSetColor(127,127,127);
+    ofDrawRectangle(modeButton);
+    
     ofSetColor(255, 255, 255);
     ofDrawRectangle(delButton);
     ofSetColor(0, 0, 0);
@@ -136,6 +141,7 @@ void client::isInside(int & xp, int & yp)
     bool live = liveButton.inside(x, y);
     bool hierarchy = hierarchyButton.inside(x, y);
     bool del = delButton.inside(x, y);
+    bool modeClicked = modeButton.inside(x, y);
 
     if (rig) isRigid = !isRigid;
     
@@ -148,6 +154,16 @@ void client::isInside(int & xp, int & yp)
     else if (hierarchy) deepHierarchy = !deepHierarchy;
     
     else if (del) ofNotifyEvent(deleteClient,index);
+    
+    else if (modeClicked)
+    {
+        int iMode = (int)mode;
+        if ( ++iMode == (int)ClientMode_END )
+        {
+            iMode = 0;
+        }
+        mode = (ClientMode)iMode;
+    }
 }
 
 string &client::getName()
@@ -215,4 +231,9 @@ bool &client::getLive()
 bool &client::getHierarchy()
 {
     return deepHierarchy;
+}
+
+ClientMode &client::getMode()
+{
+    return mode;
 }
