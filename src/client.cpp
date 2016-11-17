@@ -8,7 +8,7 @@
 
 #include "client.h"
 
-client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier)
+client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode cMode )
 {
     //arange them gridwise
     index = ind;
@@ -20,7 +20,7 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isSkeleton = s;
     isLive = live;
     deepHierarchy = hier;
-    mode = ClientMode_Default;
+    mode = cMode;
     
     rearangePosition(ind);
     

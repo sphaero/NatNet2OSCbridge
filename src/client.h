@@ -16,22 +16,24 @@
 //TODO: replace with filters!
 enum ClientMode
 {
-    ClientMode_Default  = 0,
-    ClientMode_GearVR   = 1,
-    ClientMode_END      = 2
+    ClientMode_Default      = 0,
+    ClientMode_GearVR       = 1,
+    ClientMode_FullSkeleton = 2,
+    ClientMode_END          = 3
 };
 
 static const char* ClientModeNames[] =
 {
     "Default",
     "Gear VR",
+    "Full Skeleton",
     "INVALID"
 };
 
 class client
 {
 public:
-    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier);
+    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode mode);
     ~client();
     
     void setupSender();

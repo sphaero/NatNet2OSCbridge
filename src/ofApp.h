@@ -44,7 +44,7 @@ public:
     
     void setupInputfields();
     void setupData();
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
     void sendOSC();
     
     bool connectNatnet();

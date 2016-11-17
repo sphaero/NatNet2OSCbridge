@@ -59,7 +59,8 @@ void ofApp::setupData()
         bool s = data.getValue("skeleton", 0);
         bool live = data.getValue("live", 0);
         bool hier = data.getValue("hierarchy", 0);
-        addClient(i,ip,port,name,r,m,s,live,hier);
+        ClientMode mode = (ClientMode)data.getValue("mode", 0);
+        addClient(i,ip,port,name,r,m,s,live,hier,mode);
         data.popTag();
     }
 }
@@ -156,9 +157,9 @@ void ofApp::draw()
     }
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, ClientMode mode)
 {
-    client *c = new client(i,ip,p,n,r,m,s,live, hierarchy);
+    client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, mode);
     ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
     clients.push_back(c);
 }
@@ -397,7 +398,15 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
                 m.addFloatArg(rotation.y());
                 m.addFloatArg(rotation.z());
                 m.addFloatArg(rotation.w());
-                        
+                //needed for skeleton retargeting
+                if ( c->getMode() == ClientMode_FullSkeleton )
+                {
+                    m.addIntArg(rbd[i].parent_id);
+                    m.addFloatArg(rbd[i].offset.x);
+                    m.addFloatArg(rbd[i].offset.y);
+                    m.addFloatArg(rbd[i].offset.z);
+                }
+                
                 bundle->addMessage(m);
             }
         }
@@ -429,6 +438,14 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
                 m.addFloatArg(rotation.y());
                 m.addFloatArg(rotation.z());
                 m.addFloatArg(rotation.w());
+                //needed for skeleton retargeting
+                if ( c->getMode() == ClientMode_FullSkeleton )
+                {
+                    m.addIntArg(rbd[i].parent_id);
+                    m.addFloatArg(rbd[i].offset.x);
+                    m.addFloatArg(rbd[i].offset.y);
+                    m.addFloatArg(rbd[i].offset.z);
+                }
             }
             
             bundle->addMessage(m);
@@ -556,7 +573,7 @@ void ofApp::mousePressed(int x, int y, int button)
     if(newPort.isInside(x, y)) return;
     if(addButton.isInside(x, y))
     {
-        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false, true, false);
+        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false, true, false, ClientMode_Default);
         return;
     }
     if(saveButton.isInside(x, y)) saveData();
@@ -604,6 +621,7 @@ void ofApp::saveData()
         save.addValue("skeleton", clients[i]->getSkeleton());
         save.addValue("live", clients[i]->getLive());
         save.addValue("hierarchy", clients[i]->getHierarchy());
+        save.addValue("mode", clients[i]->getMode());
         save.popTag();
     }
     save.save("setup.xml");
