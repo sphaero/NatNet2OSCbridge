@@ -9,7 +9,7 @@
 #include "ofxTextButton.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
-#define SMOOTHING 3
+#define SMOOTHING 0
 
 class RigidBodyHistory {
 public:

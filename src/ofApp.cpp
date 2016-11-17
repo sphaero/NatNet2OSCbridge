@@ -242,6 +242,7 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
         for (int i = 0; i < natnet.getNumRigidBody(); i++)
         {
             const ofxNatNet::RigidBody &RB = natnet.getRigidBodyAt(i);
+            
             // Get the matirx
             ofMatrix4x4 matrix = RB.matrix;
             
@@ -259,7 +260,7 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             bool found = false;
             for( int r = 0; r < rbHistory.size(); ++r )
             {
-                if ( rbHistory[r].rigidBodyId == i )
+                if ( rbHistory[r].rigidBodyId == rbd[i].id )
                 {
                     rb = &rbHistory[r];
                     found = true;
@@ -268,7 +269,7 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             
             if ( !found )
             {
-                rb = new RigidBodyHistory( i, position, rotation );
+                rb = new RigidBodyHistory( rbd[i].id, position, rotation );
                 rbHistory.push_back(*rb);
             }
             
@@ -341,6 +342,10 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             m.addFloatArg(rotation.y());
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
+            
+            //std::stringstream stream;
+            //stream << "Sending: " << rbd[i].name << " " << position.x << " " << position.y << " " << position.z << " " << RB.id;
+            //ofLogError( stream.str() );
             
             if ( c->getMode() != ClientMode_GearVR )
             {
