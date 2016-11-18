@@ -4,31 +4,9 @@
     <ip>10.200.200.46</ip>
 </setup>
 <client>
-    <ip>10.200.200.189</ip>
-    <port>6200</port>
-    <name>GEAR1</name>
-    <rigid>1</rigid>
-    <marker>0</marker>
-    <skeleton>1</skeleton>
-    <live>1</live>
-    <hierarchy>0</hierarchy>
-    <mode>2</mode>
-</client>
-<client>
     <ip>10.200.200.23</ip>
     <port>6200</port>
     <name>New Client</name>
-    <rigid>1</rigid>
-    <marker>0</marker>
-    <skeleton>1</skeleton>
-    <live>1</live>
-    <hierarchy>0</hierarchy>
-    <mode>2</mode>
-</client>
-<client>
-    <ip>10.200.200.190</ip>
-    <port>6200</port>
-    <name>GEAR2</name>
     <rigid>1</rigid>
     <marker>0</marker>
     <skeleton>1</skeleton>
