@@ -253,6 +253,13 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             ofQuaternion so;
             matrix.decompose(position, rotation, scale, so);
             
+            //if objects are not tracked, move them to a galaxy far far away
+            if ( !RB.isActive() ) {
+                position.x += 1000;
+                position.y += 1000;
+                position.z += 1000;
+            }
+            
             //we're going to fetch or create this
             RigidBodyHistory *rb;
             
@@ -343,9 +350,9 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
             
-            //std::stringstream stream;
-            //stream << "Sending: " << rbd[i].name << " " << position.x << " " << position.y << " " << position.z << " " << RB.id;
-            //ofLogError( stream.str() );
+            std::stringstream stream;
+            stream << "Sending: " << rbd[i].name << " " << position.x << " " << position.y << " " << position.z << " " << rbd[i].id;
+            ofLogError( stream.str() );
             
             if ( c->getMode() != ClientMode_GearVR )
             {
