@@ -20,6 +20,7 @@ public:
     ofVec3f             previousPosition;
     ofQuaternion        previousOrientation;
     bool                firstRun;
+    int                 framesInactive;
     
     RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };

@@ -9,6 +9,7 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
     
     currentDataPoint = 0;
     firstRun = TRUE;
+    framesInactive = 0;
 }
 //end
 
@@ -253,13 +254,6 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             ofQuaternion so;
             matrix.decompose(position, rotation, scale, so);
             
-            //if objects are not tracked, move them to a galaxy far far away
-            if ( !RB.isActive() ) {
-                position.x += 1000;
-                position.y += 1000;
-                position.z += 1000;
-            }
-            
             //we're going to fetch or create this
             RigidBodyHistory *rb;
             
@@ -278,6 +272,19 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             {
                 rb = new RigidBodyHistory( rbd[i].id, position, rotation );
                 rbHistory.push_back(*rb);
+            }
+            
+            //if objects are not tracked, move them to a galaxy far far away
+            if ( !RB.isActive() ) {
+                rb->framesInactive++;
+                if ( rb->framesInactive > 120 ) {
+                    position.x += 1000;
+                    position.y += 1000;
+                    position.z += 1000;
+                }
+            }
+            else {
+                rb->framesInactive = 0;
             }
             
             ofVec3f velocity;
