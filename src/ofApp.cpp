@@ -275,6 +275,8 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             }
             
             //if objects are not tracked, move them to a galaxy far far away
+            // this has been removed in favour of just sending an isActive to clients
+            /*
             if ( !RB.isActive() ) {
                 rb->framesInactive++;
                 if ( rb->framesInactive > 120 ) {
@@ -286,6 +288,7 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             else {
                 rb->framesInactive = 0;
             }
+             */
             
             ofVec3f velocity;
             ofVec3f angularVelocity;
@@ -357,10 +360,6 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
             
-            std::stringstream stream;
-            stream << "Sending: " << rbd[i].name << " " << position.x << " " << position.y << " " << position.z << " " << rbd[i].id;
-            ofLogError( stream.str() );
-            
             if ( c->getMode() != ClientMode_GearVR )
             {
                 //velocity over SMOOTHING * 2 + 1 frames
@@ -372,6 +371,8 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
                 m.addFloatArg(angularVelocity.y * 1000);
                 m.addFloatArg(angularVelocity.z * 1000);
             }
+            
+            m.addIntArg( ( RB.isActive() ? 1 : 0 ) );
             
             if ( c->getHierarchy())
                 m.setAddress("/rigidBody/"+ofToString(rbd[i].name));
@@ -424,6 +425,9 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
                     m.addFloatArg(rbd[i].offset.x);
                     m.addFloatArg(rbd[i].offset.y);
                     m.addFloatArg(rbd[i].offset.z);
+                    //TODO: Figure out if this is needed. It's obvious for rigidbodies,
+                    //          but skeletons don't have an "isActive" as a totality
+                    //m.addBoolArg(RB.isActive());
                 }
                 
                 bundle->addMessage(m);
