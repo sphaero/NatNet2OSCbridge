@@ -26,3 +26,7 @@ Currently there are 3 client modes:
 
 ### Save/Load
 Setups can be saved by hitting the "Save" button. This writes an XML file that is automatically loaded when reopening.
+
+# MOCAP information and Manual
+
+https://drive.google.com/drive/u/0/folders/0BzwxZounZTt9bjYxWmlnRGZYRE0
