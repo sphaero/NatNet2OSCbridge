@@ -48,7 +48,7 @@ public:
     ofRectangle &getArea();
     void isInside(int & x, int & y);
     void moveArea(int & x, int & y);
-    void rearangePosition(int ind);
+    void rearangePosition(int ind, bool wholeScreen);
 
     
     int &getID();
@@ -60,6 +60,7 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
+    bool notWholeScreen;
     ClientMode &getMode();
     
     ofEvent<int> deleteClient;

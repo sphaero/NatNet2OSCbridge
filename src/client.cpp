@@ -21,8 +21,9 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isLive = live;
     deepHierarchy = hier;
     mode = cMode;
+    notWholeScreen = true;
     
-    rearangePosition(ind);
+    rearangePosition(ind,notWholeScreen);
     
     ofTrueTypeFont::setGlobalDpi(72);
     
@@ -34,12 +35,29 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
 
 client::~client(){}
 
-void client::rearangePosition(int ind)
+void client::rearangePosition(int ind, bool _notWholeScreen)
 {
+    /*
+     --> Get size window
+     --> client width = 330
+     */
+    
+    notWholeScreen = _notWholeScreen;
+    
+    int clientWidth = 330;
+    int collumnSpace = ofGetWidth();
+    
+    // use whole screen or only screen left of interface
+    if(notWholeScreen) collumnSpace = ofGetWidth() - 350; // 350 is width of connection interface
+    
+    int numCollumns = floor(collumnSpace/clientWidth);
+    // I may never be 0 ..
+    if(numCollumns < 1) numCollumns = 1;
+    
     index = ind;
     int width = 30;
-    int x = 340 * (index%2);
-    int row = (index / 2);
+    int x = 340 * (index%numCollumns);
+    int row = (index / numCollumns);
     int height = width * 3;
     area = ofRectangle(x,row * height + (row * 10), 330, height);
     rigButton = ofRectangle(0, width, width, width);

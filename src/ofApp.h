@@ -43,7 +43,7 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    void setupInputfields();
+    void setupConnectionInterface();
     void setupData();
     void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
     void sendOSC();
@@ -82,6 +82,8 @@ private:
     bool                running;
     int                 rigidBodySize;
     int                 skeletonSize;
+    int                 InterfaceX;
+    int                 InterfaceY;
     
     ofTrueTypeFont      font;
     //gui stuff

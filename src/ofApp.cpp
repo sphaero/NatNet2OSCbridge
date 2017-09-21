@@ -18,20 +18,43 @@ void ofApp::setup()
 {
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
-    setupInputfields();
+    font.load("verdana.ttf", 12);
+    
+    setupConnectionInterface();
     setupData();
     visible = true;
     numRigidBody = 0;
     numSkeleton = 0;
     running = true;
-    font.load("verdana.ttf", 12);
-    connect.setup(ofRectangle(700, 140, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
-    addButton.setup(ofRectangle(700, 310, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
-    saveButton.setup(ofRectangle(700, 370, 80, 20), "Save Setup", 12, ofColor(0,0,0), ofColor(255,255,255));
+    
     rigidBodySize = -1;
     skeletonSize = -1;
     connected = false;
     invFPS = 1.0f / ofToInt(fps.getText());
+    
+   
+}
+
+void ofApp::setupConnectionInterface(){
+    
+    // These variables position the connection interface
+    InterfaceX = ofGetWidth()-350;
+    InterfaceY = 50;
+    
+    connect.setup(ofRectangle(InterfaceX, InterfaceY+90, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
+    addButton.setup(ofRectangle(InterfaceX, InterfaceY+260, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
+    saveButton.setup(ofRectangle(InterfaceX, InterfaceY+320, 80, 20), "Save Setup", 12, ofColor(0,0,0), ofColor(255,255,255));
+    
+    interfaceName.setup(ofRectangle(InterfaceX, InterfaceY, 140, 20), 10, "en0","Interface");
+    interfaceIP.setup(ofRectangle(InterfaceX, InterfaceY+30, 140, 20), 10, "127.0.0.1","Natnet IP");
+    fps.setup(ofRectangle(InterfaceX, InterfaceY+60, 140, 20), 10, "30","FPS");
+    
+    newName.setup(ofRectangle(InterfaceX, InterfaceY+170, 140, 20), 10, "New Client","Client Name");
+    newIP.setup(ofRectangle(InterfaceX, InterfaceY+200, 140, 20), 10, "127.0.0.1","Client IP");
+    newPort.setup(ofRectangle(InterfaceX, InterfaceY+230, 140, 20), 10, "6200","Client Port");
+
+
+    
 }
 
 void ofApp::setupData()
@@ -66,17 +89,6 @@ void ofApp::setupData()
     }
 }
 
-
-void ofApp::setupInputfields()
-{
-    interfaceName.setup(ofRectangle(700, 50, 140, 20), 10, "en0","Interface");
-    interfaceIP.setup(ofRectangle(700, 80, 140, 20), 10, "127.0.0.1","Natnet IP");
-    fps.setup(ofRectangle(700, 110, 140, 20), 10, "30","FPS");
-
-    newName.setup(ofRectangle(700, 220, 140, 20), 10, "New Client","Client Name");
-    newIP.setup(ofRectangle(700, 250, 140, 20), 10, "127.0.0.1","Client IP");
-    newPort.setup(ofRectangle(700, 280, 140, 20), 10, "6200","Client Port");
-}
 
 bool ofApp::connectNatnet()
 {
@@ -114,19 +126,19 @@ void ofApp::draw()
     if (visible)
     {
         ofSetColor(255, 255, 255);
-        font.drawString("Global Settings", 700, 30);
+        font.drawString("Global Settings", InterfaceX, InterfaceY-20);
         interfaceName.draw();
         interfaceIP.draw();
         fps.draw();
         connect.draw();
         if (connected) ofSetColor(0, 255, 0);
         else ofSetColor(255, 0, 0);
-        ofDrawCircle(800, 150, 10);
+        ofDrawCircle(InterfaceX+100, 150, 10);
         
 
         ofSetColor(255, 255, 255);
 
-        font.drawString("New User", 700, 200);
+        font.drawString("New User", InterfaceX, InterfaceY+150);
         
         newName.draw();
         newIP.draw();
@@ -137,7 +149,7 @@ void ofApp::draw()
         saveButton.draw();
         
         ofSetColor(255, 255, 255);
-        font.drawString("Informations", 700, 420);
+        font.drawString("Informations", InterfaceX, InterfaceY+370);
         
         string info;
         info += "natnet tracking informations: \n";
@@ -154,7 +166,7 @@ void ofApp::draw()
         info += "press h to hide the informations \n";
         
         ofSetColor(255);
-        ofDrawBitmapString(info, 700, 440);
+        ofDrawBitmapString(info, InterfaceX, InterfaceY+390);
     }
 }
 
@@ -512,7 +524,7 @@ void ofApp::deleteClient(int &index)
     clients.erase(clients.begin() + index);
     for (int i = 0; i < clients.size(); i++)
     {
-        clients[i]->rearangePosition(i);
+        clients[i]->rearangePosition(i,true);
     }    
 }
 
@@ -552,7 +564,15 @@ void ofApp::keyPressed(int key)
         return;
     }
     
-    if (key == 'h') visible = !visible;
+    if (key == 'h'){
+        visible = !visible;
+        
+        for( int i = 0; i < clients.size(); ++i )
+        {
+            // visible == notWholescreen -> if interface is visible do not use whole screen for clients
+            clients[i]->rearangePosition(i,visible);
+        }
+    }
     if (key == 'p')
     {
         running = !running;
@@ -610,6 +630,15 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
+    
+    // Reposition clients when screen is resized
+    ofLogNotice("Window resized");
+    setupConnectionInterface();
+    for( int i = 0; i < clients.size(); ++i )
+    {
+        clients[i]->rearangePosition(i,true);
+    }
+    
     
 }
 
