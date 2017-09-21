@@ -99,6 +99,7 @@ bool ofApp::connectNatnet()
         natnet.setDuplicatedPointRemovalDistance(20);
         natnet.sendRequestDescription();
     }
+	return false;
 }
 
 
