@@ -16,7 +16,10 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    ofSetVerticalSync(true);
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	
+	
+	ofSetVerticalSync(true);
     ofBackground(67,67,67);
     font.load("verdana.ttf", 12);
     
@@ -48,7 +51,7 @@ void ofApp::setupConnectionInterface(){
     interfaceName.setup(ofRectangle(InterfaceX, InterfaceY, 140, 20), 10, "en0","Interface");
     interfaceIP.setup(ofRectangle(InterfaceX, InterfaceY+30, 140, 20), 10, "127.0.0.1","Natnet IP");
     fps.setup(ofRectangle(InterfaceX, InterfaceY+60, 140, 20), 10, "30","FPS");
-    
+	
     newName.setup(ofRectangle(InterfaceX, InterfaceY+170, 140, 20), 10, "New Client","Client Name");
     newIP.setup(ofRectangle(InterfaceX, InterfaceY+200, 140, 20), 10, "127.0.0.1","Client IP");
     newPort.setup(ofRectangle(InterfaceX, InterfaceY+230, 140, 20), 10, "6200","Client Port");
@@ -59,17 +62,26 @@ void ofApp::setupConnectionInterface(){
 
 void ofApp::setupData()
 {
-    ofxXmlSettings data("setup.xml");
+	ofLogVerbose("SetupData:: connection");
+	ofxXmlSettings data("setup.xml");
     data.pushTag("setup",0);
     int fRate = data.getValue("fps", 30);
+	ofLogWarning("setupData :: fps: " + ofToString(fRate));
     string interface = data.getValue("interface", "en0");
+	ofLogWarning("setupData :: interface: " + interface);
     string natnetip = data.getValue("ip", "10.200.200.13");
+	ofLogWarning("setupData :: natnetip: " + natnetip);
     interfaceName.setText(interface);
     interfaceIP.setText(natnetip);
     fps.setText(ofToString(fRate));
     
+
+	
+
     ofSetFrameRate(fRate);
     data.popTag();
+
+	ofLogVerbose("SetupData:: clients");
 
     int numClients = data.getNumTags("client");
     for (int i = 0; i < numClients; i++)
@@ -87,6 +99,8 @@ void ofApp::setupData()
         addClient(i,ip,port,name,r,m,s,live,hier,mode);
         data.popTag();
     }
+
+	ofLogVerbose("SetupData :: DONE");
 }
 
 
@@ -579,6 +593,16 @@ void ofApp::keyPressed(int key)
         running = !running;
         if (running) natnet.sendRequestDescription();
     }
+
+	if (key == 'q')
+	{
+		interfaceIP.setText("stom");
+		ofLogWarning("QQQQ");
+	}
+
+	if (key == 'w') {
+		ofLogWarning("visible? "+visible);
+	}
 }
 
 //--------------------------------------------------------------
@@ -634,7 +658,6 @@ void ofApp::windowResized(int w, int h){
     
     // Reposition clients when screen is resized
     ofLogNotice("Window resized");
-    setupConnectionInterface();
     for( int i = 0; i < clients.size(); ++i )
     {
         clients[i]->rearangePosition(i,true);

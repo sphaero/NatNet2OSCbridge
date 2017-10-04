@@ -14,16 +14,16 @@ ofxTextInputField::~ofxTextInputField(){}
 
 void ofxTextInputField::setup(ofRectangle area, int fS, string t, string d)
 {
-    bounds = area;
-    fSize = fS;
-    text = t;
-    description = d;
-    font.load("verdana.ttf", fSize);
-    col = ofColor(255,255,255);
-    float y = +((area.height - fSize) / 2) + fSize;
-    tPos = ofVec2f(4,y);
-    cIndex = text.size();
-    calculateDrawIndices();
+	bounds = area;
+	fSize = fS;
+	text = t;
+	description = d;
+	font.load("verdana.ttf", fSize);
+	col = ofColor(255, 255, 255);
+	float y = +((area.height - fSize) / 2) + fSize;
+	tPos = ofVec2f(4, y);
+	cIndex = text.size();
+	calculateDrawIndices();
 }
 
 bool ofxTextInputField::isInside(int &x, int &y)
@@ -146,6 +146,7 @@ void ofxTextInputField::setBounds(ofRectangle area)
 void ofxTextInputField::setText(string t)
 {
     text = t;
+	cIndex = text.size();
     calculateDrawIndices();
 }
 
