@@ -199,9 +199,12 @@ void ofApp::sendOSC()
     bool skeletonsReady = true;
     bool sentRequest = false;
     
-    //get & check rigidbodies size
+    // get & check rigidbodies size
     vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
     int size = rbd.size();
+    // set rigidBodySize to numbe rof rigidbodies we get from natnet.
+    rigidBodySize = natnet.getNumRigidBody();
+    // if there is a difference do natnet.sendRequestDescription(); to get up to date rigidbodie descriptions and thus names
     if (size != rigidBodySize)
     {
         natnet.sendRequestDescription();
@@ -267,6 +270,8 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
 {
     if ( c->getRigid() )
     {
+        // we use getRigidBodyDescriptions() together with natnet.getRigidBodyAt(i)
+        // because the natnet.getRigidBodyAt(i) does not have the name of th erigidbody in natnet version 2.9.0.0
         for (int i = 0; i < natnet.getNumRigidBody(); i++)
         {
             const ofxNatNet::RigidBody &RB = natnet.getRigidBodyAt(i);
