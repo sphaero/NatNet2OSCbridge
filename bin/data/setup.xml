@@ -1,7 +1,7 @@
 <setup>
     <fps>60</fps>
-    <interface>en4</interface>
-    <ip>10.200.200.46</ip>
+    <interface>enxa44cc8e198f4</interface>
+    <ip>192.168.10.30</ip>
 </setup>
 <client>
     <ip>10.200.200.23</ip>
