@@ -1,0 +1,265 @@
+# This file allows testing your addon using travis CI servers to use it you'll need to
+# create an account in travis.org and enable your addon there. 
+#
+# By default it will test linux 64bit and osx against the master and stable OF branches. 
+# Other platforms can be enabled by uncommenting the corresponding sections.
+#
+# If any extra install is needed to use the addon it can be included in the corresponding
+# install script in:
+#
+# scripts/ci/$TARGET/install.sh
+#
+
+env:
+  global:
+    secure: "Qva3uGHJlxoNiU0zc6/5PF3soZ1HV2mhNzZuH2AngvRlh1jP2uy0m9EZ0n1sK0v893H75qb2xwAX93pDAP+KnS1+P8GNSkZStr4IseB/sjtzN6IzCCIp1wCMvzrnU61EKWU39c2+Fqt6UINC1yJpqbGLbAxtKpvgpyv8+EL5EZCYQdnM1HUZNKGUR3VYAbVrSVl3qBciYD9pWUcTV8F2XLwSXXqkYjv3LSfb7/EZ3bMn3d2KqnA1TRM+eusKAQz5FdzK6PQZggHhx6JehjE1ZPpflqhOSaI2Rtfy/Dmc6dFbCXaZ43iHNePvGytUhiy/qT6TW0Lkxr3SVVelqWNt6qbf+xf2WtAO3eifinVHqZhmxCgZeu+lXAzhnQ9XXMPnxcvaSsHQyERGm8o6v6bLCRdAfAP0PXZbfnpKJS/tIxwc9hFqWbdRAcasgaZvzWWc7fjF0pBC2PvokYSyI/0qKKsLSJ/YoRioadlErJxl+IPY9mttePc0KgtCX5WSG+lmDNZL8RDMew2gVsPwxB+CB7gNRQan7UkjPzeZGA4wIxEHDQDiwOsTb6xeg3Krrh5AGlEXPJTsUvYzOkGt39abvFd2pDvnOxkuvbfMbe5qTxggvxKyL+Z98QEgHFQgVmOYsStR7h8wu3VJpHvtfovusW2eRU0fZTWFxJVt3SD94nc="
+    - APPNAME=NatNet2OSCbridge
+language: c++
+compiler: gcc
+sudo: true
+matrix:
+  include:
+  # fully specify builds, include can't dynamically expand matrix entries
+  # relative order of sudo and env is important so that addons: is recognized
+
+# Linux 64bit, OF master
+  - os: linux
+    dist: trusty
+    sudo: required
+    env: TARGET="linux64" OF_BRANCH="master"
+    addons:
+      ssh_known_hosts: pong.hku.nl
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-4.9
+          - g++-4.9
+          - sshpass
+#          - gdb
+
+# Linux 64bit, OF stable
+  - os: linux
+    dist: trusty
+    sudo: required
+    env: TARGET="linux64" OF_BRANCH="stable"
+    addons:
+      ssh_known_hosts: pong.hku.nl
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-4.9
+          - g++-4.9
+          - sshpass
+
+# OSX, OF master
+  - os: osx
+#    osx_image: xcode8
+    compiler: clang
+    env: TARGET="osx" OF_BRANCH="stable"
+    addons:
+      ssh_known_hosts: pong.hku.nl
+
+# OSX, OF stable:  Not supported yet
+#  - os: osx
+#    osx_image: xcode8
+#    compiler: clang
+#    env: TARGET="osx" OF_BRANCH="stable"
+
+# Linux ARM6, OF master: Uncomment following lines to enable 
+#  - os: linux
+#    sudo: required
+#    dist: trusty
+#    env: TARGET="linuxarmv6l" OF_BRANCH="master"
+
+
+# Linux ARM6, OF stable:  Not supported yet
+#  - os: linux
+#    sudo: required
+#    dist: trusty
+#    env: TARGET="linuxarmv6l" OF_BRANCH="stable"
+
+# Linux ARM7, OF master: Uncomment following lines to enable 
+#  - os: linux
+#    sudo: false
+#    env: TARGET="linuxarmv7l" OF_BRANCH="master"
+#    cache:
+#      directories:
+#        - ~/rpi2_toolchain
+#        - ~/firmware-master
+#        - ~/archlinux
+
+# Linux ARM7, OF stable:  Not supported yet
+#  - os: linux
+#    sudo: false
+#    env: TARGET="linuxarmv7l" OF_BRANCH="stable"
+#    cache:
+#      directories:
+#        - ~/rpi2_toolchain
+#        - ~/firmware-master
+#        - ~/archlinux
+
+
+# Emscripten, OF master: Uncomment following lines to enable 
+#  - os: linux
+#    sudo: false
+#    env: TARGET="emscripten" OF_BRANCH="master"
+#    addons:
+#      apt:
+#        sources:
+#          - ubuntu-toolchain-r-test
+#        packages:
+#          - libstdc++6
+
+
+# Emscripten, OF stable: Not supported yet
+#  - os: linux
+#    sudo: false
+#    env: TARGET="emscripten" OF_BRANCH="stable"
+#    addons:
+#      apt:
+#        sources:
+#          - ubuntu-toolchain-r-test
+#        packages:
+#          - libstdc++6
+
+
+# iOS, OF master: Not supported yet
+#  - os: osx
+#    osx_image: xcode8
+#    compiler: clang
+#    env: TARGET="ios" OF_BRANCH="master"
+
+
+# iOS, OF stable: Not supported yet
+#  - os: osx
+#    osx_image: xcode8
+#    compiler: clang
+#    env: TARGET="ios" OF_BRANCH="stable"
+
+
+# tvOS, OF master: Not supported yet
+#  - os: osx
+#    osx_image: xcode8
+#    compiler: clang
+#    env: TARGET="tvos" OF_BRANCH="master"
+
+
+# tvOS, OF stable: Not supported yet
+#  - os: osx
+#    osx_image: xcode8
+#    compiler: clang
+#    env: TARGET="tvos" OF_BRANCH="stable"
+
+
+# Android armv7, OF master: Uncomment following lines to enable 
+#  - os: linux
+#    sudo: false
+#    env: TARGET="android" OPT="armv7" OF_BRANCH="master"
+#    cache:
+#      directories:
+#        - ~/android-ndk-r12b
+
+
+# Android armv7, OF stable: Not supported yet
+#  - os: linux
+#    sudo: false
+#    env: TARGET="android" OPT="armv7" OF_BRANCH="stable"
+#    cache:
+#      directories:
+#        - ~/android-ndk-r12b
+
+
+# Android x86, OF master: Uncomment following lines to enable 
+#  - os: linux
+#    sudo: false
+#    env: TARGET="android" OPT="x86" OF_BRANCH="master"
+#    cache:
+#      directories:
+#        - ~/android-ndk-r12b
+
+
+# Android x86, OF stable: Not supported yet
+#  - os: linux
+#    sudo: false
+#    env: TARGET="android" OPT="x86" OF_BRANCH="stable"
+#    cache:
+#      directories:
+#        - ~/android-ndk-r12b
+
+
+  # Exclude the default build that would otherwise be generated
+  # see https://github.com/travis-ci/travis-ci/issues/1228
+  exclude:
+    - compiler: gcc
+
+install:
+  - cd ~
+  - git clone --depth=1 --branch=$OF_BRANCH https://github.com/openframeworks/openFrameworks
+  - cd openFrameworks
+# fails so we do it ourselves - scripts/ci/$TRAVIS_OS_NAME/install.sh
+  - if [ "$TARGET" == "linux64" ]; then 
+      sudo scripts/linux/ubuntu/install_dependencies.sh -y;
+      if [ -f scripts/linux/download_libs.sh ]; then 
+        scripts/linux/download_libs.sh;
+      fi
+    elif [ "$TARGET" == "osx" ]; then
+      brew update;
+      brew upgrade coreutils;
+      brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb;
+      if [ -f scripts/$TARGET/download_libs.sh ]; then 
+        scripts/$TARGET/download_libs.sh;
+      fi
+    fi
+#  - scripts/linux/compileOF.sh
+  - if [ "$TARGET" == "linux64" ]; then
+      cd libs/openFrameworksCompiled/project;
+      make Debug;
+    fi
+  - cd -
+  - cd addons
+  - git clone --depth=1 https://github.com/hku-ect/ofxNatNet.git
+
+script:
+#  - scripts/ci/addons/build.sh
+  - cd $TRAVIS_BUILD_DIR
+  - echo "OF_ROOT=$HOME/openFrameworks" >> config.make
+#  - sed -i '' "s;..\/..\/..;$HOME\/openFrameworks;g" Project.xcconfig
+#  - sed -i '' "s;..\/..\/..;$HOME\/openFrameworks;g" $APPNAME.xcodeproj/project.pbxproj
+  - if [ "$TARGET" == "linux64" ]; then
+       make Debug;
+    elif [ "$TARGET" == "osx" ]; then
+       cd ..;
+       mv $APPNAME ~/openFrameworks/apps/devApps/;
+       cd ~/openFrameworks/apps/devApps/$APPNAME;
+       xcodebuild -configuration Release -target $APPNAME -project "$APPNAME.xcodeproj";
+       cd ..; mv $APPNAME $TRAVIS_BUILD_DIR; cd $TRAVIS_BUILD_DIR;
+    fi
+
+git:
+  depth: 10
+
+after_success:
+  - cd bin; pwd
+  - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then 
+      if [ -n "$TRAVIS_TAG" ]; then
+        zip -r $( echo $TRAVIS_REPO_SLUG | cut -d"/" -f2)_${TRAVIS_OS_NAME}_$TRAVIS_TAG.zip *;
+      else
+        zip -r $( echo $TRAVIS_REPO_SLUG | cut -d"/" -f2)_${TRAVIS_OS_NAME}_$TRAVIS_COMMIT.zip *;
+      fi
+    fi
+  - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then export SSHPASS=$BBPWD; fi
+  - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sshpass -e scp *.zip buildbot@pong.hku.nl:public_html/nightly/; fi
+  - cd ..
+
+deploy:
+  provider: releases
+  api_key:
+    secure: b1QTGdFh3/wK84wGAhRbs9IqtioII7C1FHz0yBUesQIqKfrxCqt2BpsZSqmUxgDqIReIIBt1aGGl7ifzE6TWC5nKzOnfDgfPJwLKrJmsTzDNO+FB2LuDWF4WNFoTMKPZTdzkxPzXJZfXYzc6THibJ6JjfhCttwDkrjyTEY2dz+7s4IYdOkerboHXKxAykAEz+Uy4VA4yN7Np/d7Xu1t7ql5cVnGyP7eIK31MDQd6FxqXHp3JKYzx5laMRjEqpMbCNlU/USFCkbb5XrdrASxCzX5mOInnydkeHnEtNaYRzNZFKW1eW6aQpY6fq/ALHW8d3nn8Ag2ikMThbNM0+soyrmafx+aXI5FJmM+nGPQAKwyf3nkqHOzb4ZP64qlK83DV/K8YjH+vPofsYf9f27sPzTceWHYC42+ZP9RG+JYYJh86/GGbziPdseQo8lizL7vT7CtVFbMQLWxyOjYyYjeWmAmArJXjgQEFFtbH9KY49vfSWtFeETfnAhT6yKtdxHjH7PICZUcigLMvheqKONb9XCUQTHU0HU8WNSHfnnKAkiVD5irvZQqheuJlMivlKA9QJeGmyBUd/cLYiga4uvOKDLptg4UPYrJsqgK8nTGuDbNrguec6NYVuhCqy3eI2mZgng1xb5OEXqIWmDfnQjnI1R4k1rgm15P8EDE23oaEJuU=
+  file_glob: true
+  file: bin/*.zip
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
