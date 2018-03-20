@@ -224,6 +224,10 @@ script:
 #  - scripts/ci/addons/build.sh
   - cd $TRAVIS_BUILD_DIR
   - echo "OF_ROOT=$HOME/openFrameworks" >> config.make
+# on master we need the ofxPoco addon
+  - if [ "$OF_BRANCH" == "master" ]; then
+      echo "ofxPoco" >> addons.make;
+    fi
 #  - sed -i '' "s;..\/..\/..;$HOME\/openFrameworks;g" Project.xcconfig
 #  - sed -i '' "s;..\/..\/..;$HOME\/openFrameworks;g" $APPNAME.xcodeproj/project.pbxproj
   - if [ "$TARGET" == "linux64" ]; then
