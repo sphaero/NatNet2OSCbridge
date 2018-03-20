@@ -217,8 +217,7 @@ install:
       cd libs/openFrameworksCompiled/project;
       make Debug;
     fi
-  - cd -
-  - cd addons
+  - cd ~/openFrameworks/addons
   - git clone --depth=1 https://github.com/hku-ect/ofxNatNet.git
 
 script:
