@@ -236,7 +236,7 @@ script:
        cd ..;
        mv $APPNAME ~/openFrameworks/apps/devApps/;
        cd ~/openFrameworks/apps/devApps/$APPNAME;
-       xcodebuild -configuration Release -target $APPNAME -project "$APPNAME.xcodeproj";
+       xcodebuild -configuration Release -project "$APPNAME.xcodeproj";
        cd ..; mv $APPNAME $TRAVIS_BUILD_DIR; cd $TRAVIS_BUILD_DIR;
     fi
 
