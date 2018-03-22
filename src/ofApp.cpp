@@ -598,16 +598,6 @@ void ofApp::keyPressed(int key)
         running = !running;
         if (running) natnet.sendRequestDescription();
     }
-
-	if (key == 'q')
-	{
-		interfaceIP.setText("stom");
-		ofLogWarning("QQQQ");
-	}
-
-	if (key == 'w') {
-		ofLogWarning("visible? "+visible);
-	}
 }
 
 //--------------------------------------------------------------
