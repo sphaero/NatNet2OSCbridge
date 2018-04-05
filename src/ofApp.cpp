@@ -248,7 +248,6 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle)
     if ( c->getRigid() )
     {
         vector<ofxNatNet::RigidBodyDescription> rbd = natnet.getRigidBodyDescriptions();
-        ofLogWarning(" natnet.getNumRigidBody(): "+ofToString(natnet.getNumRigidBody())+" rbd.size: "+ofToString(rbd.size()));
         
         // we use getRigidBodyDescriptions() together with natnet.getRigidBodyAt(i)
         // because the natnet.getRigidBodyAt(i) does not have the name of th erigidbody in natnet version 2.9.0.0
