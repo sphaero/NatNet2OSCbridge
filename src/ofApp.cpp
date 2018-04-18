@@ -107,7 +107,7 @@ void ofApp::setupData()
 bool ofApp::connectNatnet()
 {
     natnet.setup(interfaceName.getText(), interfaceIP.getText());  // interface name, server ip
-    natnet.setDuplicatedPointRemovalDistance(20);
+    //natnet.setDuplicatedPointRemovalDistance(20);
     natnet.sendRequestDescription();
 	return false;
 }
