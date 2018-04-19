@@ -212,6 +212,7 @@ void ofApp::sendOSC()
     //get & check skeletons size
     vector<ofxNatNet::SkeletonDescription> sd = natnet.getSkeletonDescriptions();
     size = sd.size();
+    skeletonSize = natnet.getNumSkeleton();
     if (size != skeletonSize)
     {
         if ( !sentRequest ) natnet.sendRequestDescription();
