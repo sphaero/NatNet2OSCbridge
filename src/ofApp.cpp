@@ -33,6 +33,7 @@ void ofApp::setup()
     rigidBodySize = -1;
     skeletonSize = -1;
     connected = false;
+    triedToConnect = false;
     invFPS = 1.0f / ofToInt(fps.getText());
     
    
@@ -106,9 +107,14 @@ void ofApp::setupData()
 
 bool ofApp::connectNatnet()
 {
+    
+    if(!triedToConnect) triedToConnect = true;
+    
     natnet.setup(interfaceName.getText(), interfaceIP.getText());  // interface name, server ip
+    
     //natnet.setDuplicatedPointRemovalDistance(20);
-    natnet.sendRequestDescription();
+    
+  
 	return false;
 }
 
@@ -120,7 +126,19 @@ void ofApp::update()
     {
         natnet.update();
         sendOSC();
+        UserFeedback = "";
     }
+    // Show user feedback
+    else if(running == true && triedToConnect == true){
+            UserFeedback  = "\n NatNet setup failed please check: \n";
+            UserFeedback += " 1. Does Motive broadcast data over the right IP address? \n";
+            UserFeedback += " 2. Did you enter the right remote IP address? \n";
+            UserFeedback += " 3. Did you enter the right local interface?\n ";
+            UserFeedbackCanvas = UserFeedbackFont.getBoundingBox(UserFeedback,0,0);
+            UserFeedbackCanvas.setPosition(ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
+    }
+    
+    
     if(natnet.isConnected()) connected = true;
     else connected = false;
 }
@@ -178,6 +196,12 @@ void ofApp::draw()
         
         ofSetColor(255);
         ofDrawBitmapString(info, InterfaceX, InterfaceY+390);
+        
+        //NatNet connection feedback
+        if(UserFeedback != ""){
+            ofDrawBitmapStringHighlight(UserFeedback, ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
+        }
+        
     }
 }
 
@@ -638,6 +662,11 @@ void ofApp::mousePressed(int x, int y, int button)
     }
     if(saveButton.isInside(x, y)) saveData();
     if (connect.isInside(x, y)) connectNatnet();
+    
+    if (UserFeedbackCanvas.inside(x,y)){
+        UserFeedback = "";
+        triedToConnect = false;
+    }
 }
 
 //--------------------------------------------------------------

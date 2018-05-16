@@ -74,9 +74,11 @@ private:
     vector<RigidBodyHistory>    rbHistory;
     
     string folder;
+    string UserFeedback;
     
     bool                visible;
     bool                connected;
+    bool                triedToConnect;
     int                 numRigidBody;
     int                 numSkeleton;
     bool                running;
@@ -84,6 +86,10 @@ private:
     int                 skeletonSize;
     int                 InterfaceX;
     int                 InterfaceY;
+    
+    ofRectangle         UserFeedbackCanvas;
+    ofBitmapFont        UserFeedbackFont;
+
     
     ofTrueTypeFont      font;
     //gui stuff
