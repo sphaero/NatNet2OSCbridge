@@ -208,7 +208,7 @@ void ofApp::draw()
 void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, ClientMode mode)
 {
     // Check if we do not add a cleint with the same properties twice
-    Boolean uniqueClient = true;
+    bool uniqueClient = true;
     for (int i = 0; i < clients.size(); i++)
     {
         if(clients[i]->getIP() == ip && clients[i]->getPort() == p){
