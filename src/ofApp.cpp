@@ -207,9 +207,28 @@ void ofApp::draw()
 
 void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, ClientMode mode)
 {
-    client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, mode);
-    ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
-    clients.push_back(c);
+    // Check if we do not add a cleint with the same properties twice
+    Boolean uniqueClient = true;
+    for (int i = 0; i < clients.size(); i++)
+    {
+        if(clients[i]->getIP() == ip && clients[i]->getPort() == p){
+            uniqueClient = false;
+            break;
+        }
+    }
+
+    
+    if(uniqueClient){
+        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, mode);
+        ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
+        clients.push_back(c);
+        if(UserFeedback != "") UserFeedback = "";
+    }else{
+        // give feedback client already exists
+        UserFeedback = "\n A client with the same settings already exists. \n Please change IP address and/or port! \n";
+        UserFeedbackCanvas = UserFeedbackFont.getBoundingBox(UserFeedback,0,0);
+        UserFeedbackCanvas.setPosition(ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
+    }
 }
 
 void ofApp::sendOSC()
