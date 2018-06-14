@@ -1,11 +1,5 @@
 #include "ofApp.h"
 
-/*
- TODO: Fix scrolling window for clients
- TODO: Fix feedback window for duplicate port/IP
- 
-*/
-
 //additions for velocities / angular velocity
 RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 {
@@ -22,19 +16,11 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    
-    // https://openframeworks.cc/documentation/utils/ofFilePath/#show_makeRelative
-    // https://github.com/ZahlGraf/IrrIMGUI/tree/master/includes/IrrIMGUI -> Fotn irrlight
-    // https://github.com/ocornut/imgui/issues/1102 -> Font
-
-    
     ofSetLogLevel(OF_LOG_VERBOSE);
-	
-	
+		
 	ofSetVerticalSync(true);
     ofBackground(67,67,67);
-    font.load("verdana.ttf", 12);
-    
+
     setupConnectionInterface();
     setupData();
     visible = true;
@@ -46,7 +32,8 @@ void ofApp::setup()
     skeletonSize = -1;
     connected = false;
     triedToConnect = false;
-    invFPS = 1.0f / ofToInt(fps.getText());
+    openModal = false;
+    invFPS = 1.0f / FPS;
     
     // SETUP GUI
     ImGui::CreateContext();
@@ -71,9 +58,7 @@ void ofApp::setup()
     style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
     style.ItemSpacing = ImVec2(6.0f, 6.0f);
     
-    
-    
-   
+
 }
 
 void ofApp::setupConnectionInterface(){
@@ -82,20 +67,6 @@ void ofApp::setupConnectionInterface(){
     InterfaceX = ofGetWidth()-350;
     InterfaceY = 50;
     
-    connect.setup(ofRectangle(InterfaceX, InterfaceY+90, 80, 20), "Connect", 12, ofColor(0,0,0), ofColor(255,255,255));
-    addButton.setup(ofRectangle(InterfaceX, InterfaceY+260, 80, 20), "Add User", 12, ofColor(0,0,0), ofColor(255,255,255));
-    saveButton.setup(ofRectangle(InterfaceX, InterfaceY+320, 80, 20), "Save Setup", 12, ofColor(0,0,0), ofColor(255,255,255));
-    
-    interfaceName.setup(ofRectangle(InterfaceX, InterfaceY, 140, 20), 10, "en0","Interface");
-    interfaceIP.setup(ofRectangle(InterfaceX, InterfaceY+30, 140, 20), 10, "127.0.0.1","Natnet IP");
-    fps.setup(ofRectangle(InterfaceX, InterfaceY+60, 140, 20), 10, "30","FPS");
-	
-    newName.setup(ofRectangle(InterfaceX, InterfaceY+170, 140, 20), 10, "New Client","Client Name");
-    newIP.setup(ofRectangle(InterfaceX, InterfaceY+200, 140, 20), 10, "127.0.0.1","Client IP");
-    newPort.setup(ofRectangle(InterfaceX, InterfaceY+230, 140, 20), 10, "6200","Client Port");
-
-
-    
 }
 
 void ofApp::setupData()
@@ -103,20 +74,18 @@ void ofApp::setupData()
 	ofLogVerbose("SetupData:: connection");
 	ofxXmlSettings data("setup.xml");
     data.pushTag("setup",0);
-    int fRate = data.getValue("fps", 30);
-	ofLogWarning("setupData :: fps: " + ofToString(fRate));
-    string interface = data.getValue("interface", "en0");
-	ofLogWarning("setupData :: interface: " + interface);
-    string natnetip = data.getValue("ip", "10.200.200.13");
-	ofLogWarning("setupData :: natnetip: " + natnetip);
-    interfaceName.setText(interface);
-    interfaceIP.setText(natnetip);
-    fps.setText(ofToString(fRate));
+    FPS = data.getValue("fps", 30);
+    ofLogWarning("setupData :: fps: " + ofToString(FPS));
     
-
-	
-
-    ofSetFrameRate(fRate);
+    strncpy(interface_char, data.getValue("interface", "en0").c_str(), 64);
+    interface_char[sizeof(natnetip_char)-1] = 0;
+    ofLogWarning("setupData :: interface: " + ofToString(interface_char));
+    
+    strncpy(natnetip_char, data.getValue("ip", "10.200.200.13").c_str(), 16);
+    natnetip_char[sizeof(natnetip_char)-1] = 0;
+    ofLogWarning("setupData :: natnetip: " + ofToString(natnetip_char));
+    
+    ofSetFrameRate(FPS);
     data.popTag();
 
 	ofLogVerbose("SetupData:: clients");
@@ -144,15 +113,11 @@ void ofApp::setupData()
 
 bool ofApp::connectNatnet(string interfaceName, string interfaceIP)
 {
-    
     if(!triedToConnect) triedToConnect = true;
     
-    //natnet.setup(interfaceName.getText(), interfaceIP.getText());  // interface name, server ip
     natnet.setup(interfaceName, interfaceIP);  // interface name, server ip
-    
     //natnet.setDuplicatedPointRemovalDistance(20);
     
-  
 	return false;
 }
 
@@ -168,12 +133,13 @@ void ofApp::update()
     }
     // Show user feedback
     else if(running == true && triedToConnect == true){
-            UserFeedback  = "\n NatNet setup failed please check: \n";
-            UserFeedback += " 1. Does Motive broadcast data over the right IP address? \n";
-            UserFeedback += " 2. Did you enter the right remote IP address? \n";
-            UserFeedback += " 3. Did you enter the right local interface?\n ";
-            UserFeedbackCanvas = UserFeedbackFont.getBoundingBox(UserFeedback,0,0);
-            UserFeedbackCanvas.setPosition(ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
+        
+        UserFeedback  = "\n NatNet setup failed please check: \n";
+        UserFeedback += " 1. Does Motive broadcast data over the right IP address? \n";
+        UserFeedback += " 2. Did you enter the right remote IP address? \n";
+        UserFeedback += " 3. Did you enter the right local interface?\n ";
+        setFeedback(UserFeedback);
+        triedToConnect = false;
     }
     
     
@@ -186,70 +152,7 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-    
-    
     if ( this->guiVisible ) { gui.draw(); }
-    
-    /*
-    
-    string msg;
-    for (int i = 0; i < clients.size(); i++)
-    {
-        clients[i]->draw();
-    }
-    
-    if (visible)
-    {
-        ofSetColor(255, 255, 255);
-        font.drawString("Global Settings", InterfaceX, InterfaceY-20);
-        interfaceName.draw();
-        interfaceIP.draw();
-        fps.draw();
-        connect.draw();
-        if (connected) ofSetColor(0, 255, 0);
-        else ofSetColor(255, 0, 0);
-        ofDrawCircle(InterfaceX+100, 150, 10);
-        
-
-        ofSetColor(255, 255, 255);
-
-        font.drawString("New User", InterfaceX, InterfaceY+150);
-        
-        newName.draw();
-        newIP.draw();
-        newPort.draw();
-        
-        addButton.draw();
-        
-        saveButton.draw();
-        
-        ofSetColor(255, 255, 255);
-        font.drawString("Informations", InterfaceX, InterfaceY+370);
-        
-        string info;
-        info += "natnet tracking informations: \n";
-        info += "frames: " + ofToString(natnet.getFrameNumber()) + "\n";
-        info += "data rate: " + ofToString(natnet.getDataRate()) + "\n";
-        info += string("connected: ") + (natnet.isConnected() ? "YES" : "NO") + "\n";
-        info += "num markers set: " + ofToString(natnet.getNumMarkersSet()) + "\n";
-        info += "num marker: " + ofToString(natnet.getNumMarker()) + "\n";
-        info += "num filterd (non regidbodies) marker: " +
-        ofToString(natnet.getNumFilterdMarker()) + "\n";
-        info += "num rigidbody: " + ofToString(natnet.getNumRigidBody()) + "\n";
-        info += "num skeleton: " + ofToString(natnet.getNumSkeleton()) + "\n";
-        info += string("press p to pause clients, is paused: ") + (running ? "NO" : "YES") + "\n";
-        info += "press h to hide the informations \n";
-        
-        ofSetColor(255);
-        ofDrawBitmapString(info, InterfaceX, InterfaceY+390);
-        
-        //NatNet connection feedback
-        if(UserFeedback != ""){
-            ofDrawBitmapStringHighlight(UserFeedback, ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
-        }
-        
-    }
-     */
 }
 
 void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, ClientMode mode)
@@ -276,14 +179,10 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
 }
 
 
+// Set Feedback text an open pop-up
 void ofApp::setFeedback(string feedbackText){
-    
     UserFeedback = feedbackText;
-    UserFeedbackCanvas = UserFeedbackFont.getBoundingBox(UserFeedback,0,0);
-    UserFeedbackCanvas.setPosition(ofGetWindowWidth()/2-UserFeedbackCanvas.width/2,ofGetWindowHeight()/2-UserFeedbackCanvas.height/2);
-    
-    ImGui::OpenPopup("userFeedback");
-    
+    openModal = true;
 }
 
 
@@ -622,17 +521,6 @@ void ofApp::fixRanges( ofVec3f *euler )
         euler->z -= 360.0f;
 }
 
-void ofApp::deactivateInputs()
-{
-    //deactivate all inputfields
-    interfaceName.deactivate();
-    interfaceIP.deactivate();
-    fps.deactivate();
-    newName.deactivate();
-    newIP.deactivate();
-    newPort.deactivate();
-}
-
 void ofApp::deleteClient(int &index)
 {
     ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
@@ -648,37 +536,6 @@ void ofApp::deleteClient(int &index)
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    //first check the input fields
-    if (interfaceName.getState())
-    {
-        interfaceName.addKey(key);
-        return;
-    }
-    if (interfaceIP.getState())
-    {
-        interfaceIP.addKey(key);
-        return;
-    }
-    if (fps.getState())
-    {
-        fps.addKey(key);
-        return;
-    }
-    if (newName.getState())
-    {
-        newName.addKey(key);
-        return;
-    }
-    if (newIP.getState())
-    {
-        newIP.addKey(key);
-        return;
-    }
-    if (newPort.getState())
-    {
-        newPort.addKey(key);
-        return;
-    }
     
     if (key == 'h'){
         visible = !visible;
@@ -692,7 +549,7 @@ void ofApp::keyPressed(int key)
     if (key == 'p')
     {
         running = !running;
-        if (running) natnet.sendRequestDescription();
+        //if (running) natnet.sendRequestDescription();
     }
 }
 
@@ -714,34 +571,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
-    deactivateInputs();
-    for (int i = 0; i < clients.size(); i++)
-    {
-        bool isInside = clients[i]->getArea().inside(x, y);
-        if (isInside)
-        {
-            clients[i]->isInside(x, y);
-            return;
-        }
-    }
-    if(interfaceName.isInside(x, y)) return;
-    if(interfaceIP.isInside(x, y)) return;
-    if(fps.isInside(x, y)) return;
-    if(newName.isInside(x, y)) return;
-    if(newIP.isInside(x, y)) return;
-    if(newPort.isInside(x, y)) return;
-    if(addButton.isInside(x, y))
-    {
-        addClient(clients.size(), newIP.getText(), ofToInt(newPort.getText()), newName.getText(), false, false, false, true, false, ClientMode_Default);
-        return;
-    }
-    if(saveButton.isInside(x, y)) saveData();
-    //if (connect.isInside(x, y)) connectNatnet();
-    
-    if (UserFeedbackCanvas.inside(x,y)){
-        UserFeedback = "";
-        triedToConnect = false;
-    }
+  
 }
 
 //--------------------------------------------------------------
@@ -774,12 +604,13 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void ofApp::saveData()
 {
+    ofLogNotice("Starting save Data");
     ofxXmlSettings save;
     save.addTag("setup");
     save.pushTag("setup",0);
-    save.addValue("fps", ofToInt(fps.getText()));
-    save.addValue("interface", interfaceName.getText());
-    save.addValue("ip", interfaceIP.getText());
+    save.addValue("fps", FPS);
+    save.addValue("interface", interface_char);
+    save.addValue("ip", natnetip_char);
     save.popTag();
     for (int i = 0; i < clients.size(); i++)
     {
@@ -797,6 +628,8 @@ void ofApp::saveData()
         save.popTag();
     }
     save.save("setup.xml");
+    ofLogNotice("fps "+ofToString(FPS)+" interface "+ofToString(interface_char)+" ip "+ofToString(natnetip_char));
+    ofLogNotice("Save Data Finished");
 }
 
 
@@ -848,15 +681,13 @@ void ofApp::doGui() {
         ImGui::PushFont(fontSubTitle);
         ImGui::Text("Global Settings");
         ImGui::PopFont();
-        static char interface[128] = "interface";
-        ImGui::InputText("interface", interface, IM_ARRAYSIZE(interface));
-        static char natnet_ip[15] = "127.0.0.1";
-        ImGui::InputText("natnet ip", natnet_ip, IM_ARRAYSIZE(natnet_ip));
-        static int fps = 60;
-        ImGui::InputInt("FPS", &fps);
+        
+        ImGui::InputText("interface", interface_char, 64);
+        ImGui::InputText("natnet ip", natnetip_char, 16);
+        ImGui::InputInt("FPS", &FPS);
         if ( ImGui::Button("Connect") )
         {
-            connectNatnet(ofToString(interface), ofToString(natnet_ip));
+            connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
         }
         
         ImGui::Spacing();
@@ -877,17 +708,6 @@ void ofApp::doGui() {
         {
             addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
 
-        }
-        
-        
-        // MODAL POP UP
-        if (ImGui::BeginPopupModal("userFeedback", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-        {
-            ImGui::Text(UserFeedback.c_str());
-            ImGui::Separator();
-            if (ImGui::Button("OK", ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
-            ImGui::SetItemDefaultFocus();
-            ImGui::EndPopup();
         }
         
         ImGui::Spacing();
@@ -930,8 +750,24 @@ void ofApp::doGui() {
         ImGui::Spacing();
         
         ImGui::End();
-
         
+        
+        if(openModal){
+            ImGui::OpenPopup("userFeedback");
+            openModal = false;
+        }
+        
+        // MODAL POP UP
+        if (ImGui::BeginPopupModal("userFeedback", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text(UserFeedback.c_str());
+            ImGui::Separator();
+            if (ImGui::Button("OK", ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::SetItemDefaultFocus();
+            ImGui::EndPopup();
+        }
+
+
         gui.end();
         this->mouseOverGui = mainSettings.mouseOverGui;
     }

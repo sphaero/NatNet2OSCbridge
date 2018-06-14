@@ -5,8 +5,6 @@
 #include "ofxNatNet.h"
 #include "ofxXmlSettings.h"
 #include "client.h"
-#include "ofxTextInputField.h"
-#include "ofxTextButton.h"
 #include "ofxImGui.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
@@ -51,7 +49,6 @@ public:
     
     bool connectNatnet(string interfaceName, string interfaceIP);
     
-    void deactivateInputs();
     void saveData();
     void deleteClient(int &index);
     
@@ -91,6 +88,7 @@ private:
     bool                visible;
     bool                connected;
     bool                triedToConnect;
+    bool                openModal;
     int                 numRigidBody;
     int                 numSkeleton;
     bool                running;
@@ -99,24 +97,10 @@ private:
     int                 InterfaceX;
     int                 InterfaceY;
     
-    ofRectangle         UserFeedbackCanvas;
-    ofBitmapFont        UserFeedbackFont;
-
-    
-    ofTrueTypeFont      font;
+   
     //gui stuff
-    
-    ofxTextInputField   interfaceName;
-    ofxTextInputField   interfaceIP;
-    ofxTextInputField   fps;
-    
-    ofxTextInputField   newName;
-    ofxTextInputField   newIP;
-    ofxTextInputField   newPort;
-    
-    ofxTextButton       addButton;
-    ofxTextButton       saveButton;
-    ofxTextButton       connect;
-    
     float               invFPS;
+    int                 FPS;
+    char                interface_char[64];
+    char                natnetip_char[16];
 };
