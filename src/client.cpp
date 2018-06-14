@@ -89,6 +89,7 @@ void client::sendBundle(ofxOscBundle &b)
 
 void client::draw()
 {
+    /*
     ofSetLineWidth(1);
     ofPushMatrix();
     ofTranslate(area.getX(),area.getY());
@@ -110,6 +111,28 @@ void client::draw()
     verdana14.drawString(ClientModeNames[(int)mode], 30, 80 );
     
     ofPopMatrix();
+    */
+    
+    ImGui::Text(name.c_str());
+    ImGui::Text("ip:");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.7f,1.0f,1.0f,1.0f), ip.c_str());
+    ImGui::SameLine();
+    ImGui::Text("port:");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
+    ImGui::Checkbox("Rigid", &isRigid);
+    ImGui::SameLine();
+    ImGui::Checkbox("Mark", &isMarker);
+    ImGui::SameLine();
+    ImGui::Checkbox("Skel", &isSkeleton);
+    ImGui::SameLine();
+    ImGui::Checkbox("Hierarchy", &deepHierarchy);
+    
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
 }
 
 void client::drawGUI()

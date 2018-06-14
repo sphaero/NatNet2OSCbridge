@@ -7,6 +7,7 @@
 #include "client.h"
 #include "ofxTextInputField.h"
 #include "ofxTextButton.h"
+#include "ofxImGui.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -48,11 +49,22 @@ public:
     void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
     void sendOSC();
     
-    bool connectNatnet();
+    bool connectNatnet(string interfaceName, string interfaceIP);
     
     void deactivateInputs();
     void saveData();
     void deleteClient(int &index);
+    
+    void setFeedback(string feedbackText);
+    
+    //GUI
+    ofxImGui::Gui gui;
+    bool guiVisible;
+    bool mouseOverGui;
+    void doGui();
+    ImFont* fontDefault;
+    ImFont* fontSubTitle;
+    ImFont* fontTitle;
     
 private:
     void                    sendAllMarkers();
