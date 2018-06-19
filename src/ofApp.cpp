@@ -179,11 +179,12 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
 }
 
 
-// Set Feedback text an open pop-up
+// Set Feedback text and open pop-up
 void ofApp::setFeedback(string feedbackText){
     UserFeedback = feedbackText;
     openModal = true;
 }
+
 
 
 void ofApp::sendOSC()
