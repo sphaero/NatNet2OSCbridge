@@ -1,4 +1,5 @@
 ofxGui
+ofxImGui
 ofxNatNet
 ofxOsc
 ofxPoco
