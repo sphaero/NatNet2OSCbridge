@@ -685,6 +685,8 @@ void ofApp::mousePressed(int x, int y, int button)
     if (UserFeedbackCanvas.inside(x,y)){
         UserFeedback = "";
         triedToConnect = false;
+    }else if(UserFeedback != ""){
+        UserFeedback = "";
     }
 }
 
