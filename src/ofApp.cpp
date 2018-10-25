@@ -1,4 +1,7 @@
 #include "ofApp.h"
+#include "fontawesome5.h"
+#include "version.h"
+#include "themes.h"
 
 //additions for velocities / angular velocity
 RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
@@ -44,21 +47,9 @@ void ofApp::setup()
     string t = ofFilePath::getAbsolutePath("verdana.ttf");
     fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
     fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 24.0f);
-    gui.setup(nullptr, false);              // default theme, no autoDraw!
+    gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
-       guiVisible = true;
-    //gui.setTheme(new ThemeTest());
-    
-    ImGuiStyle& style = ImGui::GetStyle();  //style tweaks
-    //style.FrameBorderSize = 1.0f;
-    //style.WindowBorderSize = 1.f;
-    style.ChildBorderSize = 1.0f;
-    //style.ChildRounding = 8.f;
-    style.WindowPadding = ImVec2(5.0f, 5.0f);
-    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
-    style.ItemSpacing = ImVec2(6.0f, 6.0f);
-    
-
+    guiVisible = true;
 }
 
 void ofApp::setupConnectionInterface(){
@@ -642,6 +633,8 @@ void ofApp::exit()
     }
 }
 
+static bool version_popup = false;
+
 void ofApp::doGui() {
     this->mouseOverGui = false;
     if (this->guiVisible)
@@ -649,11 +642,25 @@ void ofApp::doGui() {
         auto mainSettings = ofxImGui::Settings();
         //ui stuff
         gui.begin();
-        
+        // Create a main menu bar
+        float mainmenu_height = 0;
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                //if (ImGui::MenuItem("Open CSV..", "Ctrl+O")) { loadAFile(); }
+                //if (ImGui::MenuItem("Save Setup", "Ctrl+S"))   {saveData(); }
+                if (ImGui::MenuItem("About", "Ctrl+i")) { version_popup=true; }
+                if (ImGui::MenuItem("Exit", "Ctrl+W"))  { ofExit(0); }
+                ImGui::EndMenu();
+            }
+            mainmenu_height = ImGui::GetWindowSize().y;
+            ImGui::EndMainMenuBar();
+        }
+
         // clients window
-        int mainmenu_height = 0;
         ImGui::SetNextWindowPos(ImVec2( 0, mainmenu_height ));
-        ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()));
+        ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()-mainmenu_height));
         ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
         
         // DRAW CLIENTS
@@ -675,8 +682,8 @@ void ofApp::doGui() {
         ImGui::End();
         
         // right dock
-        ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, 0 ));
-        ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-0));
+        ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, mainmenu_height ));
+        ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-mainmenu_height));
         ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar);
         
         ImGui::PushFont(fontSubTitle);
@@ -768,6 +775,19 @@ void ofApp::doGui() {
             ImGui::EndPopup();
         }
 
+        if (version_popup) {
+            ImGui::OpenPopup("Version Info");
+        }
+        if (ImGui::BeginPopupModal("Version Info"))
+        {
+            ImGui::Text( "Version: " VERSION );
+            //TODO: more info through python
+            if ( ImGui::Button("Close") ) {
+                version_popup = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
 
         gui.end();
         this->mouseOverGui = mainSettings.mouseOverGui;
