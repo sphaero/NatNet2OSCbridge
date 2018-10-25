@@ -656,7 +656,7 @@ void ofApp::doGui() {
             if (ImGui::BeginMenu("File"))
             {
                 //if (ImGui::MenuItem("Open CSV..", "Ctrl+O")) { loadAFile(); }
-                //if (ImGui::MenuItem("Save Setup", "Ctrl+S"))   {saveData(); }
+                if (ImGui::MenuItem("Save Setup", "Ctrl+S"))   {saveData(); }
                 if (ImGui::MenuItem("About", "Ctrl+i")) { version_popup=true; }
                 if (ImGui::MenuItem("Exit", "Ctrl+W"))  { ofExit(0); }
                 ImGui::EndMenu();
@@ -699,7 +699,7 @@ void ofApp::doGui() {
         ImGui::InputText("interface", interface_char, 64);
         ImGui::InputText("natnet ip", natnetip_char, 16);
         ImGui::InputInt("FPS", &FPS);
-        if ( ImGui::Button("Connect") )
+        if ( ImGui::Button(ICON_FA_PLUG " Connect") )
         {
             connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
         }
@@ -729,7 +729,7 @@ void ofApp::doGui() {
         ImGui::Spacing();
 
         
-        if ( ImGui::Button("Save Setup") )
+        if ( ImGui::Button(ICON_FA_SAVE " Save Setup") )
         {
             saveData();
         }
