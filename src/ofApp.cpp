@@ -3,6 +3,8 @@
 #include "version.h"
 #include "themes.h"
 
+static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+
 //additions for velocities / angular velocity
 RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 {
@@ -42,11 +44,16 @@ void ofApp::setup()
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = NULL;                  // no imgui.ini
-    
     fontDefault = io.Fonts->AddFontDefault();
+    ImFontConfig config;
+    config.MergeMode = true;
+    //config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+    config.PixelSnapH = true;
+    io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &config, icon_ranges);
+
     string t = ofFilePath::getAbsolutePath("verdana.ttf");
-    fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
-    fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 24.0f);
+    fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 16.0f);
+    fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
     guiVisible = true;
@@ -155,7 +162,7 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
         if(clients[i]->getIP() == ip && clients[i]->getPort() == p){
             uniqueClient = false;
             // Set feedback
-            setFeedback("A client with the same name already exists. \n Please change CLient name \n");
+            setFeedback("A client with the same settings already exists.\nPlease change the client's settings!\n");
             break;
         }
         
@@ -668,8 +675,7 @@ void ofApp::doGui() {
         for (int i = 0; i < clients.size(); i++)
         {
             bool enabled = true;
-            string name = clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
-            
+            string name = ICON_FA_DESKTOP " " + clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
             if ( ImGui::CollapsingHeader(name.c_str(), &enabled, ImGuiTreeNodeFlags_DefaultOpen) )
             {
                 clients[i]->draw();
@@ -712,7 +718,7 @@ void ofApp::doGui() {
         ImGui::InputText("client_ip", client_ip, IM_ARRAYSIZE(client_ip));
         static int client_port = 6000;
         ImGui::InputInt("client port", &client_port);
-        if ( ImGui::Button("Add User") )
+        if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
         {
             addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
 
