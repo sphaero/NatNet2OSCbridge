@@ -524,11 +524,7 @@ void ofApp::deleteClient(int &index)
 {
     ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
     delete clients[index];
-    clients.erase(clients.begin() + index);
-    for (int i = 0; i < clients.size(); i++)
-    {
-        clients[i]->rearangePosition(i,true);
-    }    
+    clients.erase(clients.begin() + index); 
 }
 
 
@@ -538,12 +534,6 @@ void ofApp::keyPressed(int key)
     
     if (key == 'h'){
         visible = !visible;
-        
-        for( int i = 0; i < clients.size(); ++i )
-        {
-            // visible == notWholescreen -> if interface is visible do not use whole screen for clients
-            clients[i]->rearangePosition(i,visible);
-        }
     }
     if (key == 'p')
     {
@@ -579,16 +569,8 @@ void ofApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    
-    // Reposition clients when screen is resized
-    ofLogNotice("Window resized");
-    for( int i = 0; i < clients.size(); ++i )
-    {
-        clients[i]->rearangePosition(i,true);
-    }
-    
-    
+void ofApp::windowResized(int w, int h)
+{
 }
 
 //--------------------------------------------------------------

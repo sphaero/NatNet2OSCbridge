@@ -45,12 +45,6 @@ public:
     void setMarker(bool value);
     void setSkeleton(bool value);
     void draw();
-    void drawGUI();
-    ofRectangle &getArea();
-    void isInside(int & x, int & y);
-    void moveArea(int & x, int & y);
-    void rearangePosition(int ind, bool wholeScreen);
-
     
     int &getID();
     string &getIP();
@@ -61,13 +55,11 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
-    bool notWholeScreen;
     ClientMode &getMode();
-    
+
     ofEvent<int> deleteClient;
     
 private:
-    ofVec2f         position;
     int             index;
     string          ip;
     int             port;
@@ -78,19 +70,6 @@ private:
     bool            isLive;
     bool            deepHierarchy;
     ClientMode      mode;
-    
-    
-    ofRectangle     area;
-    ofRectangle     rigButton;
-    ofRectangle     markButton;
-    ofRectangle     skelButton;
-    ofRectangle     liveButton;
-    ofRectangle     hierarchyButton;
-    ofRectangle     delButton;
-    ofRectangle     modeButton;
-    
-    ofTrueTypeFont	verdana14;
-    
     ofxOscSender    sender;
     
 };
