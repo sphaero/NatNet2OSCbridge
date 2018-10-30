@@ -668,7 +668,7 @@ void ofApp::doGui() {
         // clients window
         ImGui::SetNextWindowPos(ImVec2( 0, mainmenu_height ));
         ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()-mainmenu_height));
-        ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+        ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
         
         // DRAW CLIENTS
         int ypos = 0;
@@ -690,7 +690,7 @@ void ofApp::doGui() {
         // right dock
         ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, mainmenu_height ));
         ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-mainmenu_height));
-        ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
         
         ImGui::PushFont(fontSubTitle);
         ImGui::Text("Global Settings");
