@@ -1,4 +1,9 @@
 #include "ofApp.h"
+#include "fontawesome5.h"
+#include "version.h"
+#include "themes.h"
+
+static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
 //additions for velocities / angular velocity
 RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
@@ -39,26 +44,19 @@ void ofApp::setup()
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = NULL;                  // no imgui.ini
-    
     fontDefault = io.Fonts->AddFontDefault();
-    string t = ofFilePath::getAbsolutePath("verdana.ttf");
-    fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
-    fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 24.0f);
-    gui.setup(nullptr, false);              // default theme, no autoDraw!
-    
-       guiVisible = true;
-    //gui.setTheme(new ThemeTest());
-    
-    ImGuiStyle& style = ImGui::GetStyle();  //style tweaks
-    //style.FrameBorderSize = 1.0f;
-    //style.WindowBorderSize = 1.f;
-    style.ChildBorderSize = 1.0f;
-    //style.ChildRounding = 8.f;
-    style.WindowPadding = ImVec2(5.0f, 5.0f);
-    style.ItemInnerSpacing = ImVec2(8.0f, 8.0f);
-    style.ItemSpacing = ImVec2(6.0f, 6.0f);
-    
+    ImFontConfig config;
+    config.MergeMode = true;
+    //config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+    config.PixelSnapH = true;
+    io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &config, icon_ranges);
 
+    string t = ofFilePath::getAbsolutePath("verdana.ttf");
+    fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 16.0f);
+    fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
+    gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
+    
+    guiVisible = true;
 }
 
 void ofApp::setupConnectionInterface(){
@@ -164,7 +162,7 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
         if(clients[i]->getIP() == ip && clients[i]->getPort() == p){
             uniqueClient = false;
             // Set feedback
-            setFeedback("A client with the same name already exists. \n Please change CLient name \n");
+            setFeedback("A client with the same settings already exists.\nPlease change the client's settings!\n");
             break;
         }
         
@@ -642,6 +640,8 @@ void ofApp::exit()
     }
 }
 
+static bool version_popup = false;
+
 void ofApp::doGui() {
     this->mouseOverGui = false;
     if (this->guiVisible)
@@ -649,20 +649,33 @@ void ofApp::doGui() {
         auto mainSettings = ofxImGui::Settings();
         //ui stuff
         gui.begin();
-        
+        // Create a main menu bar
+        float mainmenu_height = 0;
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("File"))
+            {
+                //if (ImGui::MenuItem("Open CSV..", "Ctrl+O")) { loadAFile(); }
+                if (ImGui::MenuItem("Save Setup", "Ctrl+S"))   {saveData(); }
+                if (ImGui::MenuItem("About", "Ctrl+i")) { version_popup=true; }
+                if (ImGui::MenuItem("Exit", "Ctrl+W"))  { ofExit(0); }
+                ImGui::EndMenu();
+            }
+            mainmenu_height = ImGui::GetWindowSize().y;
+            ImGui::EndMainMenuBar();
+        }
+
         // clients window
-        int mainmenu_height = 0;
         ImGui::SetNextWindowPos(ImVec2( 0, mainmenu_height ));
-        ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()));
-        ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+        ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()-mainmenu_height));
+        ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
         
         // DRAW CLIENTS
         int ypos = 0;
         for (int i = 0; i < clients.size(); i++)
         {
             bool enabled = true;
-            string name = clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
-            
+            string name = ICON_FA_DESKTOP " " + clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
             if ( ImGui::CollapsingHeader(name.c_str(), &enabled, ImGuiTreeNodeFlags_DefaultOpen) )
             {
                 clients[i]->draw();
@@ -675,9 +688,9 @@ void ofApp::doGui() {
         ImGui::End();
         
         // right dock
-        ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, 0 ));
-        ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-0));
-        ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, mainmenu_height ));
+        ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-mainmenu_height));
+        ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
         
         ImGui::PushFont(fontSubTitle);
         ImGui::Text("Global Settings");
@@ -686,7 +699,7 @@ void ofApp::doGui() {
         ImGui::InputText("interface", interface_char, 64);
         ImGui::InputText("natnet ip", natnetip_char, 16);
         ImGui::InputInt("FPS", &FPS);
-        if ( ImGui::Button("Connect") )
+        if ( ImGui::Button(ICON_FA_PLUG " Connect") )
         {
             connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
         }
@@ -705,7 +718,7 @@ void ofApp::doGui() {
         ImGui::InputText("client_ip", client_ip, IM_ARRAYSIZE(client_ip));
         static int client_port = 6000;
         ImGui::InputInt("client port", &client_port);
-        if ( ImGui::Button("Add User") )
+        if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
         {
             addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
 
@@ -716,7 +729,7 @@ void ofApp::doGui() {
         ImGui::Spacing();
 
         
-        if ( ImGui::Button("Save Setup") )
+        if ( ImGui::Button(ICON_FA_SAVE " Save Setup") )
         {
             saveData();
         }
@@ -768,6 +781,19 @@ void ofApp::doGui() {
             ImGui::EndPopup();
         }
 
+        if (version_popup) {
+            ImGui::OpenPopup("Version Info");
+        }
+        if (ImGui::BeginPopupModal("Version Info"))
+        {
+            ImGui::Text( "Version: " VERSION );
+            //TODO: more info through python
+            if ( ImGui::Button("Close") ) {
+                version_popup = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
 
         gui.end();
         this->mouseOverGui = mainSettings.mouseOverGui;

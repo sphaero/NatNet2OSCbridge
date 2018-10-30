@@ -7,6 +7,7 @@
 //
 
 #include "client.h"
+#include "fontawesome5.h"
 
 client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode cMode )
 {
@@ -88,32 +89,10 @@ void client::sendBundle(ofxOscBundle &b)
 }
 
 void client::draw()
-{
-    /*
-    ofSetLineWidth(1);
-    ofPushMatrix();
-    ofTranslate(area.getX(),area.getY());
-    drawGUI();
-    string msg;
-    msg += name + " ip " + ofToString(ip);
-    msg += " : " + ofToString(port);
-
-    ofSetColor(255,255,255);
-    verdana14.drawString(msg, 20, 20);
-    verdana14.drawString("Rigid", 30, 50);
-    verdana14.drawString("Mark", 100, 50);
-    verdana14.drawString("Skel", 170, 50);
-    verdana14.drawString("Hierarchy", 230, 50);
-    verdana14.drawString("Live", 270, 80);
-    
-    
-    //mode
-    verdana14.drawString(ClientModeNames[(int)mode], 30, 80 );
-    
-    ofPopMatrix();
-    */
-    
-    ImGui::Text(name.c_str());
+{   
+    ImGui::Text(ICON_FA_BROADCAST_TOWER);
+    ImGui::SameLine();
+    //ImGui::Text(name.c_str());
     ImGui::Text("ip:");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.7f,1.0f,1.0f,1.0f), ip.c_str());
@@ -129,10 +108,9 @@ void client::draw()
     ImGui::SameLine();
     ImGui::Checkbox("Hierarchy", &deepHierarchy);
     
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
-    
+    //ImGui::Spacing();
+    //ImGui::Separator();
+    //ImGui::Spacing();
 }
 
 void client::drawGUI()
