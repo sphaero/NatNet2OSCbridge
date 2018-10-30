@@ -44,7 +44,7 @@ public:
     void setRigid(bool value);
     void setMarker(bool value);
     void setSkeleton(bool value);
-    void draw();
+    void doGui();
     
     int &getID();
     string &getIP();
