@@ -660,7 +660,7 @@ void ofApp::doGui() {
             string name = ICON_FA_DESKTOP " " + clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
             if ( ImGui::CollapsingHeader(name.c_str(), &enabled, ImGuiTreeNodeFlags_DefaultOpen) )
             {
-                clients[i]->draw();
+                clients[i]->doGui();
             }
             if ( ! enabled )
             {

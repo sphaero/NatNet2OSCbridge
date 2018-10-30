@@ -42,7 +42,7 @@ void client::sendBundle(ofxOscBundle &b)
     sender.sendBundle(b);
 }
 
-void client::draw()
+void client::doGui()
 {   
     ImGui::Text(ICON_FA_BROADCAST_TOWER);
     ImGui::SameLine();
