@@ -25,7 +25,6 @@ void ofApp::setup()
 		
 	ofSetVerticalSync(true);
     ofBackground(67,67,67);
-
     setupConnectionInterface();
     setupData();
     visible = true;
@@ -49,7 +48,7 @@ void ofApp::setup()
     config.MergeMode = true;
     //config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
     config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &config, icon_ranges);
+    io.Fonts->AddFontFromFileTTF(ofToDataPath( FONT_ICON_FILE_NAME_FAS ).data(), 12.0f, &config, icon_ranges);
 
     string t = ofFilePath::getAbsolutePath("verdana.ttf");
     fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 16.0f);
@@ -524,11 +523,7 @@ void ofApp::deleteClient(int &index)
 {
     ofRemoveListener(clients[index]->deleteClient, this, &ofApp::deleteClient);
     delete clients[index];
-    clients.erase(clients.begin() + index);
-    for (int i = 0; i < clients.size(); i++)
-    {
-        clients[i]->rearangePosition(i,true);
-    }    
+    clients.erase(clients.begin() + index); 
 }
 
 
@@ -538,12 +533,6 @@ void ofApp::keyPressed(int key)
     
     if (key == 'h'){
         visible = !visible;
-        
-        for( int i = 0; i < clients.size(); ++i )
-        {
-            // visible == notWholescreen -> if interface is visible do not use whole screen for clients
-            clients[i]->rearangePosition(i,visible);
-        }
     }
     if (key == 'p')
     {
@@ -579,16 +568,8 @@ void ofApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    
-    // Reposition clients when screen is resized
-    ofLogNotice("Window resized");
-    for( int i = 0; i < clients.size(); ++i )
-    {
-        clients[i]->rearangePosition(i,true);
-    }
-    
-    
+void ofApp::windowResized(int w, int h)
+{
 }
 
 //--------------------------------------------------------------
@@ -678,7 +659,7 @@ void ofApp::doGui() {
             string name = ICON_FA_DESKTOP " " + clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
             if ( ImGui::CollapsingHeader(name.c_str(), &enabled, ImGuiTreeNodeFlags_DefaultOpen) )
             {
-                clients[i]->draw();
+                clients[i]->doGui();
             }
             if ( ! enabled )
             {
