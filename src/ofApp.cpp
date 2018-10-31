@@ -25,7 +25,6 @@ void ofApp::setup()
 		
 	ofSetVerticalSync(true);
     ofBackground(67,67,67);
-
     setupConnectionInterface();
     setupData();
     visible = true;
@@ -49,7 +48,7 @@ void ofApp::setup()
     config.MergeMode = true;
     //config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
     config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 12.0f, &config, icon_ranges);
+    io.Fonts->AddFontFromFileTTF(ofToDataPath( FONT_ICON_FILE_NAME_FAS ).data(), 12.0f, &config, icon_ranges);
 
     string t = ofFilePath::getAbsolutePath("verdana.ttf");
     fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 16.0f);
