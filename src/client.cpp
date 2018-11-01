@@ -7,6 +7,7 @@
 //
 
 #include "client.h"
+#include "fontawesome5.h"
 
 client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode cMode )
 {
@@ -21,56 +22,10 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isLive = live;
     deepHierarchy = hier;
     mode = cMode;
-    notWholeScreen = true;
-    
-    rearangePosition(ind,notWholeScreen);
-    
-    ofTrueTypeFont::setGlobalDpi(72);
-    
-    verdana14.load("verdana.ttf", 14, true, true);
-    verdana14.setLineHeight(18.0f);
-    verdana14.setLetterSpacing(1.037);
     setupSender();
 }
 
 client::~client(){}
-
-void client::rearangePosition(int ind, bool _notWholeScreen)
-{
-    /*
-     --> Get size window
-     --> client width = 330
-     */
-    
-    notWholeScreen = _notWholeScreen;
-    
-    int clientWidth = 330;
-    int collumnSpace = ofGetWidth();
-    
-    // use whole screen or only screen left of interface
-    if(notWholeScreen) collumnSpace = ofGetWidth() - 350; // 350 is width of connection interface
-    
-    int numCollumns = floor(collumnSpace/clientWidth);
-    // I may never be 0 ..
-    if(numCollumns < 1) numCollumns = 1;
-    
-    index = ind;
-    int width = 30;
-    int x = 340 * (index%numCollumns);
-    int row = (index / numCollumns);
-    int height = width * 3;
-    area = ofRectangle(x,row * height + (row * 10), 330, height);
-    rigButton = ofRectangle(0, width, width, width);
-    markButton = ofRectangle(70, width, width, width);
-    skelButton = ofRectangle(140, width, width, width);
-    hierarchyButton = ofRectangle(300, width, width, width);
-    liveButton = ofRectangle(300, width*2, width, width);
-    delButton = ofRectangle(area.width - (width / 2), 0, width / 2, width / 2);
-    
-    //todo: add some kind of "mode" setup for gears, or which things we want to send or not send?
-    modeButton = ofRectangle(0, width*2+5, 200, width-10);
-}
-
 
 void client::setupSender()
 {
@@ -87,112 +42,34 @@ void client::sendBundle(ofxOscBundle &b)
     sender.sendBundle(b);
 }
 
-void client::draw()
-{
-    ofSetLineWidth(1);
-    ofPushMatrix();
-    ofTranslate(area.getX(),area.getY());
-    drawGUI();
-    string msg;
-    msg += name + " ip " + ofToString(ip);
-    msg += " : " + ofToString(port);
-
-    ofSetColor(255,255,255);
-    verdana14.drawString(msg, 20, 20);
-    verdana14.drawString("Rigid", 30, 50);
-    verdana14.drawString("Mark", 100, 50);
-    verdana14.drawString("Skel", 170, 50);
-    verdana14.drawString("Hierarchy", 230, 50);
-    verdana14.drawString("Live", 270, 80);
+void client::doGui()
+{   
+    ImGui::Text(ICON_FA_BROADCAST_TOWER);
+    ImGui::SameLine();
+    //ImGui::Text(name.c_str());
+    ImGui::Text("ip:");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.7f,1.0f,1.0f,1.0f), ip.c_str());
+    ImGui::SameLine();
+    ImGui::Text("port:");
+    ImGui::SameLine();
+    ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
+    ImGui::Checkbox("Rigid", &isRigid);
+    ImGui::SameLine();
+    ImGui::Checkbox("Mark", &isMarker);
+    ImGui::SameLine();
+    ImGui::Checkbox("Skel", &isSkeleton);
+    ImGui::SameLine();
+    ImGui::Checkbox("Hierarchy", &deepHierarchy);
     
-    
-    //mode
-    verdana14.drawString(ClientModeNames[(int)mode], 30, 80 );
-    
-    ofPopMatrix();
-}
-
-void client::drawGUI()
-{
-    ofNoFill();
-    ofSetColor(255, 255, 255);
-    ofDrawRectangle(0,0,area.getWidth(),area.getHeight());
-    ofFill();
-    if (!isRigid) ofSetColor(255, 0, 0);
-    else ofSetColor(0,255,0);
-    ofDrawRectangle(rigButton);
-    
-    if (!isMarker) ofSetColor(255, 0, 0);
-    else ofSetColor(0,255,0);
-    ofDrawRectangle(markButton);
-
-    if (!isSkeleton) ofSetColor(255, 0, 0);
-    else ofSetColor(0,255,0);
-    ofDrawRectangle(skelButton);
-    
-    if (!isLive) ofSetColor(255, 0, 0);
-    else ofSetColor(0,255,0);
-    ofDrawRectangle(liveButton);
-    
-    if (!deepHierarchy) ofSetColor(255, 0, 0);
-    else ofSetColor(0,255,0);
-    ofDrawRectangle(hierarchyButton);
-    
-    ofSetColor(127,127,127);
-    ofDrawRectangle(modeButton);
-    
-    ofSetColor(255, 255, 255);
-    ofDrawRectangle(delButton);
-    ofSetColor(0, 0, 0);
-    ofDrawLine(delButton.x, delButton.y, delButton.x + delButton.width, delButton.y + delButton.height);
-    ofDrawLine(delButton.x + delButton.width, delButton.y, delButton.x, delButton.y + delButton.height);
-}
-
-void client::isInside(int & xp, int & yp)
-{
-    int x = xp - area.getX();
-    int y = yp - area.getY();
-    
-    bool rig = rigButton.inside(x, y);
-    bool mark = markButton.inside(x, y);
-    bool skel = skelButton.inside(x, y);
-    bool live = liveButton.inside(x, y);
-    bool hierarchy = hierarchyButton.inside(x, y);
-    bool del = delButton.inside(x, y);
-    bool modeClicked = modeButton.inside(x, y);
-
-    if (rig) isRigid = !isRigid;
-    
-    else if (mark) isMarker = !isMarker;
-    
-    else if (skel) isSkeleton = !isSkeleton;
-    
-    else if (live) isLive = !isLive;
-    
-    else if (hierarchy) deepHierarchy = !deepHierarchy;
-    
-    else if (del) ofNotifyEvent(deleteClient,index);
-    
-    else if (modeClicked)
-    {
-        int iMode = (int)mode;
-        if ( ++iMode == (int)ClientMode_END )
-        {
-            iMode = 0;
-        }
-        mode = (ClientMode)iMode;
-    }
+    //ImGui::Spacing();
+    //ImGui::Separator();
+    //ImGui::Spacing();
 }
 
 string &client::getName()
 {
     return name;
-}
-
-
-ofRectangle &client::getArea()
-{
-    return area;
 }
 
 int &client::getID()

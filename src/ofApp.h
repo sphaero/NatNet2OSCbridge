@@ -5,8 +5,7 @@
 #include "ofxNatNet.h"
 #include "ofxXmlSettings.h"
 #include "client.h"
-#include "ofxTextInputField.h"
-#include "ofxTextButton.h"
+#include "ofxImGui.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -48,11 +47,21 @@ public:
     void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
     void sendOSC();
     
-    bool connectNatnet();
+    bool connectNatnet(string interfaceName, string interfaceIP);
     
-    void deactivateInputs();
     void saveData();
     void deleteClient(int &index);
+    
+    void setFeedback(string feedbackText);
+    
+    //GUI
+    ofxImGui::Gui gui;
+    bool guiVisible;
+    bool mouseOverGui;
+    void doGui();
+    ImFont* fontDefault;
+    ImFont* fontSubTitle;
+    ImFont* fontTitle;
     
 private:
     void                    sendAllMarkers();
@@ -79,6 +88,7 @@ private:
     bool                visible;
     bool                connected;
     bool                triedToConnect;
+    bool                openModal;
     int                 numRigidBody;
     int                 numSkeleton;
     bool                running;
@@ -87,24 +97,10 @@ private:
     int                 InterfaceX;
     int                 InterfaceY;
     
-    ofRectangle         UserFeedbackCanvas;
-    ofBitmapFont        UserFeedbackFont;
-
-    
-    ofTrueTypeFont      font;
+   
     //gui stuff
-    
-    ofxTextInputField   interfaceName;
-    ofxTextInputField   interfaceIP;
-    ofxTextInputField   fps;
-    
-    ofxTextInputField   newName;
-    ofxTextInputField   newIP;
-    ofxTextInputField   newPort;
-    
-    ofxTextButton       addButton;
-    ofxTextButton       saveButton;
-    ofxTextButton       connect;
-    
     float               invFPS;
+    int                 FPS;
+    char                interface_char[64];
+    char                natnetip_char[16];
 };
