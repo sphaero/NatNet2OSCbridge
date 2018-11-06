@@ -35,7 +35,7 @@ init:
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"'
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync mingw-w64-i686-ntldd-git"'
 # fix missing ssl
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl 1.0.2.p-2 mingw-w64-i686-openssl 1.1.1-4"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl mingw-w64-i686-openssl"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
 
 install:
