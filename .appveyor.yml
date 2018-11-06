@@ -23,6 +23,10 @@ configuration: Debug
 clone_depth: 100
 
 init:
+# fix for https://github.com/appveyor/ci/issues/2571
+- del c:\windows\system32\libcrypto-1_1-x64.dll c:\windows\system32\libssl-1_1-x64.dll
+- del c:\windows\system32\libcrypto-1_1.dll c:\windows\system32\libssl-1_1.dll
+- dir c:\windows\system32\l*.dll
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
