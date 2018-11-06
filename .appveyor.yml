@@ -24,8 +24,9 @@ clone_depth: 100
 
 init:
 # fix for https://github.com/appveyor/ci/issues/2571
-- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
-- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
+- ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
+#- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
 - dir c:\windows\system32\l*.dll
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
@@ -52,6 +53,7 @@ build_script:
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "make && make copy_dlls" 
 - cd bin
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "ntldd -R *.exe"
+- cd ..
 - if "%BUILDER%"=="VS" echo "BOE" 
 
 after_build:
