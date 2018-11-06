@@ -23,17 +23,19 @@ configuration: Debug
 clone_depth: 100
 
 init:
-# fix for https://github.com/appveyor/ci/issues/2571
 - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-#- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
-#- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
-- dir c:\windows\system32\l*.dll
+# fix for https://github.com/appveyor/ci/issues/2571
+- del C:\Windows\System32\libssl-*.dll C:\Windows\system32\libcrypto-*.dll
+- del C:\Windows\SysWOW64\libssl-*.dll C:\Windows\SysWOW64\libcrypto-*.dll
+#- dir c:\windows\system32\l*.dll
 - set MSYS2_PATH=c:\msys64
 - set CHERE_INVOKING=1
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x86" set MSYSTEM=MINGW32
 - if "%BUILDER%_%PLATFORM%"=="MSYS2_x64" set MSYSTEM=MINGW64
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm --needed -Sy bash pacman pacman-mirrors msys2-runtime msys2-runtime-devel"'
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed unzip rsync mingw-w64-i686-ntldd-git"'
+# fix missing ssl
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl 1.0.2.p-2 mingw-w64-i686-openssl 1.1.1-4"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
 
 install:
