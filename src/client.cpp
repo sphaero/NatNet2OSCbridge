@@ -54,13 +54,21 @@ void client::doGui()
     ImGui::Text("port:");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
-    ImGui::Checkbox("Rigid", &isRigid);
+    char rigidstr[6+ip.length()+6];
+    sprintf(rigidstr, "Rigid##%s%i", ip.c_str(), port);
+    ImGui::Checkbox(rigidstr, &isRigid);
     ImGui::SameLine();
-    ImGui::Checkbox("Mark", &isMarker);
+    char markstr[6+ip.length()+6];
+    sprintf(markstr, "Mark##%s%i", ip.c_str(), port);
+    ImGui::Checkbox(markstr, &isMarker);
     ImGui::SameLine();
-    ImGui::Checkbox("Skel", &isSkeleton);
+    char skelstr[6+ip.length()+6];
+    sprintf(skelstr, "Skel##%s%i", ip.c_str(), port);
+    ImGui::Checkbox(skelstr, &isSkeleton);
     ImGui::SameLine();
-    ImGui::Checkbox("Hierarchy", &deepHierarchy);
+    char hierstr[6+ip.length()+6];
+    sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
+    ImGui::Checkbox(hierstr, &deepHierarchy);
     
     //ImGui::Spacing();
     //ImGui::Separator();
