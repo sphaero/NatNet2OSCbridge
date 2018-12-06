@@ -27,8 +27,8 @@ string getAppConfigDir()
         return "";
     }
     return dir;
-#elif defined(TARGET_WINDOWS)
-    std::string appdata = ofGetEnv( "%APPDATA%" );
+#elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
+    std::string appdata = ofGetEnv( "APPDATA" );
     string dir = ofFilePath::join( appdata,  "/NatNet2OSC_bridge" );
     if ( ! ofDirectory::createDirectory( dir, false, true ) )
     {
@@ -616,7 +616,7 @@ void ofApp::saveData(string filepath="")
     if ( filepath == "" ) {
         filepath = ofFilePath::join( userDataDir, "setup.xml");
     }
-    ofLogNotice("Starting save Data");
+    ofLogNotice("Starting save data to " + filepath);
     ofxXmlSettings save;
     save.addTag("setup");
     save.pushTag("setup",0);
