@@ -49,7 +49,7 @@ public:
     
     bool connectNatnet(string interfaceName, string interfaceIP);
     
-    void saveData();
+    void saveData(string filepath);
     void deleteClient(int &index);
     
     void setFeedback(string feedbackText);
@@ -82,7 +82,7 @@ private:
     vector<client*>             clients;
     vector<RigidBodyHistory>    rbHistory;
     
-    string folder;
+    string userDataDir;
     string UserFeedback;
     
     bool                visible;

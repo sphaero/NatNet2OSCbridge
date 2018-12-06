@@ -17,6 +17,29 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
     framesInactive = 0;
 }
 //end
+string getAppConfigDir()
+{
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+    string dir = ofFilePath::join( ofFilePath::getUserHomeDir(),  ".config/NatNet2OSC_bridge" );
+    if ( ! ofDirectory::createDirectory( dir, false, true ) )
+    {
+        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
+        return "";
+    }
+    return dir;
+#elif defined(TARGET_WINDOWS)
+    std::string appdata = ofGetEnv( "%APPDATA%" );
+    string dir = ofFilePath::join( appdata,  "/NatNet2OSC_bridge" );
+    if ( ! ofDirectory::createDirectory( dir, false, true ) )
+    {
+        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
+        return "";
+    }
+    return dir;
+#else
+    return "";
+#endif
+}
 
 //--------------------------------------------------------------
 void ofApp::setup()
@@ -69,7 +92,14 @@ void ofApp::setupConnectionInterface(){
 void ofApp::setupData()
 {
 	ofLogVerbose("SetupData:: connection");
-	ofxXmlSettings data("setup.xml");
+    userDataDir = getAppConfigDir();
+    string xmlpath = ofFilePath::join(userDataDir, "setup.xml");
+    if ( ! ofFile::doesFileExist( xmlpath ) )
+    {
+        xmlpath = "setup.xml";
+        ofLogVerbose() << "Loading setup from packaged " << xmlpath << " probably first run or never saved on this system?";
+    }
+    ofxXmlSettings data( xmlpath );
     data.pushTag("setup",0);
     FPS = data.getValue("fps", 30);
     ofLogWarning("setupData :: fps: " + ofToString(FPS));
@@ -581,8 +611,11 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
 
-void ofApp::saveData()
+void ofApp::saveData(string filepath="")
 {
+    if ( filepath == "" ) {
+        filepath = ofFilePath::join( userDataDir, "setup.xml");
+    }
     ofLogNotice("Starting save Data");
     ofxXmlSettings save;
     save.addTag("setup");
@@ -606,7 +639,7 @@ void ofApp::saveData()
         save.addValue("mode", clients[i]->getMode());
         save.popTag();
     }
-    save.save("setup.xml");
+    save.save(filepath);
     ofLogNotice("fps "+ofToString(FPS)+" interface "+ofToString(interface_char)+" ip "+ofToString(natnetip_char));
     ofLogNotice("Save Data Finished");
 }
@@ -779,4 +812,6 @@ void ofApp::doGui() {
         this->mouseOverGui = mainSettings.mouseOverGui;
     }
 }
+
+
 
