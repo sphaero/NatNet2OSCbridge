@@ -1,4 +1,31 @@
+#include "ofFileUtils.h"
+#include "ofUtils.h"
+#include "ofLog.h"
 #include "helpers.h"
+
+std::string getAppConfigDir()
+{
+#if defined(TARGET_LINUX) || defined(TARGET_OSX)
+    std::string dir = ofFilePath::join( ofFilePath::getUserHomeDir(),  ".config/NatNet2OSC_bridge" );
+    if ( ! ofDirectory::createDirectory( dir, false, true ) )
+    {
+        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
+        return "";
+    }
+    return dir;
+#elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
+    std::string appdata = ofGetEnv( "APPDATA" );
+    std::string dir = ofFilePath::join( appdata,  "/NatNet2OSC_bridge" );
+    if ( ! ofDirectory::createDirectory( dir, false, true ) )
+    {
+        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
+        return "";
+    }
+    return dir;
+#else
+    return "";
+#endif
+}
 
 NetworkInterfaceList listNetworkInterfaces(AddressType addressType,
                                            NetworkInterface::IPVersion ipVersion)

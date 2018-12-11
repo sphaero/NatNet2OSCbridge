@@ -18,29 +18,6 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
     framesInactive = 0;
 }
 //end
-string getAppConfigDir()
-{
-#if defined(TARGET_LINUX) || defined(TARGET_OSX)
-    string dir = ofFilePath::join( ofFilePath::getUserHomeDir(),  ".config/NatNet2OSC_bridge" );
-    if ( ! ofDirectory::createDirectory( dir, false, true ) )
-    {
-        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
-        return "";
-    }
-    return dir;
-#elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
-    std::string appdata = ofGetEnv( "APPDATA" );
-    string dir = ofFilePath::join( appdata,  "/NatNet2OSC_bridge" );
-    if ( ! ofDirectory::createDirectory( dir, false, true ) )
-    {
-        ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
-        return "";
-    }
-    return dir;
-#else
-    return "";
-#endif
-}
 
 //--------------------------------------------------------------
 void ofApp::setup()

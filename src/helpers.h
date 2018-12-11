@@ -10,6 +10,9 @@
 #include "Poco/Net/IPAddress.h"
 #include "Poco/Net/NetworkInterface.h"
 
+// return the path to where the user can save application data
+std::string getAppConfigDir();
+
 /// \brief A typedef for Poco::Net::NetworkInterface.
 typedef Poco::Net::NetworkInterface NetworkInterface;
 
