@@ -2,6 +2,7 @@
 #include "fontawesome5.h"
 #include "version.h"
 #include "themes.h"
+#include "helpers.h"
 
 static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 
@@ -45,9 +46,17 @@ string getAppConfigDir()
 void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
-		
-	ofSetVerticalSync(true);
+    ofSetVerticalSync(true);
     ofBackground(67,67,67);
+
+    //fill the interface list
+    auto niclist = listNetworkInterfaces( ANY, NetworkInterface::IPv4_ONLY );
+    for (const auto& interface: niclist )
+    {
+        iface_list.push_back( interface.name() );
+    }
+    // and set the current iface to last found (first is probably lo)
+    current_iface_idx = iface_list.size() - 1;
     setupConnectionInterface();
     setupData();
     visible = true;
@@ -104,10 +113,20 @@ void ofApp::setupData()
     FPS = data.getValue("fps", 30);
     ofLogWarning("setupData :: fps: " + ofToString(FPS));
     
-    strncpy(interface_char, data.getValue("interface", "en0").c_str(), 64);
-    interface_char[sizeof(natnetip_char)-1] = 0;
-    ofLogWarning("setupData :: interface: " + ofToString(interface_char));
-    
+    string xml_interface = data.getValue("interface", "");
+    std::vector<string>::iterator it = std::find( iface_list.begin(), iface_list.end(), xml_interface);
+    if ( it != iface_list.end() )
+    {
+        // interface found on this machine
+        current_iface_idx = std::distance(iface_list.begin(), it);
+        ofLogWarning("setupData :: interface: " + xml_interface);
+    }
+    else
+    {
+        // interface not found, do nothing
+        ofLogWarning("setupData :: interface: " + xml_interface + " not found, using default interface");
+    }
+
     strncpy(natnetip_char, data.getValue("ip", "10.200.200.13").c_str(), 16);
     natnetip_char[sizeof(natnetip_char)-1] = 0;
     ofLogWarning("setupData :: natnetip: " + ofToString(natnetip_char));
@@ -621,7 +640,7 @@ void ofApp::saveData(string filepath="")
     save.addTag("setup");
     save.pushTag("setup",0);
     save.addValue("fps", FPS);
-    save.addValue("interface", interface_char);
+    save.addValue("interface", iface_list.at(current_iface_idx));
     save.addValue("ip", natnetip_char);
     save.popTag();
     for (int i = 0; i < clients.size(); i++)
@@ -640,7 +659,7 @@ void ofApp::saveData(string filepath="")
         save.popTag();
     }
     save.save(filepath);
-    ofLogNotice("fps "+ofToString(FPS)+" interface "+ofToString(interface_char)+" ip "+ofToString(natnetip_char));
+    ofLogNotice("fps "+ofToString(FPS)+" interface " + iface_list.at(current_iface_idx) +" ip "+ofToString(natnetip_char));
     ofLogNotice("Save Data Finished");
 }
 
@@ -709,12 +728,12 @@ void ofApp::doGui() {
         ImGui::Text("Global Settings");
         ImGui::PopFont();
         
-        ImGui::InputText("interface", interface_char, 64);
+        ImGui::Combo("interface", &current_iface_idx, iface_list);
         ImGui::InputText("natnet ip", natnetip_char, 16);
         ImGui::InputInt("FPS", &FPS);
         if ( ImGui::Button(ICON_FA_PLUG " Connect") )
         {
-            connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
+            connectNatnet(iface_list.at(current_iface_idx), ofToString(natnetip_char));
         }
         
         ImGui::Spacing();
