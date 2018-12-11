@@ -101,6 +101,7 @@ private:
     //gui stuff
     float               invFPS;
     int                 FPS;
-    char                interface_char[64];
     char                natnetip_char[16];
+    int                 current_iface_idx;
+    vector<string>      iface_list;
 };
