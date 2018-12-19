@@ -27,7 +27,7 @@ void ofApp::setup()
 #ifdef TARGET_WIN32     // close the console on Windows
      FreeConsole();
  #endif
-	ofSetVerticalSync(true);
+    ofSetVerticalSync(true);
     ofBackground(67,67,67);
 
     //fill the interface list
