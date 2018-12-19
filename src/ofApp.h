@@ -6,6 +6,7 @@
 #include "ofxXmlSettings.h"
 #include "client.h"
 #include "ofxImGui.h"
+#include "uiWidgets.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -62,6 +63,7 @@ public:
     ImFont* fontDefault;
     ImFont* fontSubTitle;
     ImFont* fontTitle;
+    uiLogger uiLogWidget;
     
 private:
     void                    sendAllMarkers();

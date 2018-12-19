@@ -45,7 +45,10 @@ string getAppConfigDir()
 void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
-		
+    ofLog::setChannel(uiLogWidget.channel);
+#ifdef TARGET_WIN32     // close the console on Windows
+     FreeConsole();
+ #endif
 	ofSetVerticalSync(true);
     ofBackground(67,67,67);
     setupConnectionInterface();
@@ -705,77 +708,81 @@ void ofApp::doGui() {
         ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-mainmenu_height));
         ImGui::Begin("rightpanel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
         
-        ImGui::PushFont(fontSubTitle);
-        ImGui::Text("Global Settings");
-        ImGui::PopFont();
-        
-        ImGui::InputText("interface", interface_char, 64);
-        ImGui::InputText("natnet ip", natnetip_char, 16);
-        ImGui::InputInt("FPS", &FPS);
-        if ( ImGui::Button(ICON_FA_PLUG " Connect") )
-        {
-            connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
+        //ImGui::PushFont(fontSubTitle);
+        if ( ImGui::CollapsingHeader("Global Settings", NULL, ImGuiTreeNodeFlags_DefaultOpen) )
+            {
+            //ImGui::PopFont();
+
+            ImGui::InputText("interface", interface_char, 64);
+            ImGui::InputText("natnet ip", natnetip_char, 16);
+            ImGui::InputInt("FPS", &FPS);
+            if ( ImGui::Button(ICON_FA_PLUG " Connect") )
+            {
+                connectNatnet(ofToString(interface_char), ofToString(natnetip_char));
+            }
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            ImGui::PushFont(fontSubTitle);
+            ImGui::Text("New User");
+            ImGui::PopFont();
+            static char client_name[128] = "New Client";
+            ImGui::InputText("client_name", client_name, IM_ARRAYSIZE(client_name));
+            static char client_ip[15] = "127.0.0.1";
+            ImGui::InputText("client_ip", client_ip, IM_ARRAYSIZE(client_ip));
+            static int client_port = 6000;
+            ImGui::InputInt("client port", &client_port);
+            if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
+            {
+                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
+
+            }
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+
+            if ( ImGui::Button(ICON_FA_SAVE " Save Setup") )
+            {
+                saveData();
+            }
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            ImGui::PushFont(fontSubTitle);
+            ImGui::Text("NatNet Information: ");
+            ImGui::PopFont();
+            ImGui::Columns(2, "natnetstats");
+            ImGui::Text("frames: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getFrameNumber()).c_str()); ImGui::NextColumn();
+            ImGui::Text("data rate: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getDataRate()).c_str()); ImGui::NextColumn();
+            ImGui::Text("connected: "); ImGui::NextColumn();
+            string con =(natnet.isConnected() ? "YES" : "NO");
+            ImGui::Text("%s",con.c_str()); ImGui::NextColumn();
+            ImGui::Text("num markers: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getNumMarker()).c_str()); ImGui::NextColumn();
+            ImGui::TextWrapped("num filtererd (non rigidbodies) marker:: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getNumFilterdMarker()).c_str()); ImGui::NextColumn();
+            ImGui::Text("num rigidbody: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getNumRigidBody()).c_str()); ImGui::NextColumn();
+            ImGui::Text("num skeleton: "); ImGui::NextColumn();
+            ImGui::Text("%s",ofToString(natnet.getNumSkeleton()).c_str()); ImGui::NextColumn();
+            ImGui::Columns(1);
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
         }
-        
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        ImGui::PushFont(fontSubTitle);
-        ImGui::Text("New User");
-        ImGui::PopFont();
-        
-        static char client_name[128] = "New Client";
-        ImGui::InputText("client_name", client_name, IM_ARRAYSIZE(client_name));
-        static char client_ip[15] = "127.0.0.1";
-        ImGui::InputText("client_ip", client_ip, IM_ARRAYSIZE(client_ip));
-        static int client_port = 6000;
-        ImGui::InputInt("client port", &client_port);
-        if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
+        if ( ImGui::CollapsingHeader("log console", NULL, 0 ) )
         {
-            addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
-
+            uiLogWidget.doGui();
         }
-        
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        
-        if ( ImGui::Button(ICON_FA_SAVE " Save Setup") )
-        {
-            saveData();
-        }
-        
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-
-        ImGui::PushFont(fontSubTitle);
-        ImGui::Text("NatNet Information: ");
-        ImGui::PopFont();
-        ImGui::Columns(2, "natnetstats");
-        ImGui::Text("frames: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getFrameNumber()).c_str()); ImGui::NextColumn();
-        ImGui::Text("data rate: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getDataRate()).c_str()); ImGui::NextColumn();
-        ImGui::Text("connected: "); ImGui::NextColumn();
-        string con =(natnet.isConnected() ? "YES" : "NO");
-        ImGui::Text("%s",con.c_str()); ImGui::NextColumn();
-        ImGui::Text("num markers: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getNumMarker()).c_str()); ImGui::NextColumn();
-        ImGui::TextWrapped("num filtererd (non rigidbodies) marker:: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getNumFilterdMarker()).c_str()); ImGui::NextColumn();
-        ImGui::Text("num rigidbody: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getNumRigidBody()).c_str()); ImGui::NextColumn();
-        ImGui::Text("num skeleton: "); ImGui::NextColumn();
-        ImGui::Text("%s",ofToString(natnet.getNumSkeleton()).c_str()); ImGui::NextColumn();
-        ImGui::Columns(1);
-        
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
-        
         ImGui::End();
         
         
