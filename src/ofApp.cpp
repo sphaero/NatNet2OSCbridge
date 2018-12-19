@@ -26,7 +26,9 @@ void ofApp::setup()
     ofLog::setChannel(uiLogWidget.channel);
 #ifdef TARGET_WIN32     // close the console on Windows
      FreeConsole();
- #endif
+#endif
+    ofSetWindowTitle("Natnet2OSC_bridge");
+    ofSetEscapeQuitsApp(false);
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
 
