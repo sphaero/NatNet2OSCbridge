@@ -32,14 +32,13 @@
 		8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */; };
 		933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B40EDA85BEB63E46785BC29 /* tinyxml.cpp */; };
 		9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832BDC407620CDBA568B713D /* tinyxmlerror.cpp */; };
-		A0546C8DFD346D9D36093E16 /* ofxTextButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1A1E32D0DFD2250A36A65C4 /* ofxTextButton.cpp */; };
 		A0F2BFB15B92B4C6EB9527DE /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C966A8F6085AAA2FED6F411 /* Helpers.cpp */; };
 		A6F396BE5D1E24326E1F796A /* ofxImGuiLoggerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64438C8902B287DA10BCD63B /* ofxImGuiLoggerChannel.cpp */; };
 		ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADD194746185E2DA11468377 /* IpEndpointName.cpp */; };
 		C2114978C2A333BA9867109F /* DefaultTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9A7E144D697FCBB4216A73E /* DefaultTheme.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
+		CD56E11021CA8D26003ED29A /* uiWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */; };
 		CDA2FFED21BFE9D400313125 /* helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA2FFEB21BFE9D400313125 /* helpers.cpp */; };
-		D25089B9AE1AB7F6DBB1DB3A /* ofxTextInputField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5249F4866137DE53A22CDAA7 /* ofxTextInputField.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -126,7 +125,6 @@
 		4BF97AC133A743F7D2E222B6 /* bn.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bn.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/bn.h; sourceTree = SOURCE_ROOT; };
 		4E95FB446A9C9C6F0DE12D75 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OscPrintReceivedElements.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.h; sourceTree = SOURCE_ROOT; };
 		50DF87D612C5AAE17AAFA6C0 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxXmlSettings.cpp; path = ../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp; sourceTree = SOURCE_ROOT; };
-		5249F4866137DE53A22CDAA7 /* ofxTextInputField.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxTextInputField.cpp; path = src/ofxTextInputField.cpp; sourceTree = SOURCE_ROOT; };
 		5565E3718DB1D46F1214EBFC /* md2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = md2.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/md2.h; sourceTree = SOURCE_ROOT; };
 		56DAF0A34EFCF5E2A5E60386 /* rand.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rand.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/rand.h; sourceTree = SOURCE_ROOT; };
 		5749F2535EC575188CD8B7EA /* md5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = md5.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/md5.h; sourceTree = SOURCE_ROOT; };
@@ -149,7 +147,6 @@
 		7689F8A0F3D0B7635A8C3104 /* ofxOscArg.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxOscArg.h; path = ../../../addons/ofxOsc/src/ofxOscArg.h; sourceTree = SOURCE_ROOT; };
 		773AA38F169F9C1E793528DC /* lhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lhash.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/lhash.h; sourceTree = SOURCE_ROOT; };
 		7A6C877B8EC4F7438DED9FB4 /* ecdh.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ecdh.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/ecdh.h; sourceTree = SOURCE_ROOT; };
-		7D33422D8198F18E9E6B3A58 /* ofxTextButton.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxTextButton.h; path = src/ofxTextButton.h; sourceTree = SOURCE_ROOT; };
 		7D3A8C6EA022F43F7B57C119 /* pkcs12.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pkcs12.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/pkcs12.h; sourceTree = SOURCE_ROOT; };
 		81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxOscSender.cpp; path = ../../../addons/ofxOsc/src/ofxOscSender.cpp; sourceTree = SOURCE_ROOT; };
 		819BC58C111B1594F7B89BBC /* client.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = client.cpp; path = src/client.cpp; sourceTree = SOURCE_ROOT; };
@@ -181,7 +178,6 @@
 		AE335EB4709BFD4671EEAC84 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MessageMappingOscPacketListener.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/MessageMappingOscPacketListener.h; sourceTree = SOURCE_ROOT; };
 		AE806A26C99C3FB31F2ACF76 /* imstb_textedit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imstb_textedit.h; path = ../../../addons/ofxImGui/libs/imgui/src/imstb_textedit.h; sourceTree = SOURCE_ROOT; };
 		AF53C1FCB4DC2DA249C71CE4 /* asn1t.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = asn1t.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/asn1t.h; sourceTree = SOURCE_ROOT; };
-		B1A1E32D0DFD2250A36A65C4 /* ofxTextButton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxTextButton.cpp; path = src/ofxTextButton.cpp; sourceTree = SOURCE_ROOT; };
 		B1CC96657896D2F948104F3D /* seed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = seed.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/seed.h; sourceTree = SOURCE_ROOT; };
 		B21E7E5F548EEA92F368040B /* tinyxml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tinyxml.h; path = ../../../addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
 		B2D9BED8F594CFBBD0821E7E /* mdc2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mdc2.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/mdc2.h; sourceTree = SOURCE_ROOT; };
@@ -204,6 +200,8 @@
 		C78B524F843EF9B47C5BC9D1 /* themes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = themes.h; path = src/themes.h; sourceTree = SOURCE_ROOT; };
 		C9FE1E8D2E9BC8B7F5D308C8 /* asn1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = asn1.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/asn1.h; sourceTree = SOURCE_ROOT; };
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
+		CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uiWidgets.cpp; sourceTree = "<group>"; };
+		CD56E10F21CA8D26003ED29A /* uiWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiWidgets.h; sourceTree = "<group>"; };
 		CDA2FFEB21BFE9D400313125 /* helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
 		CDA2FFEC21BFE9D400313125 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
 		D1F2D509F3D753BBF52DAA19 /* rc4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc4.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/rc4.h; sourceTree = SOURCE_ROOT; };
@@ -240,7 +238,6 @@
 		FD24C7DBE373C3B79648C23F /* BaseEngine.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BaseEngine.h; path = ../../../addons/ofxImGui/src/BaseEngine.h; sourceTree = SOURCE_ROOT; };
 		FDB04DA12ABAFBA5FFE217C9 /* opensslconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = opensslconf.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/opensslconf.h; sourceTree = SOURCE_ROOT; };
 		FDC037DF46F0D26E4621F89B /* ossl_typ.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ossl_typ.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/ossl_typ.h; sourceTree = SOURCE_ROOT; };
-		FFE3E15B8B4E272089192378 /* ofxTextInputField.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxTextInputField.h; path = src/ofxTextInputField.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -612,15 +609,13 @@
 				819BC58C111B1594F7B89BBC /* client.cpp */,
 				46B58A23C9FB8DA866314455 /* client.h */,
 				F05E94703F897523DCFB0E40 /* fontawesome5.h */,
-				B1A1E32D0DFD2250A36A65C4 /* ofxTextButton.cpp */,
-				7D33422D8198F18E9E6B3A58 /* ofxTextButton.h */,
-				5249F4866137DE53A22CDAA7 /* ofxTextInputField.cpp */,
-				FFE3E15B8B4E272089192378 /* ofxTextInputField.h */,
 				618587FC1974BE837B51272C /* themes.cpp */,
 				C78B524F843EF9B47C5BC9D1 /* themes.h */,
 				8BEAD1BB282C557812121361 /* version.h */,
 				CDA2FFEB21BFE9D400313125 /* helpers.cpp */,
 				CDA2FFEC21BFE9D400313125 /* helpers.h */,
+				CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */,
+				CD56E10F21CA8D26003ED29A /* uiWidgets.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -789,8 +784,6 @@
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				69560ED5F66AECC5383BAA35 /* client.cpp in Sources */,
-				A0546C8DFD346D9D36093E16 /* ofxTextButton.cpp in Sources */,
-				D25089B9AE1AB7F6DBB1DB3A /* ofxTextInputField.cpp in Sources */,
 				4AA163D21B8E8C1D46BBAEEE /* themes.cpp in Sources */,
 				DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */,
 				C2114978C2A333BA9867109F /* DefaultTheme.cpp in Sources */,
@@ -803,6 +796,7 @@
 				5C2607C471F8D48C0036C56E /* imgui.cpp in Sources */,
 				E984796BE84AA4315636B6E7 /* imgui_demo.cpp in Sources */,
 				00413C35AAE31B483D7538AB /* imgui_draw.cpp in Sources */,
+				CD56E11021CA8D26003ED29A /* uiWidgets.cpp in Sources */,
 				0090B479605B26E7C387B02D /* imgui_widgets.cpp in Sources */,
 				2EB82731E35103D1E16BAFCF /* ofxNatNet.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
