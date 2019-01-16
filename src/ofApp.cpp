@@ -2,7 +2,7 @@
 #include "fontawesome5.h"
 #include "version.h"
 #include "themes.h"
-#include "helpers.h"
+#include "ect_helpers.h"
 
 static const ImWchar icon_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 

@@ -23,6 +23,11 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     deepHierarchy = hier;
     mode = cMode;
     setupSender();
+
+	rigidstr = new char[6 + ip.length() + 6];
+	markstr = new char[6 + ip.length() + 6];
+	skelstr = new char[6 + ip.length() + 6];
+	hierstr = new char[6 + ip.length() + 6];
 }
 
 client::~client(){}
@@ -54,19 +59,23 @@ void client::doGui()
     ImGui::Text("port:");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
-    char rigidstr[6+ip.length()+6];
+	
+	//char* rigidstr = new char[6 + ip.length() + 6];
     sprintf(rigidstr, "Rigid##%s%i", ip.c_str(), port);
     ImGui::Checkbox(rigidstr, &isRigid);
     ImGui::SameLine();
-    char markstr[6+ip.length()+6];
+	
+	//char* markstr = new char[6+ip.length()+6];
     sprintf(markstr, "Mark##%s%i", ip.c_str(), port);
     ImGui::Checkbox(markstr, &isMarker);
     ImGui::SameLine();
-    char skelstr[6+ip.length()+6];
+	
+	//char* skelstr = new char[6+ip.length()+6];
     sprintf(skelstr, "Skel##%s%i", ip.c_str(), port);
     ImGui::Checkbox(skelstr, &isSkeleton);
     ImGui::SameLine();
-    char hierstr[6+ip.length()+6];
+	
+	//char* hierstr = new char[6+ip.length()+6];
     sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
     ImGui::Checkbox(hierstr, &deepHierarchy);
     

@@ -1,5 +1,5 @@
-#ifndef HELPERS_H
-#define HELPERS_H
+#ifndef ECT_HELPERS_H
+#define ECT_HELPERS_H
 
 #pragma once
 
@@ -48,4 +48,4 @@ bool Combo(const char* label, int* currIndex, std::vector<std::string>& values);
 bool ListBox(const char* label, int* currIndex, std::vector<std::string>& values);
 }
 
-#endif // HELPERS_H
+#endif // ECT_HELPERS_H
