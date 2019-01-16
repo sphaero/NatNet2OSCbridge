@@ -38,7 +38,7 @@
 		C2114978C2A333BA9867109F /* DefaultTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9A7E144D697FCBB4216A73E /* DefaultTheme.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		CD56E11021CA8D26003ED29A /* uiWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */; };
-		CDA2FFED21BFE9D400313125 /* helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA2FFEB21BFE9D400313125 /* helpers.cpp */; };
+		CDC0C9FA21EF9037000997ED /* ect_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC0C9F821EF9037000997ED /* ect_helpers.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -202,8 +202,8 @@
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
 		CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uiWidgets.cpp; sourceTree = "<group>"; };
 		CD56E10F21CA8D26003ED29A /* uiWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiWidgets.h; sourceTree = "<group>"; };
-		CDA2FFEB21BFE9D400313125 /* helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helpers.cpp; sourceTree = "<group>"; };
-		CDA2FFEC21BFE9D400313125 /* helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = helpers.h; sourceTree = "<group>"; };
+		CDC0C9F821EF9037000997ED /* ect_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ect_helpers.cpp; sourceTree = "<group>"; };
+		CDC0C9F921EF9037000997ED /* ect_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ect_helpers.h; sourceTree = "<group>"; };
 		D1F2D509F3D753BBF52DAA19 /* rc4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc4.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/rc4.h; sourceTree = SOURCE_ROOT; };
 		D315839A1D24D10046025C0C /* asn1_mac.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = asn1_mac.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/asn1_mac.h; sourceTree = SOURCE_ROOT; };
 		D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BaseEngine.cpp; path = ../../../addons/ofxImGui/src/BaseEngine.cpp; sourceTree = SOURCE_ROOT; };
@@ -612,10 +612,10 @@
 				618587FC1974BE837B51272C /* themes.cpp */,
 				C78B524F843EF9B47C5BC9D1 /* themes.h */,
 				8BEAD1BB282C557812121361 /* version.h */,
-				CDA2FFEB21BFE9D400313125 /* helpers.cpp */,
-				CDA2FFEC21BFE9D400313125 /* helpers.h */,
 				CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */,
 				CD56E10F21CA8D26003ED29A /* uiWidgets.h */,
+				CDC0C9F821EF9037000997ED /* ect_helpers.cpp */,
+				CDC0C9F921EF9037000997ED /* ect_helpers.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -801,7 +801,6 @@
 				2EB82731E35103D1E16BAFCF /* ofxNatNet.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
 				5864AD82E20F15536D054EA3 /* ofxOscMessage.cpp in Sources */,
-				CDA2FFED21BFE9D400313125 /* helpers.cpp in Sources */,
 				4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */,
 				640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */,
 				8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */,
@@ -816,6 +815,7 @@
 				63B57AC5BF4EF088491E0317 /* ofxXmlSettings.cpp in Sources */,
 				933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */,
 				9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */,
+				CDC0C9FA21EF9037000997ED /* ect_helpers.cpp in Sources */,
 				5A4349E9754D6FA14C0F2A3A /* tinyxmlparser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
