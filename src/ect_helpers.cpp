@@ -1,7 +1,7 @@
 #include "ofFileUtils.h"
 #include "ofUtils.h"
 #include "ofLog.h"
-#include "helpers.h"
+#include "ect_helpers.h"
 
 std::string getAppConfigDir()
 {
