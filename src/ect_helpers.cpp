@@ -15,7 +15,7 @@ std::string getAppConfigDir()
     return dir;
 #elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
     std::string appdata = ofGetEnv( "APPDATA" );
-    std::string dir = ofFilePath::join( appdata,  "/NatNet2OSC_bridge" );
+    std::string dir = ofFilePath::join( appdata,  "\\NatNet2OSC_bridge" );
     if ( ! ofDirectory::createDirectory( dir, false, true ) )
     {
         ofLogNotice() << "couldn't create or open " << dir << "reverting to bin/data";
@@ -24,6 +24,17 @@ std::string getAppConfigDir()
     return dir;
 #else
     return "";
+#endif
+}
+
+void browseAppConfigDir()
+{
+#if defined(TARGET_LINUX)
+    ofLogVerbose("Not yet implemented");
+#elif defined(TARGET_OSX)
+    ofSystem("open " + getAppConfigDir());
+#elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
+    ofSystem("explorer " + getAppConfigDir());
 #endif
 }
 

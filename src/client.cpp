@@ -24,10 +24,10 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     mode = cMode;
     setupSender();
 
-	rigidstr = new char[6 + ip.length() + 6];
-	markstr = new char[6 + ip.length() + 6];
-	skelstr = new char[6 + ip.length() + 6];
-	hierstr = new char[6 + ip.length() + 6];
+    rigidstr = new char[6 + ip.length() + 6];
+    markstr = new char[6 + ip.length() + 6];
+    skelstr = new char[6 + ip.length() + 6];
+    hierstr = new char[6 + ip.length() + 6];
 }
 
 client::~client(){}
@@ -59,15 +59,15 @@ void client::doGui()
     ImGui::Text("port:");
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
-	
+    
     sprintf(rigidstr, "Rigid##%s%i", ip.c_str(), port);
     ImGui::Checkbox(rigidstr, &isRigid);
     ImGui::SameLine();
-	
+    
     sprintf(markstr, "Mark##%s%i", ip.c_str(), port);
     ImGui::Checkbox(markstr, &isMarker);
     ImGui::SameLine();
-	
+    
     sprintf(skelstr, "Skel##%s%i", ip.c_str(), port);
     ImGui::Checkbox(skelstr, &isSkeleton);
     ImGui::SameLine();
