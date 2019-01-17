@@ -27,6 +27,17 @@ std::string getAppConfigDir()
 #endif
 }
 
+void browseAppConfigDir()
+{
+#if defined(TARGET_LINUX)
+	ofLogVerbose("Not yet implemented");
+#elif defined(TARGET_OSX)
+	ofSystem("open " + getAppConfigDir());
+#elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
+	ofSystem("explorer " + getAppConfigDir());
+#endif
+}
+
 NetworkInterfaceList listNetworkInterfaces(AddressType addressType,
                                            NetworkInterface::IPVersion ipVersion)
 {

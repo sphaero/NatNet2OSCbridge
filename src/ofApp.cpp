@@ -794,6 +794,11 @@ void ofApp::doGui() {
 			{
 				setupData(save_fileName);
 			}
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_FA_FILE_DOWNLOAD " Open Folder"))
+			{
+				browseAppConfigDir();
+			}
 
             ImGui::Spacing();
             ImGui::Separator();
