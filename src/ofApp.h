@@ -44,7 +44,7 @@ public:
     void gotMessage(ofMessage msg);
     
     void setupConnectionInterface();
-    void setupData();
+    void setupData(string filename);
     void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
     void sendOSC();
     
@@ -104,6 +104,7 @@ private:
     float               invFPS;
     int                 FPS;
     char                natnetip_char[16];
+	char*				save_fileName;
     int                 current_iface_idx;
     vector<string>      iface_list;
 };
