@@ -40,7 +40,9 @@ void ofApp::setup()
     current_iface_idx = iface_list.size() - 1;
     setupConnectionInterface();
 
-	save_fileName = new char[32]{ "setup.xml" };
+	string initialXml = "setup.xml";
+	save_fileName = new char[32];
+	strcpy(save_fileName, initialXml.c_str());
 
     setupData("");
     visible = true;
