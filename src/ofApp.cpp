@@ -40,9 +40,9 @@ void ofApp::setup()
     current_iface_idx = iface_list.size() - 1;
     setupConnectionInterface();
 
-	string initialXml = "setup.xml";
-	save_fileName = new char[32];
-	strcpy(save_fileName, initialXml.c_str());
+    string initialXml = "setup.xml";
+    save_fileName = new char[32];
+    strcpy(save_fileName, initialXml.c_str());
 
     setupData("");
     visible = true;
@@ -86,34 +86,34 @@ void ofApp::setupConnectionInterface(){
 
 void ofApp::setupData( string filename="" )
 {
-	ofLogVerbose("SetupData:: connection");
+    ofLogVerbose("SetupData:: connection");
     userDataDir = getAppConfigDir();
-	string xmlpath = ofFilePath::join(userDataDir, save_fileName); //setup.xml );
-	string persistentPath = ofFilePath::join(userDataDir, "persistent_state.xml");
+    string xmlpath = ofFilePath::join(userDataDir, save_fileName); //setup.xml );
+    string persistentPath = ofFilePath::join(userDataDir, "persistent_state.xml");
     if ( filename == "" || !ofFile::doesFileExist( xmlpath ) )
     {
-		if (!ofFile::doesFileExist(persistentPath)) {
-			xmlpath = "setup.xml";
-			ofLogVerbose() << "Loading setup from packaged " << xmlpath << " probably first run or never saved on this system?";
-		}
-		else {
-			ofxXmlSettings state(persistentPath);
-			state.pushTag("name");
-			xmlpath = state.getValue("filename", "setup.xml");
-			strcpy(save_fileName, xmlpath.c_str());
-			xmlpath = ofFilePath::join(userDataDir, xmlpath);
-			state.popTag();
-		}
+        if (!ofFile::doesFileExist(persistentPath)) {
+            xmlpath = "setup.xml";
+            ofLogVerbose() << "Loading setup from packaged " << xmlpath << " probably first run or never saved on this system?";
+        }
+        else {
+            ofxXmlSettings state(persistentPath);
+            state.pushTag("name");
+            xmlpath = state.getValue("filename", "setup.xml");
+            strcpy(save_fileName, xmlpath.c_str());
+            xmlpath = ofFilePath::join(userDataDir, xmlpath);
+            state.popTag();
+        }
     }
-	else if ( filename != "" ) {	//"" = load from initial setup
-		//store name of last loaded file
-		ofxXmlSettings persistent_state;
-		persistent_state.addTag("name");
-		persistent_state.pushTag("name", 0);
-		persistent_state.addValue("filename", save_fileName);
-		persistent_state.popTag();
-		persistent_state.save(persistentPath);
-	}
+    else if ( filename != "" ) {    //"" = load from initial setup
+        //store name of last loaded file
+        ofxXmlSettings persistent_state;
+        persistent_state.addTag("name");
+        persistent_state.pushTag("name", 0);
+        persistent_state.addValue("filename", save_fileName);
+        persistent_state.popTag();
+        persistent_state.save(persistentPath);
+    }
 
     ofxXmlSettings data( xmlpath );
     data.pushTag("setup",0);
@@ -142,14 +142,14 @@ void ofApp::setupData( string filename="" )
     data.popTag();
 
 
-	while( clients.size() > 0 ) {
-		int i = 0;
-		deleteClient(i);
-	}
+    while( clients.size() > 0 ) {
+        int i = 0;
+        deleteClient(i);
+    }
 
     int numClients = data.getNumTags("client");
 
-	ofLogVerbose("SetupData:: clients (" + ofToString(numClients) + ")");
+    ofLogVerbose("SetupData:: clients (" + ofToString(numClients) + ")");
     for (int i = 0; i < numClients; i++)
     {
         data.pushTag("client",i);
@@ -166,7 +166,7 @@ void ofApp::setupData( string filename="" )
         data.popTag();
     }
 
-	ofLogVerbose("SetupData :: DONE");
+    ofLogVerbose("SetupData :: DONE");
 }
 
 
@@ -177,7 +177,7 @@ bool ofApp::connectNatnet(string interfaceName, string interfaceIP)
     natnet.setup(interfaceName, interfaceIP);  // interface name, server ip
     //natnet.setDuplicatedPointRemovalDistance(20);
     
-	return false;
+    return false;
 }
 
 
@@ -646,7 +646,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 void ofApp::saveData(string filepath="")
 {
     if ( filepath == "" ) {
-		filepath = ofFilePath::join(userDataDir, save_fileName);// "setup.xml");
+        filepath = ofFilePath::join(userDataDir, save_fileName);// "setup.xml");
     }
     ofLogNotice("Starting save data to " + filepath);
     ofxXmlSettings save;
@@ -673,14 +673,14 @@ void ofApp::saveData(string filepath="")
     }
     save.save(filepath);
 
-	//store name of last saved file
-	string persistentPath = ofFilePath::join(userDataDir, "persistent_state.xml");
-	ofxXmlSettings persistent_state;
-	persistent_state.addTag("name");
-	persistent_state.pushTag("name", 0);
-	persistent_state.addValue("filename", save_fileName);
-	persistent_state.popTag();
-	persistent_state.save(persistentPath);
+    //store name of last saved file
+    string persistentPath = ofFilePath::join(userDataDir, "persistent_state.xml");
+    ofxXmlSettings persistent_state;
+    persistent_state.addTag("name");
+    persistent_state.pushTag("name", 0);
+    persistent_state.addValue("filename", save_fileName);
+    persistent_state.popTag();
+    persistent_state.save(persistentPath);
 
     ofLogNotice("fps "+ofToString(FPS)+" interface " + iface_list.at(current_iface_idx) +" ip "+ofToString(natnetip_char));
     ofLogNotice("Save Data Finished");
@@ -784,21 +784,21 @@ void ofApp::doGui() {
             ImGui::Spacing();
 
 
-			ImGui::InputText("file name", save_fileName, 32);
+            ImGui::InputText("file name", save_fileName, 32);
             if ( ImGui::Button(ICON_FA_SAVE " Save Setup") )
             {
                 saveData();
             }
-			ImGui::SameLine();
-			if (ImGui::Button(ICON_FA_FILE_DOWNLOAD " Load Setup"))
-			{
-				setupData(save_fileName);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button(ICON_FA_FOLDER_OPEN " Open Folder"))
-			{
-				browseAppConfigDir();
-			}
+            ImGui::SameLine();
+            if (ImGui::Button(ICON_FA_FILE_DOWNLOAD " Load Setup"))
+            {
+                setupData(save_fileName);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button(ICON_FA_FOLDER_OPEN " Open Folder"))
+            {
+                browseAppConfigDir();
+            }
 
             ImGui::Spacing();
             ImGui::Separator();

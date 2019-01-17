@@ -104,7 +104,7 @@ private:
     float               invFPS;
     int                 FPS;
     char                natnetip_char[16];
-	char*				save_fileName;
+    char*                save_fileName;
     int                 current_iface_idx;
     vector<string>      iface_list;
 };

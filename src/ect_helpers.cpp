@@ -30,11 +30,11 @@ std::string getAppConfigDir()
 void browseAppConfigDir()
 {
 #if defined(TARGET_LINUX)
-	ofLogVerbose("Not yet implemented");
+    ofLogVerbose("Not yet implemented");
 #elif defined(TARGET_OSX)
-	ofSystem("open " + getAppConfigDir());
+    ofSystem("open " + getAppConfigDir());
 #elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
-	ofSystem("explorer " + getAppConfigDir());
+    ofSystem("explorer " + getAppConfigDir());
 #endif
 }
 

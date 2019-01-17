@@ -72,10 +72,10 @@ private:
     ClientMode      mode;
     ofxOscSender    sender;
 
-	char*			rigidstr;
-	char*			markstr;
-	char*			skelstr;
-	char*			hierstr;
+    char*            rigidstr;
+    char*            markstr;
+    char*            skelstr;
+    char*            hierstr;
 };
 
 #endif /* defined(__NatNet2OSCbridge__client__) */
