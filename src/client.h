@@ -23,14 +23,6 @@ enum ClientMode
     ClientMode_END          = 3
 };
 
-static const char* ClientModeNames[] =
-{
-    "Default",
-    "Gear VR",
-    "Full Skeleton",
-    "INVALID"
-};
-
 class client
 {
 public:
@@ -76,6 +68,13 @@ private:
     char*            markstr;
     char*            skelstr;
     char*            hierstr;
+
+    vector<string>   clientMode_list = 
+    {
+        "Default",
+        "Optimized",
+        "Full Skeleton"
+    };
 };
 
 #endif /* defined(__NatNet2OSCbridge__client__) */
