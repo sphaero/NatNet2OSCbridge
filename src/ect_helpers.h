@@ -12,6 +12,8 @@
 
 // return the path to where the user can save application data
 std::string getAppConfigDir();
+// opens a file browser to the app config dir (so people can find their setups)
+void		browseAppConfigDir();
 
 /// \brief A typedef for Poco::Net::NetworkInterface.
 typedef Poco::Net::NetworkInterface NetworkInterface;
