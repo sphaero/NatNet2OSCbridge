@@ -8,6 +8,7 @@
 
 #include "client.h"
 #include "fontawesome5.h"
+#include "ect_helpers.h"
 
 client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode cMode )
 {
@@ -74,7 +75,22 @@ void client::doGui()
 
     sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
     ImGui::Checkbox(hierstr, &deepHierarchy);
-    
+
+    //Without PushID/PopID all the client combo's start to conflict...
+    ImGui::PushID(index);
+    if (ImGui::BeginCombo("mode", clientMode_list[(int)mode].c_str())) {
+        for (int n = 0; n < 3; n++)
+        {
+            bool is_selected = ((int)mode == n);
+            if (ImGui::Selectable(clientMode_list[n].c_str(), is_selected))
+                mode = (ClientMode)n;
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopID();
+
     //ImGui::Spacing();
     //ImGui::Separator();
     //ImGui::Spacing();
