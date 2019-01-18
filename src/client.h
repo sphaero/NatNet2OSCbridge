@@ -14,19 +14,21 @@
 #include "ofxOsc.h"
 #include "ofxImGui.h"
 
-//TODO: replace with filters!
-enum ClientMode
+//These function as bit flags
+enum ClientFlags
 {
-    ClientMode_Default      = 0,
-    ClientMode_GearVR       = 1,
-    ClientMode_FullSkeleton = 2,
-    ClientMode_END          = 3
+    ClientFlag_Velocity     = 1,
+    ClientFlag_FullSkeleton = 2
+    //4 -> this could become ClientFlag_Hierarchy
+    //8
+    //16
+    //32
 };
 
 class client
 {
 public:
-    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode mode);
+    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int modeFlags);
     ~client();
     
     void setupSender();
@@ -47,7 +49,7 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
-    ClientMode &getMode();
+    int &getModeFlags();
 
     ofEvent<int> deleteClient;
     
@@ -61,7 +63,7 @@ private:
     bool            isSkeleton;
     bool            isLive;
     bool            deepHierarchy;
-    ClientMode      mode;
+    int             modeFlags;
     ofxOscSender    sender;
 
     char*            rigidstr;
@@ -71,8 +73,7 @@ private:
 
     vector<string>   clientMode_list = 
     {
-        "Default",
-        "Optimized",
+        "Velocity",
         "Full Skeleton"
     };
 };

@@ -45,7 +45,7 @@ public:
     
     void setupConnectionInterface();
     void setupData(string filename);
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, ClientMode mode);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags);
     void sendOSC();
     
     bool connectNatnet(string interfaceName, string interfaceIP);

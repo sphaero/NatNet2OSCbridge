@@ -161,8 +161,8 @@ void ofApp::setupData( string filename="" )
         bool s = data.getValue("skeleton", 0);
         bool live = data.getValue("live", 0);
         bool hier = data.getValue("hierarchy", 0);
-        ClientMode mode = (ClientMode)data.getValue("mode", 0);
-        addClient(i,ip,port,name,r,m,s,live,hier,mode);
+        int modeFlags = (int)data.getValue("mode", 0);
+        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags);
         data.popTag();
     }
 
@@ -214,7 +214,7 @@ void ofApp::draw()
     if ( this->guiVisible ) { gui.draw(); }
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, ClientMode mode)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags)
 {
     // Check if we do not add a client with the same properties twice
     bool uniqueClient = true;
@@ -230,7 +230,7 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
     }
     
     if(uniqueClient){
-        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, mode);
+        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, modeFlags);
         ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
         clients.push_back(c);
         if(UserFeedback != "") UserFeedback = "";
@@ -447,7 +447,7 @@ void ofApp::getRigidbodies(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Ri
             m.addFloatArg(rotation.z());
             m.addFloatArg(rotation.w());
             
-            if ( c->getMode() != ClientMode_GearVR )
+            if ( c->getModeFlags() & ClientFlag_Velocity )
             {
                 //velocity over SMOOTHING * 2 + 1 frames
                 m.addFloatArg(velocity.x * 1000);
@@ -506,7 +506,7 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
                 m.addFloatArg(rotation.z());
                 m.addFloatArg(rotation.w());
                 //needed for skeleton retargeting
-                if ( c->getMode() == ClientMode_FullSkeleton )
+                if ( c->getModeFlags() & ClientFlag_FullSkeleton )
                 {
                     m.addIntArg(rbd[i].parent_id);
                     m.addFloatArg(rbd[i].offset.x);
@@ -549,7 +549,7 @@ void ofApp::getSkeletons(client *c, ofxOscBundle *bundle, vector<ofxNatNet::Skel
                 m.addFloatArg(rotation.z());
                 m.addFloatArg(rotation.w());
                 //needed for skeleton retargeting
-                if ( c->getMode() == ClientMode_FullSkeleton )
+                if ( c->getModeFlags() & ClientFlag_FullSkeleton )
                 {
                     m.addIntArg(rbd[i].parent_id);
                     m.addFloatArg(rbd[i].offset.x);
@@ -668,7 +668,7 @@ void ofApp::saveData(string filepath="")
         save.addValue("skeleton", clients[i]->getSkeleton());
         save.addValue("live", clients[i]->getLive());
         save.addValue("hierarchy", clients[i]->getHierarchy());
-        save.addValue("mode", clients[i]->getMode());
+        save.addValue("mode", clients[i]->getModeFlags());
         save.popTag();
     }
     save.save(filepath);
@@ -775,7 +775,7 @@ void ofApp::doGui() {
             ImGui::InputInt("client port", &client_port);
             if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
             {
-                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, ClientMode_Default);
+                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0);
 
             }
 
