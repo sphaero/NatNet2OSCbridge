@@ -8,8 +8,9 @@
 
 #include "client.h"
 #include "fontawesome5.h"
+#include "ect_helpers.h"
 
-client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, ClientMode cMode )
+client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int mFlags )
 {
     //arange them gridwise
     index = ind;
@@ -21,7 +22,7 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isSkeleton = s;
     isLive = live;
     deepHierarchy = hier;
-    mode = cMode;
+    modeFlags = mFlags;
     setupSender();
 
     rigidstr = new char[6 + ip.length() + 6];
@@ -48,7 +49,10 @@ void client::sendBundle(ofxOscBundle &b)
 }
 
 void client::doGui()
-{   
+{
+    //Without PushID/PopID all the client combo's & flag checkboxes start to conflict...
+    ImGui::PushID(index);
+
     ImGui::Text(ICON_FA_BROADCAST_TOWER);
     ImGui::SameLine();
     //ImGui::Text(name.c_str());
@@ -75,6 +79,29 @@ void client::doGui()
     sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
     ImGui::Checkbox(hierstr, &deepHierarchy);
     
+    //DISCUSS: We could turn this into a drop-down flag list as well, with checkboxes. Hierarchy could be moved to this as well.
+    //We can use the BeginCombo/EndCombo example from ImGui to do this...
+    ImGui::Text("flags:");
+    for ( int i = 0; i < clientMode_list.size(); ++i ) {
+        ImGui::SameLine();
+
+        int mask = pow(2, i);
+        bool b = (modeFlags & mask);
+
+        if (ImGui::Checkbox(clientMode_list[i].c_str(), &b)) {
+            if (b) {
+                ofLogVerbose("Enabled " + clientMode_list[i]);
+                modeFlags |= mask;
+            }
+            else {
+                ofLogVerbose("Disabled " + clientMode_list[i]);
+                modeFlags &= ~mask;
+            }
+        }
+    }
+
+    ImGui::PopID();
+
     //ImGui::Spacing();
     //ImGui::Separator();
     //ImGui::Spacing();
@@ -141,7 +168,7 @@ bool &client::getHierarchy()
     return deepHierarchy;
 }
 
-ClientMode &client::getMode()
+int &client::getModeFlags()
 {
-    return mode;
+    return modeFlags;
 }
