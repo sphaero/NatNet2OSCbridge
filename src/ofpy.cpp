@@ -8,7 +8,7 @@ PyObject* PyInit__glm(void);
 
 int init_python()
 {
-    Py_SetProgramName(L"./lib/bin/python");     // L prepend is string literal (ddg it)
+    Py_SetProgramName(L"./python/bin/python");     // L prepend is string literal (ddg it)
     //PyImport_AppendInittab("_glm", PyInit__glm);
     //PyImport_AppendInittab("_openframeworks", PyInit__openframeworks);
     Py_Initialize();
