@@ -605,9 +605,9 @@ void ofApp::keyPressed(int key)
     {
 #ifdef DEBUG
 #ifdef _MSC_VER
-        __debugbreak()
+        if ( IsDebuggerPresent() ) __debugbreak();
 #else
-        raise(SIGTRAP);
+        if ( gdbIsAttached() ) raise(SIGTRAP);
 #endif
 #endif
     }
