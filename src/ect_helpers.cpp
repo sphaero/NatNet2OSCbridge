@@ -30,7 +30,7 @@ std::string getAppConfigDir()
 void browseAppConfigDir()
 {
 #if defined(TARGET_LINUX)
-    ofLogVerbose("Not yet implemented");
+    ofSystem("xdg-open " + getAppConfigDir());
 #elif defined(TARGET_OSX)
     ofSystem("open " + getAppConfigDir());
 #elif defined(TARGET_WINDOWS) || defined(TARGET_WIN32)
