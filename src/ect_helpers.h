@@ -44,6 +44,9 @@ enum AddressType
 
 NetworkInterfaceList listNetworkInterfaces(AddressType addressType,
                                            NetworkInterface::IPVersion ipVersion = NetworkInterface::IPv4_OR_IPv6);
+
+bool gdbIsAttached();
+
 namespace ImGui
 {
 bool Combo(const char* label, int* currIndex, std::vector<std::string>& values);

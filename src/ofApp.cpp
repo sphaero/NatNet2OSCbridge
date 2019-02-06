@@ -601,6 +601,16 @@ void ofApp::keyPressed(int key)
         running = !running;
         //if (running) natnet.sendRequestDescription();
     }
+    if (key == OF_KEY_ALT )
+    {
+#ifdef DEBUG
+#ifdef _MSC_VER
+        if ( IsDebuggerPresent() ) __debugbreak();
+#else
+        if ( gdbIsAttached() ) raise(SIGTRAP);
+#endif
+#endif
+    }
 }
 
 //--------------------------------------------------------------
