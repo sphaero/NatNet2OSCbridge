@@ -7,6 +7,7 @@
 #include "client.h"
 #include "ofxImGui.h"
 #include "uiWidgets.h"
+#include "ofpy.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0

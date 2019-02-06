@@ -30,6 +30,9 @@ void ofApp::setup()
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
 
+    //init python
+    init_python();
+
     //fill the interface list
     auto niclist = listNetworkInterfaces( ANY, NetworkInterface::IPv4_ONLY );
     for (const auto& interface: niclist )
@@ -201,6 +204,8 @@ void ofApp::update()
         triedToConnect = false;
     }
     
+    PyRun_SimpleString("import sys\n"
+                           "print(sys.version, sys.path)\n");
     
     if(natnet.isConnected()) connected = true;
     else connected = false;

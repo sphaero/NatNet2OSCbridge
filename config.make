@@ -78,6 +78,7 @@
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
+PROJECT_LDFLAGS = $(PY_LDFLAGS)
 
 ################################################################################
 # PROJECT DEFINES
@@ -105,7 +106,7 @@ PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CFLAGS = 
+PROJECT_CFLAGS = $(PY_CFLAGS)
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
@@ -141,3 +142,5 @@ PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
 # PROJECT_CXX = 
 # PROJECT_CC = 
 GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
+PY_CFLAGS := $(shell ./bin/lib/bin/python3-config --cflags)
+PY_LDFLAGS := $(shell ./bin/lib/bin/python3-config --ldflags)
