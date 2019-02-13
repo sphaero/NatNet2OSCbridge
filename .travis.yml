@@ -24,7 +24,7 @@ matrix:
 
 # Linux 64bit, OF master
   - os: linux
-    dist: trusty
+    dist: xenial
     sudo: required
     env: TARGET="linux64" OF_BRANCH="master"
     addons:
