@@ -142,5 +142,14 @@ PROJECT_CFLAGS = $(PY_CFLAGS)
 # PROJECT_CXX = 
 # PROJECT_CC = 
 GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
-PY_CFLAGS := $(shell ./bin/lib/bin/python3-config --cflags)
-PY_LDFLAGS := $(shell ./bin/lib/bin/python3-config --ldflags)
+PY_CFLAGS := $(shell ./bin/python/bin/python3-config --cflags)
+PY_LDFLAGS := $(shell ./bin/python/bin/python3-config --ldflags)
+
+ifeq ($(PY_CFLAGS),)
+PY_CFLAGS := -Iext/cpython/Include -Iext/cpython
+endif
+ifeq ($(PY_LDFLAGS),)
+PY_LDFLAGS := -L$(shell pwd)/bin/ -lpython37
+endif
+
+$(info $(PY_LDFLAGS))
