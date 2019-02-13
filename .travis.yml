@@ -228,9 +228,9 @@ script:
   - mkdir bin/python
   - cd ext/cpython
   - ./configure --prefix $TRAVIS_BUILD_DIR/bin/python && make && make install
-  - cd ..;
-  - mv $APPNAME ~/openFrameworks/apps/devApps/;
-  - cd ~/openFrameworks/apps/devApps/$APPNAME;
+  - cd $TRAVIS_BUILD_DIR/..
+  - mv $APPNAME ~/openFrameworks/apps/devApps/
+  - cd ~/openFrameworks/apps/devApps/$APPNAME
   - if [ "$TARGET" == "linux64" ]; then
        make Debug;
     elif [ "$TARGET" == "osx" ]; then
