@@ -195,6 +195,7 @@ matrix:
     - compiler: gcc
 
 install:
+  - git submodule update --init --recursive
   - cd ~
   - git clone --depth=1 --branch=$OF_BRANCH https://github.com/openframeworks/openFrameworks
   - cd openFrameworks
@@ -224,6 +225,9 @@ install:
 script:
 #  - scripts/ci/addons/build.sh
   - cd $TRAVIS_BUILD_DIR
+  - mkdir bin/python
+  - cd ext/cpython
+  - ./configure --prefix $TRAVIS_BUILD_DIR/bin/python && make && make install
   - cd ..;
   - mv $APPNAME ~/openFrameworks/apps/devApps/;
   - cd ~/openFrameworks/apps/devApps/$APPNAME;
