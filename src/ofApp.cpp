@@ -609,7 +609,7 @@ void ofApp::keyPressed(int key)
     if (key == OF_KEY_ALT )
     {
 #ifdef DEBUG
-#ifdef _MSC_VER
+#ifdef TARGET_WIN32
         if ( IsDebuggerPresent() ) __debugbreak();
 #else
         if ( gdbIsAttached() ) raise(SIGTRAP);
