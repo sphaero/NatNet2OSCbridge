@@ -3,7 +3,8 @@
 
 #pragma once
 
-
+#include <unistd.h>
+#include <fcntl.h>
 #include <string>
 #include "imgui.h"
 #include "Poco/Net/HostEntry.h"
