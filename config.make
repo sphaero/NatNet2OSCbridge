@@ -153,10 +153,7 @@ PY_LDFLAGS := -L$(shell pwd)/bin/ -lpython37
 endif
 
 python_win:
-	cd ext/cpython
-	./configure
-	cd -
+	cd ext/cpython;	./configure
 	wget https://www.python.org/ftp/python/3.7.2/python-3.7.2.post1-embed-win32.zip
-	-mkdir bin/python
 	unzip -uo python-3.7.2.post1-embed-win32.zip -d bin/
 	rm python-3.7.2.post1-embed-win32.zip
