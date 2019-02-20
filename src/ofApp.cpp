@@ -24,9 +24,6 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofLog::setChannel(uiLogWidget.channel);
-#ifdef TARGET_WIN32     // close the console on Windows
-     FreeConsole();
- #endif
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
 
