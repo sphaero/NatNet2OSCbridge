@@ -37,6 +37,7 @@ matrix:
           - g++-4.9
           - sshpass
           - libssl-dev
+          - openssl
 #          - gdb
 
 # Linux 64bit, OF stable
