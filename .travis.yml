@@ -231,7 +231,7 @@ script:
   - cd ~/openFrameworks/apps/devApps/$APPNAME
   - mkdir bin/python
   - cd ext/cpython
-  - ./configure --prefix $TRAVIS_BUILD_DIR/bin/python && make && make install
+  - ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python && make && make install
   - cd ../..
   - if [ "$TARGET" == "linux64" ]; then
        make Debug;
