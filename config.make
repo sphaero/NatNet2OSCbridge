@@ -78,6 +78,7 @@
 # incorporated directly into the final executable application binary.
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
+PROJECT_LDFLAGS = $(PY_LDFLAGS)
 
 ################################################################################
 # PROJECT DEFINES
@@ -105,7 +106,7 @@ PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
-# PROJECT_CFLAGS = 
+PROJECT_CFLAGS = $(PY_CFLAGS)
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
@@ -141,3 +142,18 @@ PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
 # PROJECT_CXX = 
 # PROJECT_CC = 
 GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
+PY_CFLAGS := $(shell ./bin/python/bin/python3-config --cflags)
+PY_LDFLAGS := $(shell ./bin/python/bin/python3-config --ldflags)
+
+ifeq ($(PY_CFLAGS),)
+PY_CFLAGS := -Iext/cpython/Include -Iext/cpython
+endif
+ifeq ($(PY_LDFLAGS),)
+PY_LDFLAGS := -L$(shell pwd)/bin/ -lpython37
+endif
+
+python_win:
+	cd ext/cpython;	./configure
+	wget https://www.python.org/ftp/python/3.7.2/python-3.7.2.post1-embed-win32.zip
+	unzip -uo python-3.7.2.post1-embed-win32.zip -d bin/
+	rm python-3.7.2.post1-embed-win32.zip

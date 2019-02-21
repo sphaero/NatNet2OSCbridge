@@ -24,7 +24,7 @@ matrix:
 
 # Linux 64bit, OF master
   - os: linux
-    dist: trusty
+    dist: xenial
     sudo: required
     env: TARGET="linux64" OF_BRANCH="master"
     addons:
@@ -36,6 +36,8 @@ matrix:
           - gcc-4.9
           - g++-4.9
           - sshpass
+          - libssl-dev
+          - openssl
 #          - gdb
 
 # Linux 64bit, OF stable
@@ -195,6 +197,7 @@ matrix:
     - compiler: gcc
 
 install:
+  - git submodule update --init --recursive
   - cd ~
   - git clone --depth=1 --branch=$OF_BRANCH https://github.com/openframeworks/openFrameworks
   - cd openFrameworks
@@ -223,10 +226,13 @@ install:
 
 script:
 #  - scripts/ci/addons/build.sh
-  - cd $TRAVIS_BUILD_DIR
-  - cd ..;
-  - mv $APPNAME ~/openFrameworks/apps/devApps/;
-  - cd ~/openFrameworks/apps/devApps/$APPNAME;
+  - cd $TRAVIS_BUILD_DIR/..
+  - mv $APPNAME ~/openFrameworks/apps/devApps/
+  - cd ~/openFrameworks/apps/devApps/$APPNAME
+  - mkdir bin/python
+  - cd ext/cpython
+  - ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python && make && make install
+  - cd ../..
   - if [ "$TARGET" == "linux64" ]; then
        make Debug;
     elif [ "$TARGET" == "osx" ]; then

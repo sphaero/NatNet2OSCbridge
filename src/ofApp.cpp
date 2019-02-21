@@ -24,11 +24,11 @@ void ofApp::setup()
 {
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofLog::setChannel(uiLogWidget.channel);
-#ifdef TARGET_WIN32     // close the console on Windows
-     FreeConsole();
- #endif
     ofSetVerticalSync(true);
     ofBackground(67,67,67);
+
+    //init python
+    init_python();
 
     //fill the interface list
     auto niclist = listNetworkInterfaces( ANY, NetworkInterface::IPv4_ONLY );
@@ -201,6 +201,8 @@ void ofApp::update()
         triedToConnect = false;
     }
     
+    PyRun_SimpleString("import sys\n"
+                           "print(sys.version, sys.path)\n");
     
     if(natnet.isConnected()) connected = true;
     else connected = false;
@@ -604,7 +606,7 @@ void ofApp::keyPressed(int key)
     if (key == OF_KEY_ALT )
     {
 #ifdef DEBUG
-#ifdef _MSC_VER
+#ifdef TARGET_WIN32
         if ( IsDebuggerPresent() ) __debugbreak();
 #else
         if ( gdbIsAttached() ) raise(SIGTRAP);

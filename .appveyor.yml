@@ -35,8 +35,10 @@ init:
 # fix missing ssl
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed libopenssl mingw-w64-i686-openssl"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
-
+# python deps
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed mingw-w64-i686-python3-virtualenv python3-pip python3-setuptools"'
 install:
+- git submodule update --init --recursive
 - cd ..
 - git clone --depth=1 --branch=master https://github.com/openframeworks/openFrameworks
 - mkdir openFrameworks\apps\myapps
@@ -50,7 +52,8 @@ install:
 - cd ..\apps\myapps\%APPVEYOR_PROJECT_NAME%
 
 build_script:
-- if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "make Debug && make copy_dlls" 
+- '%MSYS2_PATH%\usr\bin\bash -lc "make python_win && rm bin/libcrypto*.dll bin/libssl*.dll"'
+- if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "make Debug && make copy_dlls"
 - if "%BUILDER%"=="VS" echo "BOE" 
 
 after_build:
