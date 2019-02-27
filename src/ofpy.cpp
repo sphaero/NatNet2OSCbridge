@@ -25,6 +25,9 @@ int init_python()
     //PyImport_AppendInittab("_glm", PyInit__glm);
     //PyImport_AppendInittab("_openframeworks", PyInit__openframeworks);
 
+    //Py_InitializeEx(int initsigs)   // This function works like Py_Initialize() if initsigs is 1.
+                                    // If initsigs is 0, it skips initialization registration of signal handlers, which might be useful when Python is embedded.
+    //Py_NoSiteFlag=1; // Disable the import of the module site and the site-dependent manipulations of sys.path that it entails. Also disable these manipulations if site is explicitly imported later (call site.main() if you want them to be triggered).
     Py_Initialize();
     // expand the python path?
     PyRun_SimpleString(
