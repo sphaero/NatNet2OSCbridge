@@ -61,7 +61,7 @@ matrix:
   - os: osx
     osx_image: xcode9.2
     compiler: clang
-    env: TARGET="osx" OF_BRANCH="stable"
+    env: TARGET="osx" OF_BRANCH="stable" MACOSX_DEPLOYMENT_TARGET=10.9
     addons:
       ssh_known_hosts: pong.hku.nl
 
