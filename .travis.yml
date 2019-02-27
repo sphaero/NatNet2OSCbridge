@@ -234,7 +234,7 @@ script:
   - if [ "$TARGET" == "osx" ]; then 
       brew install openssl xz;
       ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared --with-openssl=$(brew --prefix openssl);
-      make -s && make install
+      make -s && make install;
     fi
   - if [ "$TARGET" == "linux64" ]; then
       ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared && make -s && make install
