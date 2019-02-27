@@ -42,7 +42,7 @@ matrix:
 
 # Linux 64bit, OF stable
   - os: linux
-    dist: trusty
+    dist: xenial
     sudo: required
     env: TARGET="linux64" OF_BRANCH="stable"
     addons:
@@ -54,6 +54,8 @@ matrix:
           - gcc-4.9
           - g++-4.9
           - sshpass
+          - libssl-dev
+          - openssl
 
 # OSX, OF master
   - os: osx
@@ -231,13 +233,16 @@ script:
   - cd ~/openFrameworks/apps/devApps/$APPNAME
   - mkdir bin/python
   - cd ext/cpython
-  - ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python && make && make install
-  - cd ../..
-  - if [ "$TARGET" == "linux64" ]; then
-       make Debug;
-    elif [ "$TARGET" == "osx" ]; then
-       xcodebuild -configuration Release -project "$APPNAME.xcodeproj";
+  - if [ "$TARGET" == "osx" ]; then 
+      brew install openssl xz;
+      ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared --with-openssl=$(brew --prefix openssl);
+      make -s && make install;
     fi
+  - if [ "$TARGET" == "linux64" ]; then
+      ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared && make -s && make install;
+    fi
+  - cd ../..
+  - make Debug
   - cd ..
   - mv $APPNAME $TRAVIS_BUILD_DIR 
   - cd $TRAVIS_BUILD_DIR;

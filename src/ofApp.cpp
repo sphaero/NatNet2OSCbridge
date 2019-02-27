@@ -201,9 +201,6 @@ void ofApp::update()
         triedToConnect = false;
     }
     
-    PyRun_SimpleString("import sys\n"
-                           "print(sys.version, sys.path)\n");
-    
     if(natnet.isConnected()) connected = true;
     else connected = false;
     

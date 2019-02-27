@@ -8,16 +8,30 @@ PyObject* PyInit__glm(void);
 
 int init_python()
 {
-    Py_SetProgramName(L"./python/bin/python");     // L prepend is string literal (ddg it)
-    //PyImport_AppendInittab("_glm", PyInit__glm);
-    //PyImport_AppendInittab("_openframeworks", PyInit__openframeworks);
+#ifdef TARGET_OSX
+    Py_SetProgramName(L"../../../python/bin/python");     // L prepend is string literal (ddg it)
+    Py_SetPythonHome(L"../../../python");
     Py_Initialize();
     // expand the python path?
     PyRun_SimpleString(
                     "import sys\n"
-                    "sys.path.append('.')\n"
+                    "sys.path.append('../../../data')\n"
+                    "print(\"Python {0} initialized. Paths: {1}\".format(sys.version, sys.path))\n");
+
+#else
+    Py_SetProgramName(L"./python/bin/python");     // L prepend is string literal (ddg it)
+    Py_SetPythonHome(L"./python");
+    // for when we want to expose OF in python
+    //PyImport_AppendInittab("_glm", PyInit__glm);
+    //PyImport_AppendInittab("_openframeworks", PyInit__openframeworks);
+
+    Py_Initialize();
+    // expand the python path?
+    PyRun_SimpleString(
+                    "import sys\n"
                     "sys.path.append('data')\n"
-    );
+                    "print(\"Python {0} initialized. Paths: {1}\".format(sys.version, sys.path))\n");
+#endif
 
     return 0;
 }
