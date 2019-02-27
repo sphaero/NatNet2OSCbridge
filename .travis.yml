@@ -237,7 +237,7 @@ script:
       make -s && make install;
     fi
   - if [ "$TARGET" == "linux64" ]; then
-      ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared && make -s && make install
+      ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --disable-shared && make -s && make install;
     fi
   - cd ../..
   - make Debug
