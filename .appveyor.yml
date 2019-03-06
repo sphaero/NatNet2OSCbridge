@@ -67,27 +67,25 @@ after_build:
 - dir
 
 deploy:
-  provider: FTP
-  protocol: sftp
-  host: pong.hku.nl
-  username: buildbot
-  password:
-    secure: sX82pi7zNN1f0L6eYSqOQA==
-  folder: public_html/nightly/
-  artifact: buildzip 
-
-deploy:
-  release: NatNet2OSCbridge_win_$(appveyor_build_version)
-  description: 'Release version'
-  provider: GitHub
-  auth_token:
-    secure: 9ko98o5TER6nN6gtko/ZkCEnfWeMSaRpSe6AXIdBJ6+UdWFI9TRBPrw8y+x6/IuX
-  artifact: buildzip
-  draft: true
-  prerelease: true
-  on:
-    branch: master                 # release from master branch only
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only
+  - provider: FTP
+    protocol: sftp
+    host: pong.hku.nl
+    username: buildbot
+    password:
+      secure: sX82pi7zNN1f0L6eYSqOQA==
+    folder: public_html/nightly/
+    artifact: buildzip 
+  - provider: GitHub
+    release: NatNet2OSCbridge_win_$(appveyor_build_version)
+    description: 'Release version'
+    auth_token:
+      secure: 9ko98o5TER6nN6gtko/ZkCEnfWeMSaRpSe6AXIdBJ6+UdWFI9TRBPrw8y+x6/IuX
+    artifact: buildzip
+    draft: true
+    prerelease: true
+    on:
+      branch: master                 # release from master branch only
+      APPVEYOR_REPO_TAG: true        # deploy on tag push only
 
 artifacts:
   - path: '*.zip'
