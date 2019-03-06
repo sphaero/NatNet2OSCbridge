@@ -81,7 +81,7 @@ deploy:
   description: 'Release version'
   provider: GitHub
   auth_token:
-    secure: <your encrypted token> # your encrypted token from GitHub
+    secure: 9ko98o5TER6nN6gtko/ZkCEnfWeMSaRpSe6AXIdBJ6+UdWFI9TRBPrw8y+x6/IuX
   artifact: buildzip
   draft: true
   prerelease: true
