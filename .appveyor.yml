@@ -76,6 +76,19 @@ deploy:
   folder: public_html/nightly/
   artifact: buildzip 
 
+deploy:
+  release: NatNet2OSCbridge_win_$(appveyor_build_version)
+  description: 'Release version'
+  provider: GitHub
+  auth_token:
+    secure: <your encrypted token> # your encrypted token from GitHub
+  artifact: buildzip
+  draft: true
+  prerelease: true
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
+
 artifacts:
   - path: '*.zip'
     name: buildzip
