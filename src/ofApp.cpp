@@ -763,10 +763,18 @@ void ofApp::doGui() {
             ImGui::Combo("interface", &current_iface_idx, iface_list);
             ImGui::InputText("natnet ip", natnetip_char, 16);
             ImGui::InputInt("FPS", &FPS);
+
+            if ( natnet.isConnected() )
+            {
+                ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2/7.0f, 0.6f, 0.6f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3/7.0f, 0.7f, 0.7f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(4/7.0f, 0.8f, 0.8f));
+            }
             if ( ImGui::Button(ICON_FA_PLUG " Connect") )
             {
                 connectNatnet(iface_list.at(current_iface_idx), ofToString(natnetip_char));
             }
+            if ( natnet.isConnected() ) ImGui::PopStyleColor(3);
 
             ImGui::Spacing();
             ImGui::Separator();
