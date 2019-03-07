@@ -25,10 +25,10 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     modeFlags = mFlags;
     setupSender();
 
-    rigidstr = new char[6 + ip.length() + 6];
-    markstr = new char[6 + ip.length() + 6];
-    skelstr = new char[6 + ip.length() + 6];
-    hierstr = new char[6 + ip.length() + 6];
+    rigidstr = "Rigid##" + ip + ofToString(port);
+    markstr = "Mark##" + ip + ofToString(port);
+    skelstr = "Skel##" + ip + ofToString(port);
+    hierstr = "Hier##" + ip + ofToString(port);
 }
 
 client::~client(){}
@@ -64,39 +64,76 @@ void client::doGui()
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
     
-    sprintf(rigidstr, "Rigid##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(rigidstr, &isRigid);
+    ImGui::Checkbox(rigidstr.c_str(), &isRigid);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send rigidbodies");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
     ImGui::SameLine();
     
-    sprintf(markstr, "Mark##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(markstr, &isMarker);
+    ImGui::Checkbox(markstr.c_str(), &isMarker);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send markers");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
     ImGui::SameLine();
     
-    sprintf(skelstr, "Skel##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(skelstr, &isSkeleton);
+    ImGui::Checkbox(skelstr.c_str(), &isSkeleton);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send Skeletons");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
     ImGui::SameLine();
 
-    sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(hierstr, &deepHierarchy);
-    
+    ImGui::Checkbox(hierstr.c_str(), &deepHierarchy);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send hierarchy of skeletons joints");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+    ImGui::SameLine();
+
     //DISCUSS: We could turn this into a drop-down flag list as well, with checkboxes. Hierarchy could be moved to this as well.
     //We can use the BeginCombo/EndCombo example from ImGui to do this...
-    ImGui::Text("flags:");
     for ( int i = 0; i < clientMode_list.size(); ++i ) {
         ImGui::SameLine();
 
         int mask = pow(2, i);
         bool b = (modeFlags & mask);
 
-        if (ImGui::Checkbox(clientMode_list[i].c_str(), &b)) {
+        if (ImGui::Checkbox(clientMode_list[i].first.c_str(), &b)) {
             if (b) {
-                ofLogVerbose("Enabled " + clientMode_list[i]);
+                ofLogVerbose("Enabled " + clientMode_list[i].second);
                 modeFlags |= mask;
             }
             else {
-                ofLogVerbose("Disabled " + clientMode_list[i]);
+                ofLogVerbose("Disabled " + clientMode_list[i].second);
                 modeFlags &= ~mask;
             }
+        }
+
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted(clientMode_list[i].second.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
         }
     }
 

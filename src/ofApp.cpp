@@ -591,7 +591,6 @@ void ofApp::deleteClient(int &index)
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    
     if (key == 'h'){
         visible = !visible;
     }
@@ -764,18 +763,23 @@ void ofApp::doGui() {
             ImGui::Combo("interface", &current_iface_idx, iface_list);
             ImGui::InputText("natnet ip", natnetip_char, 16);
             ImGui::InputInt("FPS", &FPS);
+
+            if ( natnet.isConnected() )
+            {
+                ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2/7.0f, 0.6f, 0.6f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(3/7.0f, 0.7f, 0.7f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(4/7.0f, 0.8f, 0.8f));
+            }
             if ( ImGui::Button(ICON_FA_PLUG " Connect") )
             {
                 connectNatnet(iface_list.at(current_iface_idx), ofToString(natnetip_char));
             }
+            if ( natnet.isConnected() ) ImGui::PopStyleColor(3);
 
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
 
-            ImGui::PushFont(fontSubTitle);
-            ImGui::Text("New User");
-            ImGui::PopFont();
             static char client_name[128] = "New Client";
             ImGui::InputText("client_name", client_name, IM_ARRAYSIZE(client_name));
             static char client_ip[15] = "127.0.0.1";
@@ -801,7 +805,11 @@ void ofApp::doGui() {
             ImGui::SameLine();
             if (ImGui::Button(ICON_FA_FILE_DOWNLOAD " Load Setup"))
             {
-                setupData(save_fileName);
+                ofFileDialogResult openFileResult = ofSystemLoadDialog("Select an XML file to load");
+                if ( openFileResult.bSuccess )
+                {
+                    setupData( openFileResult.getPath() );
+                }
             }
             ImGui::SameLine();
             if (ImGui::Button(ICON_FA_FOLDER_OPEN " Open Folder"))
@@ -812,10 +820,9 @@ void ofApp::doGui() {
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
-
-            ImGui::PushFont(fontSubTitle);
-            ImGui::Text("NatNet Information: ");
-            ImGui::PopFont();
+        }
+        if ( ImGui::CollapsingHeader("NatNet statistics", NULL, ImGuiTreeNodeFlags_DefaultOpen ) )
+        {
             ImGui::Columns(2, "natnetstats");
             ImGui::Text("frames: "); ImGui::NextColumn();
             ImGui::Text("%s",ofToString(natnet.getFrameNumber()).c_str()); ImGui::NextColumn();
