@@ -71,10 +71,10 @@ private:
     string          skelstr;
     string          hierstr;
 
-    vector<string>   clientMode_list = 
+    vector<pair<string,string>>   clientMode_list =
     {
-        "Velocity",
-        "Full Skeleton"
+        { "Vel", "Send velocity of rigidbodies" },
+        { "Full", "Send full skeleton data" }
     };
 };
 
