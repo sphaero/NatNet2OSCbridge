@@ -772,9 +772,6 @@ void ofApp::doGui() {
             ImGui::Separator();
             ImGui::Spacing();
 
-            ImGui::PushFont(fontSubTitle);
-            ImGui::Text("New User");
-            ImGui::PopFont();
             static char client_name[128] = "New Client";
             ImGui::InputText("client_name", client_name, IM_ARRAYSIZE(client_name));
             static char client_ip[15] = "127.0.0.1";
