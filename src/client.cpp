@@ -25,10 +25,10 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     modeFlags = mFlags;
     setupSender();
 
-    rigidstr = new char[6 + ip.length() + 6];
-    markstr = new char[6 + ip.length() + 6];
-    skelstr = new char[6 + ip.length() + 6];
-    hierstr = new char[6 + ip.length() + 6];
+    rigidstr = "Rigid##" + ip + ofToString(port);
+    markstr = "Mark##" + ip + ofToString(port);
+    skelstr = "Skel##" + ip + ofToString(port);
+    hierstr = "Hierarchy##" + ip + ofToString(port);
 }
 
 client::~client(){}
@@ -64,20 +64,16 @@ void client::doGui()
     ImGui::SameLine();
     ImGui::TextColored(ImVec4(0.5f,0.3f,1.0f,1.0f), "%d", port);
     
-    sprintf(rigidstr, "Rigid##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(rigidstr, &isRigid);
+    ImGui::Checkbox(rigidstr.c_str(), &isRigid);
     ImGui::SameLine();
     
-    sprintf(markstr, "Mark##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(markstr, &isMarker);
+    ImGui::Checkbox(markstr.c_str(), &isMarker);
     ImGui::SameLine();
     
-    sprintf(skelstr, "Skel##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(skelstr, &isSkeleton);
+    ImGui::Checkbox(skelstr.c_str(), &isSkeleton);
     ImGui::SameLine();
 
-    sprintf(hierstr, "Hierarchy##%s%i", ip.c_str(), port);
-    ImGui::Checkbox(hierstr, &deepHierarchy);
+    ImGui::Checkbox(hierstr.c_str(), &deepHierarchy);
     
     //DISCUSS: We could turn this into a drop-down flag list as well, with checkboxes. Hierarchy could be moved to this as well.
     //We can use the BeginCombo/EndCombo example from ImGui to do this...

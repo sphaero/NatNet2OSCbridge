@@ -66,10 +66,10 @@ private:
     int             modeFlags;
     ofxOscSender    sender;
 
-    char*            rigidstr;
-    char*            markstr;
-    char*            skelstr;
-    char*            hierstr;
+    string          rigidstr;
+    string          markstr;
+    string          skelstr;
+    string          hierstr;
 
     vector<string>   clientMode_list = 
     {
