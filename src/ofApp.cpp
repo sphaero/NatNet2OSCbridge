@@ -797,7 +797,11 @@ void ofApp::doGui() {
             ImGui::SameLine();
             if (ImGui::Button(ICON_FA_FILE_DOWNLOAD " Load Setup"))
             {
-                setupData(save_fileName);
+                ofFileDialogResult openFileResult = ofSystemLoadDialog("Select an XML file to load");
+                if ( openFileResult.bSuccess )
+                {
+                    setupData( openFileResult.getPath() );
+                }
             }
             ImGui::SameLine();
             if (ImGui::Button(ICON_FA_FOLDER_OPEN " Open Folder"))
