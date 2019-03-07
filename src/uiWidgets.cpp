@@ -3,6 +3,7 @@
 uiLogger::uiLogger()
 {
     channel = std::shared_ptr<ofxImGui::LoggerChannel>(new ofxImGui::LoggerChannel());
+    channel->capture_stdout();
 }
 
 void uiLogger::doGui()
