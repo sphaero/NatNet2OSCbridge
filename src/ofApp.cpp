@@ -591,7 +591,6 @@ void ofApp::deleteClient(int &index)
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
-    
     if (key == 'h'){
         visible = !visible;
     }
@@ -812,10 +811,9 @@ void ofApp::doGui() {
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
-
-            ImGui::PushFont(fontSubTitle);
-            ImGui::Text("NatNet Information: ");
-            ImGui::PopFont();
+        }
+        if ( ImGui::CollapsingHeader("NatNet statistics", NULL, ImGuiTreeNodeFlags_DefaultOpen ) )
+        {
             ImGui::Columns(2, "natnetstats");
             ImGui::Text("frames: "); ImGui::NextColumn();
             ImGui::Text("%s",ofToString(natnet.getFrameNumber()).c_str()); ImGui::NextColumn();
