@@ -52,6 +52,10 @@ int init_python()
                     "print(\"Python {0} initialized. Paths: {1}\".format(sys.version, sys.path))\n");
 #endif
 
+    // TODO: just import all .py files in dir? Or better when run method is called try to look it up from the pymods map and load and insert otherwise!
+    PyObject *pHelper;
+    pHelper = import_python_file("helpers");
+    if (pHelper != NULL ) pymods.insert(std::pair<std::string, PyObject*>("helpers", pHelper));
     return 0;
 }
 
@@ -84,9 +88,9 @@ PyObject* import_python_file( std::string filename )
     return NULL;
 }
 
-int run_method(PyObject* pModule, const std::string method_name)
+PyObject* run_method(PyObject* pModule, const std::string method_name)
 {
-    PyObject *pFunc, *pValue;
+    PyObject *pFunc = NULL, *pRetObject = NULL;
     if ( pModule != NULL )
     {
         pFunc = PyObject_GetAttrString( pModule, method_name.c_str() );
@@ -94,30 +98,42 @@ int run_method(PyObject* pModule, const std::string method_name)
         {
             //we have a method
             // determine args TODO
-            pValue = PyObject_CallObject(pFunc, NULL);
-            if ( pValue != NULL )
-            {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue));
-                Py_DECREF(pValue);
-                Py_DECREF(pFunc);
-                return 0;
-            }
-            else
-            {
-                if (PyErr_Occurred())
-                    PyErr_Print();
-                ofLogError() << "Call: " << method_name << " failed";
-                Py_DECREF(pFunc);
-                return 1;
-            }
+            if (PyErr_Occurred())
+                PyErr_Print();
+            ofLogError() << "Call: " << method_name << " failed";
+            pRetObject = PyObject_CallObject(pFunc, NULL);
+            Py_DECREF(pFunc);
+            //Py_DECREF(pModule);
+            return pRetObject;
         }
         else
         {
             if (PyErr_Occurred())
                 PyErr_Print();
             ofLogError() << "Can't find method: " << method_name;
-            return 2;
+            Py_DECREF(pFunc);
+            //Py_DECREF(pModule);
+            return NULL;
         }
     }
-    return 3;
+    Py_DECREF(pFunc);
+    //Py_DECREF(pModule);
+    return NULL;
+}
+
+std::string run_method(std::string python_file, const std::string method_name)
+{
+    PyObject *pModule = pymods.at(python_file);
+    PyObject *pValue = NULL;
+    std::string ret = "";
+    pValue = run_method(pModule, method_name);
+    if ( pValue != NULL && PyUnicode_Check(pValue) )
+    {
+        PyObject *pStr = PyUnicode_AsUTF8String(pValue);
+        ret = PyBytes_AS_STRING(pStr);
+        Py_DECREF(pStr);
+    }
+    Py_DECREF(pValue);
+    //Py_DECREF(pModule);
+    return ret;
 }
