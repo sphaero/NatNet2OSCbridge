@@ -99,8 +99,10 @@ PyObject* run_method(PyObject* pModule, const std::string method_name)
             //we have a method
             // determine args TODO
             if (PyErr_Occurred())
+            {
                 PyErr_Print();
-            ofLogError() << "Call: " << method_name << " failed";
+                ofLogError() << "Call: " << method_name << " failed";
+            }
             pRetObject = PyObject_CallObject(pFunc, NULL);
             Py_DECREF(pFunc);
             //Py_DECREF(pModule);
