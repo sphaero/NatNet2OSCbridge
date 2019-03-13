@@ -157,3 +157,40 @@ python_win:
 	wget https://www.python.org/ftp/python/3.7.2/python-3.7.2.post1-embed-win32.zip
 	unzip -uo python-3.7.2.post1-embed-win32.zip -d bin/
 	rm python-3.7.2.post1-embed-win32.zip
+
+osx_bundle: 
+	$(eval BIN_NAME = $(APPNAME)_debug)
+# overwrite current Info.plist
+	@echo $(APP_NAME)
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>nl.hku.ect</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(GIT_VERSION)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+
+	@echo TARGET=$(TARGET)
+	@mv bin/data bin/$(BIN_NAME).app/Contents/Resources
+	@mv bin/python bin/$(BIN_NAME).app/Contents/Resources
+
+# TODO create dmg
+	@echo "TODO create DMG"
+
