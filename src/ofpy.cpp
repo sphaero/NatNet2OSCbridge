@@ -52,17 +52,30 @@ int init_python()
                     "print(\"Python {0} initialized. Paths: {1}\".format(sys.version, sys.path))\n");
 #endif
 
-    // TODO: just import all .py files in dir? Or better when run method is called try to look it up from the pymods map and load and insert otherwise!
+    // load helper.py, needed for version info amongst others
     PyObject *pHelper;
     pHelper = import_python_file("helpers");
-    if (pHelper != NULL ) pymods.insert(std::pair<std::string, PyObject*>("helpers", pHelper));
     return 0;
 }
 
+// returns a PyObject pointer to the loaded file or NULL if errored.
+// Loaded files are cached for fast retrieval later.
 PyObject* import_python_file( std::string filename )
 {
-    PyObject *pName, *pModule;
-    pName = PyUnicode_DecodeFSDefault( filename.c_str() );
+    PyObject *pModule;
+
+    // check if already loaded
+    try
+    {
+        pModule = pymods.at( filename );
+        return pModule;
+    }
+    catch ( std::out_of_range )
+    {
+        ofLogVerbose() << "loading " << filename << " from disk" << std::endl;
+    }
+
+    PyObject *pName = PyUnicode_DecodeFSDefault( filename.c_str() );
     if ( pName != NULL )
     {
         pModule = PyImport_Import( pName );
@@ -74,16 +87,14 @@ PyObject* import_python_file( std::string filename )
         }
         else
         {
-            if (PyErr_Occurred())
+            if ( PyErr_Occurred() )
                 PyErr_Print();
             ofLogError() << "error importing " << filename;
-            //return 2;
         }
     }
     else
     {
         ofLogError() << "error loading "<< filename;
-        //return 3;
     }
     return NULL;
 }
