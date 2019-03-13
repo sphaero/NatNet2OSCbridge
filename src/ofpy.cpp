@@ -72,7 +72,7 @@ PyObject* import_python_file( std::string filename )
     }
     catch ( std::out_of_range )
     {
-        ofLogVerbose() << "loading " << filename << " from disk" << std::endl;
+        ofLogVerbose() << "loading " << filename << " from disk";
     }
 
     PyObject *pName = PyUnicode_DecodeFSDefault( filename.c_str() );
