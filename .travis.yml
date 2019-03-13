@@ -253,6 +253,7 @@ git:
 after_success:
   - git checkout config.make
   - git fetch --all --tags
+  - if [ "$TARGET" == "osx" ]; then make osx_bundle; fi
   - cd bin
 # TRAVIS_TAG is ony set when it is a tag (or release)
   - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then 
