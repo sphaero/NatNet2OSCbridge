@@ -22,6 +22,9 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+#ifdef TARGET_OSX
+    ofSetDataPathRoot("../Resources/");
+#endif
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofLog::setChannel(uiLogWidget.channel);
     ofSetVerticalSync(true);
