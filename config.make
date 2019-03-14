@@ -192,3 +192,8 @@ osx_bundle:
 
 	@echo --------------------- Creating Disk Image for $(APPNAME) $(GIT_VERSION) --------------------
 	@hdiutil create -fs HFSX -layout SPUD "$(APPNAME)_$(GIT_VERSION).dmg" -srcfolder bin -format UDBZ -volname "$(APPNAME)_$(GIT_VERSION)" -quiet
+
+undo_osx_bundle:
+	$(eval BIN_NAME = $(APPNAME)_debug)
+	@mv bin/$(BIN_NAME).app/Contents/Resources/data bin/
+	@mv bin/$(BIN_NAME).app/Contents/Resources/python bin/
