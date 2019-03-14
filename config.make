@@ -193,3 +193,7 @@ osx_bundle:
 
 # TODO create dmg
 	@echo "TODO create DMG"
+
+osx_dmg:
+	@echo --------------------- Creating Disk Image for $(APPNAME) $(GIT_VERSION) --------------------
+	@hdiutil create -fs HFSX -layout SPUD "$(APPNAME)_$(GIT_VERSION).dmg" -srcfolder bin -format UDBZ -volname "$(APPNAME)_$(GIT_VERSION)" -quiet
