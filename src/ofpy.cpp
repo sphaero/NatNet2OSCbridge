@@ -52,13 +52,30 @@ int init_python()
                     "print(\"Python {0} initialized. Paths: {1}\".format(sys.version, sys.path))\n");
 #endif
 
+    // load helper.py, needed for version info amongst others
+    PyObject *pHelper;
+    pHelper = import_python_file("helpers");
     return 0;
 }
 
+// returns a PyObject pointer to the loaded file or NULL if errored.
+// Loaded files are cached for fast retrieval later.
 PyObject* import_python_file( std::string filename )
 {
-    PyObject *pName, *pModule;
-    pName = PyUnicode_DecodeFSDefault( filename.c_str() );
+    PyObject *pModule;
+
+    // check if already loaded
+    try
+    {
+        pModule = pymods.at( filename );
+        return pModule;
+    }
+    catch ( std::out_of_range )
+    {
+        ofLogVerbose() << "loading " << filename << " from disk";
+    }
+
+    PyObject *pName = PyUnicode_DecodeFSDefault( filename.c_str() );
     if ( pName != NULL )
     {
         pModule = PyImport_Import( pName );
@@ -70,23 +87,21 @@ PyObject* import_python_file( std::string filename )
         }
         else
         {
-            if (PyErr_Occurred())
+            if ( PyErr_Occurred() )
                 PyErr_Print();
             ofLogError() << "error importing " << filename;
-            //return 2;
         }
     }
     else
     {
         ofLogError() << "error loading "<< filename;
-        //return 3;
     }
     return NULL;
 }
 
-int run_method(PyObject* pModule, const std::string method_name)
+PyObject* run_method(PyObject* pModule, const std::string method_name)
 {
-    PyObject *pFunc, *pValue;
+    PyObject *pFunc = NULL, *pRetObject = NULL;
     if ( pModule != NULL )
     {
         pFunc = PyObject_GetAttrString( pModule, method_name.c_str() );
@@ -94,30 +109,44 @@ int run_method(PyObject* pModule, const std::string method_name)
         {
             //we have a method
             // determine args TODO
-            pValue = PyObject_CallObject(pFunc, NULL);
-            if ( pValue != NULL )
+            if (PyErr_Occurred())
             {
-                printf("Result of call: %ld\n", PyLong_AsLong(pValue));
-                Py_DECREF(pValue);
-                Py_DECREF(pFunc);
-                return 0;
-            }
-            else
-            {
-                if (PyErr_Occurred())
-                    PyErr_Print();
+                PyErr_Print();
                 ofLogError() << "Call: " << method_name << " failed";
-                Py_DECREF(pFunc);
-                return 1;
             }
+            pRetObject = PyObject_CallObject(pFunc, NULL);
+            Py_DECREF(pFunc);
+            //Py_DECREF(pModule);
+            return pRetObject;
         }
         else
         {
             if (PyErr_Occurred())
                 PyErr_Print();
             ofLogError() << "Can't find method: " << method_name;
-            return 2;
+            Py_DECREF(pFunc);
+            //Py_DECREF(pModule);
+            return NULL;
         }
     }
-    return 3;
+    Py_DECREF(pFunc);
+    //Py_DECREF(pModule);
+    return NULL;
+}
+
+std::string run_method(std::string python_file, const std::string method_name)
+{
+    PyObject *pModule = pymods.at(python_file);
+    PyObject *pValue = NULL;
+    std::string ret = "";
+    pValue = run_method(pModule, method_name);
+    if ( pValue != NULL && PyUnicode_Check(pValue) )
+    {
+        PyObject *pStr = PyUnicode_AsUTF8String(pValue);
+        ret = PyBytes_AS_STRING(pStr);
+        Py_DECREF(pStr);
+    }
+    Py_DECREF(pValue);
+    //Py_DECREF(pModule);
+    return ret;
 }

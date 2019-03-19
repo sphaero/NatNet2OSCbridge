@@ -851,12 +851,36 @@ void ofApp::doGui() {
         }
         ImGui::End();
         
+        if ( version_popup )
+        {
+            // show the help window
+            //ImGui::ShowDemoWindow(&version_popup);
+            ImGui::SetNextWindowPos( ImVec2(ofGetWindowWidth()/2, ofGetWindowHeight()/2 ), ImGuiCond_FirstUseEver, ImVec2(0.5,0.5) );
+            ImGui::SetNextWindowSize( ImVec2(ofGetWindowWidth()/2, ofGetWindowHeight()/2), ImGuiCond_FirstUseEver );
+            ImGui::Begin("About & information", &version_popup, ImGuiWindowFlags_AlwaysUseWindowPadding );
+            ImGui::Columns(2, "version_info");
+            ImGui::Text("App Version:"); ImGui::NextColumn();
+            ImGui::TextWrapped( VERSION ); ImGui::NextColumn();
+
+            ImGui::Text("OS details:"); ImGui::NextColumn();
+            string osdet = run_method("helpers", "platform_details").c_str();
+            ImGui::InputTextMultiline("##osdetails", (char *)osdet.c_str(), osdet.length(), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_ReadOnly);
+            ImGui::NextColumn();
+
+            ImGui::Text("Python details"); ImGui::NextColumn();
+            string pydet = run_method("helpers", "python_details").c_str();
+            ImGui::InputTextMultiline("##pydetails", (char *)pydet.c_str(), pydet.length(), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8), ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_ReadOnly);
+            ImGui::NextColumn();
+
+            ImGui::End();
+        }
         
         if(openModal){
             ImGui::OpenPopup("userFeedback");
             openModal = false;
         }
-        
+
+
         // MODAL POP UP
         if (ImGui::BeginPopupModal("userFeedback", NULL, ImGuiWindowFlags_AlwaysAutoResize))
         {
@@ -864,20 +888,6 @@ void ofApp::doGui() {
             ImGui::Separator();
             if (ImGui::Button("OK", ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
             ImGui::SetItemDefaultFocus();
-            ImGui::EndPopup();
-        }
-
-        if (version_popup) {
-            ImGui::OpenPopup("Version Info");
-        }
-        if (ImGui::BeginPopupModal("Version Info"))
-        {
-            ImGui::Text( "Version: " VERSION );
-            //TODO: more info through python
-            if ( ImGui::Button("Close") ) {
-                version_popup = false;
-                ImGui::CloseCurrentPopup();
-            }
             ImGui::EndPopup();
         }
 
