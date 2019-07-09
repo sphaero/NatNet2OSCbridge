@@ -8,6 +8,7 @@
 #include "ofxImGui.h"
 #include "uiWidgets.h"
 #include "ofpy.h"
+#include "ImNodes.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -65,6 +66,8 @@ public:
     ImFont* fontSubTitle;
     ImFont* fontTitle;
     uiLogger uiLogWidget;
+
+    ImNodes::CanvasState* gCanvas = nullptr;
     
 private:
     void                    sendAllMarkers();
@@ -108,4 +111,12 @@ private:
     char*                save_fileName;
     int                 current_iface_idx;
     vector<string>      iface_list;
+    ImVec2              mocap_node_pos = {20,20};
+    bool                mocap_node_selected = false;
+    ImNodes::Ez::SlotInfo mocap_node_outputs[3] = {
+        { "RigidBodies", 1 },
+        { "Markers", 1 },
+        { "Skeletons", 1 }
+    };
+
 };

@@ -13,6 +13,8 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxImGui.h"
+#include "ImNodes.h"
+#include "ImNodesEz.h"
 
 //These function as bit flags
 enum ClientFlags
@@ -52,6 +54,11 @@ public:
     int &getModeFlags();
 
     ofEvent<int> deleteClient;
+
+    ImVec2 pos;
+    bool selected = false;
+    ImNodes::Ez::SlotInfo inputs[1] = {{"In", 1}};
+
     
 private:
     int             index;

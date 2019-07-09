@@ -74,6 +74,16 @@ void ofApp::setup()
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
     guiVisible = true;
+
+    // Canvas must be created after ImGui initializes, because constructor accesses ImGui style to configure default
+    // colors.
+    gCanvas = new ImNodes::CanvasState();
+    // tweak colors
+    auto &style = ImGui::GetStyle();
+    //gCanvas->colors[ImNodes::ColNodeBg] = style.Colors[ImGuiCol_ChildWindowBg];
+    gCanvas->colors[ImNodes::ColNodeActiveBg] = ImVec4(1.0f, 1.0f, 0.f,1.0f); //style.Colors[ImGuiCol_PopupBg];
+    gCanvas->colors[ImNodes::ColNodeBorder] = style.Colors[ImGuiCol_ScrollbarBg];
+
 }
 
 void ofApp::setupConnectionInterface(){
@@ -712,6 +722,7 @@ void ofApp::doGui() {
         auto mainSettings = ofxImGui::Settings();
         //ui stuff
         gui.begin();
+
         // Create a main menu bar
         float mainmenu_height = 0;
         if (ImGui::BeginMainMenuBar())
@@ -731,25 +742,44 @@ void ofApp::doGui() {
         // clients window
         ImGui::SetNextWindowPos(ImVec2( 0, mainmenu_height ));
         ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()-mainmenu_height));
-        ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus);
-        
-        // DRAW CLIENTS
-        int ypos = 0;
-        for (int i = 0; i < clients.size(); i++)
+        if ( ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus) )
         {
-            bool enabled = true;
-            string name = ICON_FA_DESKTOP " " + clients[i]->getName()+"##"+clients[i]->getIP()+ofToString(clients[i]->getPort());
-            if ( ImGui::CollapsingHeader(name.c_str(), &enabled, ImGuiTreeNodeFlags_DefaultOpen) )
+            ImNodes::BeginCanvas(gCanvas);
+            // Draw NatNet Node
+            if ( ImNodes::Ez::BeginNode(this, "MOCAP", &mocap_node_pos, &mocap_node_selected) )
+            {
+                ImNodes::Ez::InputSlots(NULL, 0 );
+                ImNodes::Ez::OutputSlots(mocap_node_outputs, 3);
+                ImNodes::Ez::EndNode();
+            }
+
+            // DRAW CLIENTS
+            int ypos = 0;
+            for (int i = 0; i < clients.size(); i++)
             {
                 clients[i]->doGui();
+                if (clients[i]->pos.x == 0 )
+                {
+                    ImNodes::AutoPositionNode(clients[i]);
+                }
+
+                if ( clients[i]->selected && ImGui::IsKeyPressedMap(ImGuiKey_Delete) )
+                {
+                    ofNotifyEvent(clients[i]->deleteClient,i);
+                }
+
+                // Client connections
+                if (clients[i]->getRigid() )
+                    clients[i]->setRigid( ImNodes::Connection(clients[i], "In", this, "RigidBodies") );
+                if (clients[i]->getMarker() )
+                    clients[i]->setMarker( ImNodes::Connection(clients[i], "In", this, "Markers") );
+                if (clients[i]->getSkeleton() )
+                    clients[i]->setSkeleton( ImNodes::Connection(clients[i], "In", this, "Skeletons") );
             }
-            if ( ! enabled )
-            {
-                ofNotifyEvent(clients[i]->deleteClient,i);
-            }
+
+            ImNodes::EndCanvas();
+            ImGui::End();
         }
-        ImGui::End();
-        
         // right dock
         ImGui::SetNextWindowPos(ImVec2( ofGetWidth()-350, mainmenu_height ));
         ImGui::SetNextWindowSize(ImVec2( 350, ofGetHeight()-mainmenu_height));
@@ -892,6 +922,7 @@ void ofApp::doGui() {
         }
 
         gui.end();
+
         this->mouseOverGui = mainSettings.mouseOverGui;
     }
 }
