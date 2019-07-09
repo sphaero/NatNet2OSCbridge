@@ -27,6 +27,11 @@ public:
     void setup();
 };
 
+class GuiCorporateGreyTheme : public ofxImGui::BaseTheme
+{
+public:
+    void setup();
+};
 
 
 #endif // GUIBLUETHEME_H
