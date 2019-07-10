@@ -81,7 +81,7 @@ void ofApp::setup()
     // tweak colors
     auto &style = ImGui::GetStyle();
     //gCanvas->colors[ImNodes::ColNodeBg] = style.Colors[ImGuiCol_ChildWindowBg];
-    gCanvas->colors[ImNodes::ColNodeActiveBg] = ImVec4(1.0f, 1.0f, 0.f,1.0f); //style.Colors[ImGuiCol_PopupBg];
+    gCanvas->colors[ImNodes::ColNodeActiveBg] = style.Colors[ImGuiCol_ChildWindowBg];
     gCanvas->colors[ImNodes::ColNodeBorder] = style.Colors[ImGuiCol_ScrollbarBg];
 
 }
@@ -172,7 +172,9 @@ void ofApp::setupData( string filename="" )
         bool live = data.getValue("live", 0);
         bool hier = data.getValue("hierarchy", 0);
         int modeFlags = (int)data.getValue("mode", 0);
-        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags);
+        float posX = (float)data.getValue("posX", 0.f);
+        float posY = (float)data.getValue("posY", 0.f);
+        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags,posX, posY);
         data.popTag();
     }
 
@@ -223,7 +225,7 @@ void ofApp::draw()
     if ( this->guiVisible ) { gui.draw(); }
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags, float posX, float posY)
 {
     // Check if we do not add a client with the same properties twice
     bool uniqueClient = true;
@@ -240,6 +242,15 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
     
     if(uniqueClient){
         client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, modeFlags);
+        if (posX == 0.f && posY == 0.f )
+        {
+            // there's some auto position functionality in ImNodes which would be cleaner!
+            c->pos = ImVec2(300.f, clients.size()*80.f+20.f);
+        }
+        else
+        {
+            c->pos = ImVec2(posX, posY);
+        }
         ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
         clients.push_back(c);
         if(UserFeedback != "") UserFeedback = "";
@@ -687,6 +698,8 @@ void ofApp::saveData(string filepath="")
         save.addValue("live", clients[i]->getLive());
         save.addValue("hierarchy", clients[i]->getHierarchy());
         save.addValue("mode", clients[i]->getModeFlags());
+        save.addValue("posX", clients[i]->pos.x );
+        save.addValue("posY", clients[i]->pos.y );
         save.popTag();
     }
     save.save(filepath);
@@ -818,7 +831,7 @@ void ofApp::doGui() {
             ImGui::InputInt("client port", &client_port);
             if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
             {
-                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0);
+                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0, 0.f, 0.f);
 
             }
 
