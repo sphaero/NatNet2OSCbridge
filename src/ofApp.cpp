@@ -72,7 +72,6 @@ void ofApp::setup()
     fontSubTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 16.0f);
     fontTitle = io.Fonts->AddFontFromFileTTF(t.c_str(), 18.0f);
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
-    
     guiVisible = true;
 
     // Canvas must be created after ImGui initializes, because constructor accesses ImGui style to configure default
@@ -755,7 +754,7 @@ void ofApp::doGui() {
         // clients window
         ImGui::SetNextWindowPos(ImVec2( 0, mainmenu_height ));
         ImGui::SetNextWindowSize(ImVec2( ofGetWidth()-351, ofGetHeight()-mainmenu_height));
-        if ( ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus) )
+        if ( ImGui::Begin("clientspanel", NULL,  ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBringToFrontOnFocus ) )
         {
             ImNodes::BeginCanvas(gCanvas);
             // Draw NatNet Node

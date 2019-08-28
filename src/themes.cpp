@@ -39,9 +39,6 @@ void GuiBlueTheme::setup()
         style.Colors[ImGuiCol_Header] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.76f );
         style.Colors[ImGuiCol_HeaderHovered] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.86f );
         style.Colors[ImGuiCol_HeaderActive] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 1.00f );
-        style.Colors[ImGuiCol_Column] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.32f );
-        style.Colors[ImGuiCol_ColumnHovered] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.78f );
-        style.Colors[ImGuiCol_ColumnActive] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 1.00f );
         style.Colors[ImGuiCol_ResizeGrip] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.15f );
         style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 0.78f );
         style.Colors[ImGuiCol_ResizeGripActive] = ImVec4( color_for_head.x, color_for_head.y, color_for_head.z, 1.00f );
@@ -146,9 +143,6 @@ void GuiGreenTheme::setup()
     style.Colors[ImGuiCol_Header]                = MED( 0.76f);
     style.Colors[ImGuiCol_HeaderHovered]         = MED( 0.86f);
     style.Colors[ImGuiCol_HeaderActive]          = HI( 1.00f);
-    style.Colors[ImGuiCol_Column]                = ImVec4(0.14f, 0.16f, 0.19f, 1.00f);
-    style.Colors[ImGuiCol_ColumnHovered]         = MED( 0.78f);
-    style.Colors[ImGuiCol_ColumnActive]          = MED( 1.00f);
     style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.47f, 0.77f, 0.83f, 0.04f);
     style.Colors[ImGuiCol_ResizeGripHovered]     = MED( 0.78f);
     style.Colors[ImGuiCol_ResizeGripActive]      = MED( 1.00f);
@@ -203,9 +197,6 @@ void GuiCherryTheme::setup() {
     style.Colors[ImGuiCol_Header]                = MED2( 0.76f);
     style.Colors[ImGuiCol_HeaderHovered]         = MED2( 0.86f);
     style.Colors[ImGuiCol_HeaderActive]          = HI2( 1.00f);
-    style.Colors[ImGuiCol_Column]                = ImVec4(0.14f, 0.16f, 0.19f, 1.00f);
-    style.Colors[ImGuiCol_ColumnHovered]         = MED2( 0.78f);
-    style.Colors[ImGuiCol_ColumnActive]          = MED2( 1.00f);
     style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(0.47f, 0.77f, 0.83f, 0.04f);
     style.Colors[ImGuiCol_ResizeGripHovered]     = MED2( 0.78f);
     style.Colors[ImGuiCol_ResizeGripActive]      = MED2( 1.00f);
