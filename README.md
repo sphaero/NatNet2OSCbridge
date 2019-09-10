@@ -1,6 +1,8 @@
 # NatNet2OSCbridge
 
-MOCAP data to OSC
+MOCAP data to OSC.
+
+Download the latests version for your platform at the [releases tab](https://github.com/hku-ect/NatNet2OSCbridge/releases)
 
 ## Feature overview
 
@@ -39,8 +41,9 @@ https://drive.google.com/drive/u/0/folders/0BzwxZounZTt9bjYxWmlnRGZYRE0
 ## OSC Data Structure
 
 In the NatNet2OSCbridge there are two modes of sending the data over OSC. 
-- Mode ONE with Hierarchy switched <b>OFF</b>
-- Mode TWO with Hierarchy switched <b>ON</b>
+
+* Mode ONE with Hierarchy **unchecked**
+* Mode TWO with Hierarchy **checked**
 
 ## Mode ONE with Hierarchy switched <b>OFF</b>
 
@@ -68,11 +71,11 @@ The OSC message consist of a message with with the label `/rigidbody` and contai
 
 `/rigidbody 0 Blokje2 0.995632 0.025337 0.034089 0.083149 0.995632 0.025337 0.034089`
 
-The units are floats and can either be in meters of centimeters depending on the recording.
+The units are floats and can either be in meters or centimeters depending on the recording.
 
 #### Skeleton message: `/skeleton/<NameOfSkeleton>/<NameOfJoint>`
 
-The OSC message consist of a message with with the label `/skeleton/<NameOfSkeleton>/<NameOfJoint>` and contains 14 values:
+The OSC message consist of a message with the label `/skeleton/<NameOfSkeleton>/<NameOfJoint>` and contains 14 values:
 
 - Value 00: Name (string) of the skeleton joint
 - Value 01: X position of skeleton joint
@@ -95,13 +98,13 @@ The OSC message consist of a message with with the label `/skeleton/<NameOfSkele
 
 `/skeleton/Jan/Ab Ab -2.34777 0.940245 -0.599119 0.071686 0.996859 0.00257 0.033565`
 
-The units are floats and can either be in meters of centimeters depending on the recording.
+The units are floats and can either be in meters or centimeters depending on the recording.
 
 ## Mode TWO with Hierarchy switched <b>ON</b>
 
 #### Rigidbody message: `/rigidbody/<NameRigidBody>`
 
-The OSC message consist of a message with with the label `/rigidbody/<NameRigidBody>` and contains 15 values:
+The OSC message consist of a message with the label `/rigidbody/<NameRigidBody>` and contains 15 values:
 
 - Value 00: ID (int) of rigidbody
 - Value 01: Name (string) of rigidbody
@@ -123,11 +126,11 @@ The OSC message consist of a message with with the label `/rigidbody/<NameRigidB
 
 `/rigidbody 0 Blokje2 0.995632 0.025337 0.034089 0.083149 0.995632 0.025337 0.034089`
 
-The units are floats and can either be in meters of centimeters depending on the recording.
+The units are floats and can either be in meters or centimeters depending on the recording.
 
 #### Skeleton message: `/skeleton/<NameOfSkeleton>/<NameOfJoint>`
 
-The OSC message consist of a message with with the label `/skeleton/<NameOfSkeleton>/<NameOfJoint>` and contains 14 values:
+The OSC message consist of a message with the label `/skeleton/<NameOfSkeleton>/<NameOfJoint>` and contains 14 values:
 
 - Value 00: Name (string) of the skeleton joint
 - Value 01: X position of skeleton joint
@@ -150,14 +153,13 @@ The OSC message consist of a message with with the label `/skeleton/<NameOfSkele
 
 `/skeleton/Jan/Ab Ab -2.34777 0.940245 -0.599119 0.071686 0.996859 0.00257 0.033565`
 
-The units are floats and can either be in meters of centimeters depending on the recording.
-
+The units are floats and can either be in meters or centimeters depending on the recording.
 
 # Build instructions
 
 This application is build upon [OpenFrameworks](https://github.com/openframeworks/openframeworks). In order to build this application you will need openframeworks installed.
 
-The following steps need to be taken to build the application from git repositories.
+The following steps need to be taken to build the application from git repositories. Please note that all these steps require the GNU build tools (make). Instructions do not cover Xcode or VisualStudio!
 
 * 1: clone openframeworks: git clone https://github.com/openframeworks/openframeworks.<br>Follow the [instructions for your platform](https://github.com/openframeworks/openFrameworks/blob/master/INSTALL_FROM_GITHUB.md)
 * 2: clone our ofxNatNet fork to the addons dir: `git clone https://github.com/hku-ect/ofxNatNet.git`
