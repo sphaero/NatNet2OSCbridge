@@ -1,5 +1,7 @@
 # NatNet2OSCbridge
 
+<img align="right" src="https://imgur.com/a/YSq4hAA">
+
 MOCAP data to OSC.
 
 Download the latests version for your platform at the [releases tab](https://github.com/hku-ect/NatNet2OSCbridge/releases)
