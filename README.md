@@ -1,6 +1,6 @@
 # NatNet2OSCbridge
 
-<img align="right" src="https://imgur.com/a/YSq4hAA">
+<img align="right" src="https://i.imgur.com/zGxigBk.png">
 
 MOCAP data to OSC.
 
