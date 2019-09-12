@@ -782,7 +782,7 @@ void ofApp::doGui() {
 
             static char client_name[128] = "New Client";
             ImGui::InputText("client_name", client_name, IM_ARRAYSIZE(client_name));
-            static char client_ip[15] = "127.0.0.1";
+            static char client_ip[16] = "127.0.0.1";
             ImGui::InputText("client_ip", client_ip, IM_ARRAYSIZE(client_ip));
             static int client_port = 6000;
             ImGui::InputInt("client port", &client_port);
