@@ -1,3 +1,6 @@
+OSX/Linux: [![Build Status](https://api.travis-ci.org/hku-ect/NatNet2OSCbridge.png?branch=master)](https://travis-ci.org/hku-ect/NatNet2OSCbridge)
+Windows: [![Build status](https://ci.appveyor.com/api/projects/status/5skubwdkuoe1uly9?svg=true)](https://ci.appveyor.com/project/sphaero/natnet2oscbridge)
+
 # NatNet2OSCbridge
 
 <img align="right" width="450" src="https://i.imgur.com/zGxigBk.png">
