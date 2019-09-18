@@ -208,7 +208,8 @@ install:
       sudo scripts/linux/ubuntu/install_dependencies.sh -y;
       if [ -f scripts/linux/download_libs.sh ]; then 
         scripts/linux/download_libs.sh;
-      fi
+      fi;
+      git checkout addons/ofxPoco/addon_config.mk;      
     elif [ "$TARGET" == "osx" ]; then
       brew update;
       brew upgrade coreutils;
