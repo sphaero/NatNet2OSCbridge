@@ -170,9 +170,8 @@ The following steps need to be taken to build the application from git repositor
 * 2: clone our ofxNatNet fork to the addons dir: `git clone https://github.com/hku-ect/ofxNatNet.git`
 * 3: clone the ofxImGui addon: `git clone https://github.com/jvcleave/ofxImGui.git`
 * 4: recurse clone the NatNet2OSCbridge repository to the apps devApps dir: `git clone --recurse-submodules https://github.com/hku-ect/NatNet2OSCbridge.git`
-* 5.1: On OSX configure and build the python library:<br/> `brew install openssl xz; cd ext/cpython; ./configure --prefix $(pwd /../../bin/python) --disable-shared --with-openssl=$(brew --prefix openssl); make; make install; cd -`
-* 5.2: On Linux configure and build the python library: <br/>`cd ext/cpython; ./configure --prefix $HOME/openFrameworks/apps/devApps/$APPNAME/bin/python --
-disable-shared && make -s && make install; cd -`
+* 5.1: On OSX configure and build the python library:<br/> `brew install openssl xz; cd ext/cpython; ./configure --prefix $(cd "$(dirname "../../bin/python")" && pwd)/$(basename "../../bin/python")" --disable-shared --with-openssl=$(brew --prefix openssl); make; make install; cd -`
+* 5.2: On Linux configure and build the python library: <br/>`cd ext/cpython; ./configure --prefix $(cd "$(dirname "../../bin/python")" && pwd)/$(basename "../../bin/python")" --disable-shared && make -s && make install; cd -`
 * 5.3: On Windows run: `make python_win`
 * 6: Build the application: `make Debug` or `make Release`
 * 7: You'll find the application in the `bin` directory.
