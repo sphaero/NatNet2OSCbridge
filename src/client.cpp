@@ -136,6 +136,16 @@ void client::doGui()
             ImGui::EndTooltip();
         }
     }
+    ImGui::SameLine();
+    ImGui::Checkbox("Midi", &recvMidi);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send midi data");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
 
     ImGui::PopID();
 

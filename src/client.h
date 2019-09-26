@@ -49,6 +49,7 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
+    bool &getMidiFlag() { return recvMidi; }
     int &getModeFlags();
 
     ofEvent<int> deleteClient;
@@ -63,6 +64,7 @@ private:
     bool            isSkeleton;
     bool            isLive;
     bool            deepHierarchy;
+    bool            recvMidi;
     int             modeFlags;
     ofxOscSender    sender;
 
