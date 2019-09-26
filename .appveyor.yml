@@ -49,6 +49,7 @@ install:
 - cd addons
 - git clone --depth=1 https://github.com/jvcleave/ofxImGui.git
 - git clone --depth=1 https://github.com/hku-ect/ofxNatNet.git
+- git clone --depth=1 https://github.com/danomatika/ofxMidi.git
 - cd ..\apps\myapps\%APPVEYOR_PROJECT_NAME%
 
 build_script:
