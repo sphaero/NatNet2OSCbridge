@@ -8,6 +8,7 @@
 #include "ofxImGui.h"
 #include "uiWidgets.h"
 #include "ofpy.h"
+#include "midinode.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -48,14 +49,17 @@ public:
     void setupData(string filename);
     void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags);
     void sendOSC();
-    
+    void sendMidi();
+
     bool connectNatnet(string interfaceName, string interfaceIP);
     
     void saveData(string filepath);
     void deleteClient(int &index);
     
     void setFeedback(string feedbackText);
-    
+
+    midiNode midiIn;
+
     //GUI
     ofxImGui::Gui gui;
     bool guiVisible;
@@ -67,6 +71,7 @@ public:
     uiLogger uiLogWidget;
     
 private:
+
     void                    sendAllMarkers();
     void                    sendAllRigidBodys();
     void                    sendAllSkeletons();
