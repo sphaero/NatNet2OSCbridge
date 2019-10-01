@@ -3,3 +3,4 @@ ofxNatNet
 ofxOsc
 ofxPoco
 ofxXmlSettings
+ofxOpenVRTracker

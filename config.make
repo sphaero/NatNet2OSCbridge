@@ -79,6 +79,7 @@
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
 PROJECT_LDFLAGS = $(PY_LDFLAGS)
+PROJECT_LDFLAGS +=-LC:/msys64/mingw32/lib -lopenvr_api
 
 ################################################################################
 # PROJECT DEFINES
@@ -90,6 +91,7 @@ PROJECT_LDFLAGS = $(PY_LDFLAGS)
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
+
 
 ################################################################################
 # PROJECT CFLAGS
@@ -107,6 +109,7 @@ PROJECT_DEFINES = VERSION=\"$(GIT_VERSION)\"
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 PROJECT_CFLAGS = $(PY_CFLAGS)
+
 
 ################################################################################
 # PROJECT OPTIMIZATION CFLAGS
@@ -144,6 +147,7 @@ PROJECT_CFLAGS = $(PY_CFLAGS)
 GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
 PY_CFLAGS := $(shell ./bin/python/bin/python3-config --cflags)
 PY_LDFLAGS := $(shell ./bin/python/bin/python3-config --ldflags)
+
 
 ifeq ($(PY_CFLAGS),)
 PY_CFLAGS := -Iext/cpython/Include -Iext/cpython
