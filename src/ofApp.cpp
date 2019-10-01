@@ -77,6 +77,13 @@ void ofApp::setup()
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
     guiVisible = true;
+
+    // VRTracker stuff -----------------------------------------------
+    // Setup OpenVR and connect to the SteamVR server.
+    openvr.connect();
+
+    // Add a listener to receive new data
+    ofAddListener(openvr.newDataReceived, this, &ofApp::newDeviceData);
 }
 
 void ofApp::setupOSCReceiver()
@@ -253,6 +260,9 @@ void ofApp::update()
 void ofApp::draw()
 {
     if ( this->guiVisible ) { gui.draw(); }
+
+    // Draw debug info to screen
+    ofDrawBitmapStringHighlight(out, 60, 60);
 }
 
 void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags, bool midi, bool osc)
@@ -335,6 +345,8 @@ void ofApp::sendOSC()
         if ( skeletonsReady && clients[i]->getSkeleton() )
             getSkeletons( clients[i], &bundle, sd );
 
+        //TODO: add vivetrackers data
+        
         //check if not empty & send
         if ( bundle.getMessageCount() > 0 )
         {
@@ -840,6 +852,25 @@ void ofApp::saveData(string filepath="")
     ofLogNotice("Save Data Finished");
 }
 
+//--------------------------------------------------------------
+void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
+
+    // Save debug info
+    string tmp = "";
+    for (int i = 0; i < (*args.devices->getTrackers()).size(); i++) {
+        tmp += (*args.devices->getTrackers())[i]->getDebugString() + "\n";
+    }
+    out = tmp;
+
+    if((*args.devices->getTrackers()).size()>0){
+        float x = (*args.devices->getTrackers())[0]->position.x;
+        float y = (*args.devices->getTrackers())[0]->position.y;
+        float z = (*args.devices->getTrackers())[0]->position.z;
+        cout << "position" << x << y << z << endl;
+    }
+    ofLogWarning("NewData");
+}
+
 
 void ofApp::exit()
 {
@@ -847,6 +878,13 @@ void ofApp::exit()
     {
         delete clients[i];
     }
+
+    // VRTRacker stuff -----------------------------------------------------
+    // Remove listener for new device data
+    ofRemoveListener(openvr.newDataReceived, this, &ofApp::newDeviceData);
+
+    // disconnect from the server
+    openvr.disconnect();
 }
 
 static bool version_popup = false;

@@ -4,3 +4,4 @@ ofxOsc
 ofxPoco
 ofxXmlSettings
 ofxMidi
+ofxOpenVRTracker
