@@ -184,7 +184,7 @@ bool ofApp::connectNatnet(string interfaceName, string interfaceIP)
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    if(running && natnet.isConnected())
+    if(running && natnet.isConnected() )
     {
         natnet.update();
         sendOSC();
@@ -200,7 +200,11 @@ void ofApp::update()
         setFeedback(UserFeedback);
         triedToConnect = false;
     }
-    
+    if ( midiIn.midiIn.isOpen() )
+    {
+        sendMidi();
+    }
+
     if(natnet.isConnected()) connected = true;
     else connected = false;
     
@@ -292,7 +296,7 @@ void ofApp::sendOSC()
         //skeletons
         if ( skeletonsReady && clients[i]->getSkeleton() )
             getSkeletons( clients[i], &bundle, sd );
-        
+
         //check if not empty & send
         if ( bundle.getMessageCount() > 0 )
         {
@@ -301,6 +305,41 @@ void ofApp::sendOSC()
     }
 }
 
+void ofApp::sendMidi()
+{
+    for( int i = 0; i < clients.size(); ++i )
+    {
+        ofxOscBundle bundle;
+        //  midi
+        if ( clients[i]->getMidiFlag() && midiIn.midiMessages.size() > 0 )
+        {
+            for(unsigned int i = 0; i < midiIn.midiMessages.size(); ++i)
+            {
+                ofxOscMessage m;
+                m.setAddress("/midi");
+                for (unsigned int j=0;j<midiIn.midiMessages[i].bytes.size();j++ )
+                {
+                    m.addCharArg(midiIn.midiMessages[i].bytes[j]);
+                }
+                bundle.addMessage(m);
+            }
+        }
+        //check if not empty & send
+        if ( bundle.getMessageCount() > 0 )
+        {
+            clients[i]->sendBundle(bundle);
+        }
+    }
+    // clear captured midi messages
+    midiIn.lock.lock();
+    std::vector<ofxMidiMessage>::iterator itr = midiIn.midiMessages.begin();
+    while (itr != midiIn.midiMessages.end() )
+    {
+        itr = midiIn.midiMessages.erase(itr);
+    }
+    midiIn.lock.unlock();
+
+}
 
 void ofApp::getMarkers(client *c, ofxOscBundle *bundle)
 {
@@ -676,6 +715,7 @@ void ofApp::saveData(string filepath="")
         save.addValue("skeleton", clients[i]->getSkeleton());
         save.addValue("live", clients[i]->getLive());
         save.addValue("hierarchy", clients[i]->getHierarchy());
+        save.addValue("midi", clients[i]->getMidiFlag());
         save.addValue("mode", clients[i]->getModeFlags());
         save.popTag();
     }
@@ -757,7 +797,7 @@ void ofApp::doGui() {
         
         //ImGui::PushFont(fontSubTitle);
         if ( ImGui::CollapsingHeader("Global Settings", NULL, ImGuiTreeNodeFlags_DefaultOpen) )
-            {
+        {
             //ImGui::PopFont();
         
             ImGui::Combo("interface", &current_iface_idx, iface_list);
@@ -820,6 +860,85 @@ void ofApp::doGui() {
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
+        }
+        if ( ImGui::CollapsingHeader("Midi Settings", NULL, ImGuiTreeNodeFlags_None) )
+        {
+            if ( ImGui::Combo("Midi Device", &midiIn.currentDevice, midiIn.midiDevices) )
+            {
+                if ( midiIn.midiIn.isOpen() )
+                {
+                    midiIn.midiIn.closePort();
+                }
+                midiIn.midiIn.openPort( midiIn.currentDevice - 1 );
+            }
+            ImGui::Columns(2, NULL, false);
+            if ( ImGui::Checkbox("Verbose", &midiIn.verbose ) )
+            {
+                midiIn.midiIn.setVerbose(midiIn.verbose);
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Send ofxMidi log messages to the log console");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+            ImGui::NextColumn();
+            if ( ImGui::Checkbox("Ignore Sysex", &midiIn.ignoreSysex ) )
+            {
+                midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Ignore Midi Sysex events");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+            ImGui::NextColumn();
+            if ( ImGui::Checkbox("Ignore Timing", &midiIn.ignoreTiming ) )
+            {
+                midiIn.ignoreTiming = !midiIn.ignoreTiming;
+                midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Ignore Midi Timing events");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+            ImGui::NextColumn();
+            if ( ImGui::Checkbox("Ignore Sense", &midiIn.ignoreSense ) )
+            {
+                midiIn.ignoreSense = !midiIn.ignoreSense;
+                midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Ignore Midi Sense events");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+            ImGui::Columns(1);
+            if ( ImGui::Button("refresh devices") )
+            {
+                // refresh available devices
+                midiIn.refreshDevices();
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("refresh available midi devices connected to the computer");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
         }
         if ( ImGui::CollapsingHeader("NatNet statistics", NULL, ImGuiTreeNodeFlags_DefaultOpen ) )
         {
