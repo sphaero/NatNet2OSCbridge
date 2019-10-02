@@ -315,11 +315,63 @@ void ofApp::sendMidi()
         {
             for(unsigned int i = 0; i < midiIn.midiMessages.size(); ++i)
             {
+                ofxMidiMessage &message = midiIn.midiMessages[i];
                 ofxOscMessage m;
-                m.setAddress("/midi");
-                for (unsigned int j=0;j<midiIn.midiMessages[i].bytes.size();j++ )
+                if ( midiIn.sendRaw )
                 {
-                    m.addCharArg(midiIn.midiMessages[i].bytes[j]);
+                    m.setAddress( midiIn.currentDeviceName );
+                    for (unsigned int j=0;j<message.bytes.size();j++ )
+                    {
+                        m.addCharArg(message.bytes[j]);
+                    }
+                }
+                else if (message.status < MIDI_SYSEX)
+                {
+                    m.setAddress( string(midiIn.currentDeviceName) + "/" + ofToString( message.channel ) + "/" + message.getStatusString(message.status) );
+                    switch (message.status) {
+                    case MIDI_NOTE_OFF:
+                    case MIDI_NOTE_ON:
+                        m.addIntArg( message.pitch );
+                        m.addIntArg( message.velocity );
+                        break;
+                    case MIDI_CONTROL_CHANGE:
+                        m.addIntArg( message.control );
+                        m.addIntArg( message.value );
+                        break;
+                    case MIDI_PROGRAM_CHANGE:
+                    case MIDI_AFTERTOUCH: // aka channel pressure
+                        //m.addIntArg( message.control );
+                        m.addIntArg( message.value );
+                        break;
+                    case MIDI_PITCH_BEND:
+                        m.addIntArg( message.value );
+                        break;
+                    case MIDI_POLY_AFTERTOUCH: // aka key pressure
+                        m.addIntArg( message.pitch );
+                        m.addIntArg( message.value );
+                        break;
+                    case MIDI_SONG_POS_POINTER:
+                        m.addIntArg( message.value );
+                        break;
+                    default:
+                        break;
+                    /* not handled
+                        // system messages
+                    case MIDI_SYSEX:
+                    case MIDI_TIME_CODE:
+                    case MIDI_SONG_POS_POINTER:
+                    case MIDI_SONG_SELECT:
+                    case MIDI_TUNE_REQUEST:
+                    case MIDI_SYSEX_END:
+                    case MIDI_TIME_CLOCK:
+                    case MIDI_START:
+                    case MIDI_CONTINUE:
+                    case MIDI_STOP:
+                    case MIDI_ACTIVE_SENSING:
+                    case MIDI_SYSTEM_RESET:
+                    */
+                    }
+
                 }
                 bundle.addMessage(m);
             }
@@ -870,21 +922,14 @@ void ofApp::doGui() {
                     midiIn.midiIn.closePort();
                 }
                 midiIn.midiIn.openPort( midiIn.currentDevice - 1 );
+                if ( midiIn.currentDeviceName == "" )
+                {
+                    midiIn.currentDeviceName = midiIn.midiDevices[midiIn.currentDevice];
+                }
             }
+            ImGui::InputText("Custom name", &midiIn.currentDeviceName, ImGuiInputTextFlags_EnterReturnsTrue);
             ImGui::Columns(2, NULL, false);
-            if ( ImGui::Checkbox("Verbose", &midiIn.verbose ) )
-            {
-                midiIn.midiIn.setVerbose(midiIn.verbose);
-            }
-            if (ImGui::IsItemHovered())
-            {
-                ImGui::BeginTooltip();
-                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-                ImGui::TextUnformatted("Send ofxMidi log messages to the log console");
-                ImGui::PopTextWrapPos();
-                ImGui::EndTooltip();
-            }
-            ImGui::NextColumn();
+
             if ( ImGui::Checkbox("Ignore Sysex", &midiIn.ignoreSysex ) )
             {
                 midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
@@ -898,9 +943,22 @@ void ofApp::doGui() {
                 ImGui::EndTooltip();
             }
             ImGui::NextColumn();
+            if ( ImGui::Checkbox("Verbose", &midiIn.verbose ) )
+            {
+                midiIn.midiIn.setVerbose(midiIn.verbose);
+            }
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Send ofxMidi log messages to the log console");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+            ImGui::NextColumn();
+
             if ( ImGui::Checkbox("Ignore Timing", &midiIn.ignoreTiming ) )
             {
-                midiIn.ignoreTiming = !midiIn.ignoreTiming;
                 midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
             }
             if (ImGui::IsItemHovered())
@@ -912,9 +970,19 @@ void ofApp::doGui() {
                 ImGui::EndTooltip();
             }
             ImGui::NextColumn();
+            ImGui::Checkbox("Send Raw", &midiIn.sendRaw );
+            if (ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+                ImGui::TextUnformatted("Send raw midi bytes");
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+
+            ImGui::NextColumn();
             if ( ImGui::Checkbox("Ignore Sense", &midiIn.ignoreSense ) )
             {
-                midiIn.ignoreSense = !midiIn.ignoreSense;
                 midiIn.midiIn.ignoreTypes(midiIn.ignoreSysex, midiIn.ignoreTiming, midiIn.ignoreSense);
             }
             if (ImGui::IsItemHovered())
@@ -925,8 +993,9 @@ void ofApp::doGui() {
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }
+
             ImGui::Columns(1);
-            if ( ImGui::Button("refresh devices") )
+            if ( ImGui::Button("Refresh devices") )
             {
                 // refresh available devices
                 midiIn.refreshDevices();

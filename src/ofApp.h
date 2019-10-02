@@ -6,6 +6,7 @@
 #include "ofxXmlSettings.h"
 #include "client.h"
 #include "ofxImGui.h"
+#include "imgui_stdlib.h"
 #include "uiWidgets.h"
 #include "ofpy.h"
 #include "midinode.h"
