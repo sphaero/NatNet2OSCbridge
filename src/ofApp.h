@@ -27,6 +27,7 @@ public:
     RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };
 
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -47,7 +48,7 @@ public:
     
     void setupConnectionInterface();
     void setupData(string filename);
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live,bool vrt, bool hierarchy, int modeFlags);
     void sendOSC();
     
     bool connectNatnet(string interfaceName, string interfaceIP);

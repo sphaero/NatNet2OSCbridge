@@ -10,7 +10,7 @@
 #include "fontawesome5.h"
 #include "ect_helpers.h"
 
-client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int mFlags )
+client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live,bool vrt, bool hier, int mFlags )
 {
     //arange them gridwise
     index = ind;
@@ -21,6 +21,7 @@ client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, 
     isMarker = m;
     isSkeleton = s;
     isLive = live;
+    recvVRTrackers = vrt;
     deepHierarchy = hier;
     modeFlags = mFlags;
     setupSender();
@@ -136,6 +137,17 @@ void client::doGui()
             ImGui::EndTooltip();
         }
     }
+    ImGui::SameLine();
+        ImGui::Checkbox("VRTrackers", &recvVRTrackers);
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted("Send VRTrackers data");
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
+
 
     ImGui::PopID();
 
