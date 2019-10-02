@@ -29,6 +29,7 @@ public:
     RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };
 
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -50,7 +51,7 @@ public:
     void setupConnectionInterface();
     void setupData(string filename);
     void setupOSCReceiver();
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags, bool midi, bool osc);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool vrt, bool hierarchy, int modeFlags, bool midi, bool osc);
     void sendOSC();
     void sendMidi();
 
