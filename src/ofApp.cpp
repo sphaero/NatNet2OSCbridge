@@ -56,7 +56,10 @@ void ofApp::setup()
     triedToConnect = false;
     openModal = false;
     invFPS = 1.0f / FPS;
-    
+
+    // Setup OSC receive
+    setupOSCReceiver();
+
     // SETUP GUI
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -74,6 +77,15 @@ void ofApp::setup()
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
     guiVisible = true;
+}
+
+void ofApp::setupOSCReceiver()
+{
+    if ( oscRecv.isListening() )
+    {
+        oscRecv.stop();
+    }
+    oscRecv.setup(oscListenPort);
 }
 
 void ofApp::setupConnectionInterface(){
@@ -161,11 +173,26 @@ void ofApp::setupData( string filename="" )
         bool s = data.getValue("skeleton", 0);
         bool live = data.getValue("live", 0);
         bool hier = data.getValue("hierarchy", 0);
+        bool midi = data.getValue("midi", 0);
+        bool osc = data.getValue("osc", 0);
         int modeFlags = (int)data.getValue("mode", 0);
-        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags);
+        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags, midi, osc);
         data.popTag();
     }
 
+    data.pushTag("midi");
+    midiIn.currentDevice = data.getValue("currentDevice", 0);
+    midiIn.currentDeviceName = data.getValue("currentDeviceName", "");
+    midiIn.ignoreSysex = data.getValue("ignoreSysex", 0);
+    midiIn.ignoreTiming = data.getValue("ignoreTiming", 0);
+    midiIn.ignoreSense = data.getValue("ignoreSense", 0);
+    midiIn.verbose = data.getValue("verbose", 0);
+    midiIn.sendRaw = data.getValue("sendRaw", 0);
+    data.popTag();
+
+    data.pushTag("OSCReceive");
+    oscListenPort = data.getValue("oscListenPort", 2525);
+    data.popTag();
     ofLogVerbose("SetupData :: DONE");
 }
 
@@ -205,6 +232,17 @@ void ofApp::update()
         sendMidi();
     }
 
+    while (oscRecv.hasWaitingMessages() )
+    {
+        // get the next message
+        ofxOscMessage m;
+        oscRecv.getNextMessage(m);
+        for( int i = 0; i < clients.size(); ++i )
+        {
+            clients[i]->sendData(m);
+        }
+    }
+
     if(natnet.isConnected()) connected = true;
     else connected = false;
     
@@ -217,7 +255,7 @@ void ofApp::draw()
     if ( this->guiVisible ) { gui.draw(); }
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags, bool midi, bool osc)
 {
     // Check if we do not add a client with the same properties twice
     bool uniqueClient = true;
@@ -233,7 +271,7 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
     }
     
     if(uniqueClient){
-        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, modeFlags);
+        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, modeFlags,midi,osc);
         ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
         clients.push_back(c);
         if(UserFeedback != "") UserFeedback = "";
@@ -755,6 +793,20 @@ void ofApp::saveData(string filepath="")
     save.addValue("interface", iface_list.at(current_iface_idx));
     save.addValue("ip", natnetip_char);
     save.popTag();
+    save.addTag("midi");
+    save.pushTag("midi",0);
+    save.addValue("currentDevice", midiIn.currentDevice);
+    save.addValue("currentDeviceName", midiIn.currentDeviceName);
+    save.addValue("ignoreSysex", midiIn.ignoreSysex);
+    save.addValue("ignoreTiming", midiIn.ignoreTiming);
+    save.addValue("ignoreSense", midiIn.ignoreSense);
+    save.addValue("verbose", midiIn.verbose);
+    save.addValue("sendRaw", midiIn.sendRaw);
+    save.popTag();
+    save.addTag("OSCReceive");
+    save.pushTag("OSCReceive",0);
+    save.addValue("oscListenPort", oscListenPort);
+    save.popTag();
     for (int i = 0; i < clients.size(); i++)
     {
         save.addTag("client");
@@ -769,6 +821,8 @@ void ofApp::saveData(string filepath="")
         save.addValue("hierarchy", clients[i]->getHierarchy());
         save.addValue("midi", clients[i]->getMidiFlag());
         save.addValue("mode", clients[i]->getModeFlags());
+        save.addValue("midi", clients[i]->getMidiFlag());
+        save.addValue("osc", clients[i]->getOSCFlag());
         save.popTag();
     }
     save.save(filepath);
@@ -880,7 +934,7 @@ void ofApp::doGui() {
             ImGui::InputInt("client port", &client_port);
             if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
             {
-                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0);
+                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0, false, false);
 
             }
 
@@ -912,6 +966,13 @@ void ofApp::doGui() {
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
+        }
+        if ( ImGui::CollapsingHeader("OSC Receiver Settings", NULL, ImGuiTreeNodeFlags_None) )
+        {
+            if ( ImGui::InputInt("OSC Listen Port", &oscListenPort) )
+            {
+                setupOSCReceiver();
+            }
         }
         if ( ImGui::CollapsingHeader("Midi Settings", NULL, ImGuiTreeNodeFlags_None) )
         {
