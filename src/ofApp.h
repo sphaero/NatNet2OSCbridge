@@ -6,6 +6,7 @@
 #include "ofxXmlSettings.h"
 #include "client.h"
 #include "ofxImGui.h"
+#include "imgui_stdlib.h"
 #include "uiWidgets.h"
 #include "ofpy.h"
 #include "midinode.h"
@@ -47,7 +48,8 @@ public:
     
     void setupConnectionInterface();
     void setupData(string filename);
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags);
+    void setupOSCReceiver();
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags, bool midi, bool osc);
     void sendOSC();
     void sendMidi();
 
@@ -59,6 +61,10 @@ public:
     void setFeedback(string feedbackText);
 
     midiNode midiIn;
+
+    // OSC Receiver
+    ofxOscReceiver oscRecv;
+    int oscListenPort = 2525;
 
     //GUI
     ofxImGui::Gui gui;

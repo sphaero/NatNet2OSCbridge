@@ -10,7 +10,7 @@
 #include "fontawesome5.h"
 #include "ect_helpers.h"
 
-client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int mFlags )
+client::client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int mFlags, bool midi, bool osc )
 {
     //arange them gridwise
     index = ind;
@@ -143,6 +143,16 @@ void client::doGui()
         ImGui::BeginTooltip();
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
         ImGui::TextUnformatted("Send midi data");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+    ImGui::SameLine();
+    ImGui::Checkbox("OSC", &recvOSC);
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Send received OSC data");
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }

@@ -47,8 +47,10 @@ public:
     std::vector<ofxMidiMessage> midiMessages;
     std::vector<string> midiDevices;
     int currentDevice = 0;
+    string currentDeviceName= "";
     std::size_t maxMessages = 100; //< max number of messages to keep track of
     ofMutex lock;
+    bool sendRaw = false;
     bool verbose = false;
     bool ignoreSysex= false;
     bool ignoreTiming = false;
