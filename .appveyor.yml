@@ -35,8 +35,8 @@ init:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Su")
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Su --needed unzip rsync libopenssl mingw-w64-i686-openssl"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
-# python deps
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed mingw-w64-i686-python3-virtualenv python3-pip python3-setuptools"'
+# python, openvr deps
+- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed mingw-w64-i686-python3-virtualenv python3-pip python3-setuptools mingw-w64-i686-openvr"'
 install:
 - git submodule update --init --recursive
 - cd ..
