@@ -28,7 +28,7 @@ enum ClientFlags
 class client
 {
 public:
-    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int modeFlags);
+    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live,bool vrt, bool hier, int modeFlags);
     ~client();
     
     void setupSender();
@@ -49,6 +49,7 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
+    bool &getVRTrackersFlag() { return recvVRTrackers; }
     int &getModeFlags();
 
     ofEvent<int> deleteClient;
@@ -63,6 +64,7 @@ private:
     bool            isSkeleton;
     bool            isLive;
     bool            deepHierarchy;
+    bool            recvVRTrackers;
     int             modeFlags;
     ofxOscSender    sender;
 

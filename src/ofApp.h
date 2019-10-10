@@ -8,6 +8,7 @@
 #include "ofxImGui.h"
 #include "uiWidgets.h"
 #include "ofpy.h"
+#include "ofxOpenVRTracker.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -25,6 +26,7 @@ public:
     
     RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };
+
 
 class ofApp : public ofBaseApp{
     
@@ -46,7 +48,7 @@ public:
     
     void setupConnectionInterface();
     void setupData(string filename);
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live,bool vrt, bool hierarchy, int modeFlags);
     void sendOSC();
     
     bool connectNatnet(string interfaceName, string interfaceIP);
@@ -65,6 +67,12 @@ public:
     ImFont* fontSubTitle;
     ImFont* fontTitle;
     uiLogger uiLogWidget;
+
+    // VRtracker stuff
+    void newDeviceData(ofxOpenVRTrackerEventArgs& args);
+    ofxOpenVRTracker openvr;
+    string out = "";
+
     
 private:
     void                    sendAllMarkers();
