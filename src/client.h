@@ -28,7 +28,7 @@ enum ClientFlags
 class client
 {
 public:
-    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int modeFlags);
+    client(int ind,string i,int p,string n,bool r,bool m,bool s, bool live, bool hier, int modeFlags, bool midi, bool osc);
     ~client();
     
     void setupSender();
@@ -49,6 +49,8 @@ public:
     bool &getSkeleton();
     bool &getLive();
     bool &getHierarchy();
+    bool &getMidiFlag() { return recvMidi; }
+    bool &getOSCFlag() { return recvOSC; }
     int &getModeFlags();
 
     ofEvent<int> deleteClient;
@@ -63,6 +65,8 @@ private:
     bool            isSkeleton;
     bool            isLive;
     bool            deepHierarchy;
+    bool            recvMidi = false;
+    bool            recvOSC = false;
     int             modeFlags;
     ofxOscSender    sender;
 
