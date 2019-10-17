@@ -38,6 +38,7 @@
 		C2114978C2A333BA9867109F /* DefaultTheme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9A7E144D697FCBB4216A73E /* DefaultTheme.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		CD56E11021CA8D26003ED29A /* uiWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */; };
+		CD90037423586DC3000E7411 /* ofpy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD90037323586DC3000E7411 /* ofpy.cpp */; };
 		CDC0C9FA21EF9037000997ED /* ect_helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDC0C9F821EF9037000997ED /* ect_helpers.cpp */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -202,6 +203,8 @@
 		CB5C15EA0881D35A88C22937 /* EngineOpenGLES.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EngineOpenGLES.h; path = ../../../addons/ofxImGui/src/EngineOpenGLES.h; sourceTree = SOURCE_ROOT; };
 		CD56E10E21CA8D26003ED29A /* uiWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = uiWidgets.cpp; sourceTree = "<group>"; };
 		CD56E10F21CA8D26003ED29A /* uiWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiWidgets.h; sourceTree = "<group>"; };
+		CD90037223586DB9000E7411 /* ofpy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofpy.h; sourceTree = "<group>"; };
+		CD90037323586DC3000E7411 /* ofpy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofpy.cpp; sourceTree = "<group>"; };
 		CDC0C9F821EF9037000997ED /* ect_helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ect_helpers.cpp; sourceTree = "<group>"; };
 		CDC0C9F921EF9037000997ED /* ect_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ect_helpers.h; sourceTree = "<group>"; };
 		D1F2D509F3D753BBF52DAA19 /* rc4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc4.h; path = ../../../addons/ofxPoco/libs/openssl/include/openssl/rc4.h; sourceTree = SOURCE_ROOT; };
@@ -616,6 +619,8 @@
 				CD56E10F21CA8D26003ED29A /* uiWidgets.h */,
 				CDC0C9F821EF9037000997ED /* ect_helpers.cpp */,
 				CDC0C9F921EF9037000997ED /* ect_helpers.h */,
+				CD90037223586DB9000E7411 /* ofpy.h */,
+				CD90037323586DC3000E7411 /* ofpy.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -799,6 +804,7 @@
 				CD56E11021CA8D26003ED29A /* uiWidgets.cpp in Sources */,
 				0090B479605B26E7C387B02D /* imgui_widgets.cpp in Sources */,
 				2EB82731E35103D1E16BAFCF /* ofxNatNet.cpp in Sources */,
+				CD90037423586DC3000E7411 /* ofpy.cpp in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
 				5864AD82E20F15536D054EA3 /* ofxOscMessage.cpp in Sources */,
 				4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */,
@@ -927,12 +933,14 @@
 					../../../addons/ofxPoco/libs/openssl/include,
 					../../../addons/ofxXmlSettings/libs,
 					../../../addons/ofxXmlSettings/src,
+					bin/python/include/python3.7m,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "$(OF_CORE_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(OF_CORE_LIBS)",
@@ -945,6 +953,7 @@
 					../../../addons/ofxPoco/libs/poco/lib/osx/PocoFoundation.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/crypto.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/ssl.a,
+					bin/python/lib/libpython3.7m.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1111,12 +1120,14 @@
 					../../../addons/ofxPoco/libs/openssl/include,
 					../../../addons/ofxXmlSettings/libs,
 					../../../addons/ofxXmlSettings/src,
+					bin/python/include/python3.7m,
 				);
 				ICON = "$(ICON_NAME_DEBUG)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "$(OF_CORE_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(OF_CORE_LIBS)",
@@ -1129,6 +1140,7 @@
 					../../../addons/ofxPoco/libs/poco/lib/osx/PocoFoundation.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/crypto.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/ssl.a,
+					bin/python/lib/libpython3.7m.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
@@ -1165,12 +1177,14 @@
 					../../../addons/ofxPoco/libs/openssl/include,
 					../../../addons/ofxXmlSettings/libs,
 					../../../addons/ofxXmlSettings/src,
+					bin/python/include/python3.7m,
 				);
 				ICON = "$(ICON_NAME_RELEASE)";
 				ICON_FILE = "$(ICON_FILE_PATH)$(ICON)";
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "$(OF_CORE_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(OF_CORE_LIBS)",
@@ -1183,6 +1197,7 @@
 					../../../addons/ofxPoco/libs/poco/lib/osx/PocoFoundation.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/crypto.a,
 					../../../addons/ofxPoco/libs/openssl/lib/osx/ssl.a,
+					bin/python/lib/libpython3.7m.a,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
