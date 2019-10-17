@@ -10,6 +10,7 @@
 #include "uiWidgets.h"
 #include "ofpy.h"
 #include "midinode.h"
+#include "ofxOpenVRTracker.h"
 
 //for velocity, defines how many layers to apply (2 * layers + 1 frames)
 #define SMOOTHING 0
@@ -27,6 +28,7 @@ public:
     
     RigidBodyHistory( int rigidBodyId, ofVec3f position, ofQuaternion eulerOrientation );
 };
+
 
 class ofApp : public ofBaseApp{
     
@@ -49,7 +51,7 @@ public:
     void setupConnectionInterface();
     void setupData(string filename);
     void setupOSCReceiver();
-    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool hierarchy, int modeFlags, bool midi, bool osc);
+    void addClient(int i,string ip,int p,string n,bool r,bool m,bool s,bool live, bool vrt, bool hierarchy, int modeFlags, bool midi, bool osc);
     void sendOSC();
     void sendMidi();
 
@@ -75,6 +77,12 @@ public:
     ImFont* fontSubTitle;
     ImFont* fontTitle;
     uiLogger uiLogWidget;
+
+    // VRtracker stuff
+    void newDeviceData(ofxOpenVRTrackerEventArgs& args);
+    ofxOpenVRTracker openvr;
+    string out = "";
+
     
 private:
 

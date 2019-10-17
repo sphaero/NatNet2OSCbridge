@@ -19,6 +19,15 @@ RigidBodyHistory::RigidBodyHistory( int id, ofVec3f p, ofQuaternion r )
 }
 //end
 
+/*
+ * VRTrackers:
+ * - name
+ * - rotation (quarternion)
+ * - position
+ * - velocity
+ * - angular velocity
+ */
+
 //--------------------------------------------------------------
 void ofApp::setup()
 {
@@ -77,6 +86,14 @@ void ofApp::setup()
     gui.setup(new GuiGreenTheme(), false);              // default theme, no autoDraw!
     
     guiVisible = true;
+
+    // VRTracker stuff -----------------------------------------------
+    // Setup OpenVR and connect to the SteamVR server.
+    openvr.connect();
+
+    // Add a listener to receive new data
+    ofAddListener(openvr.newDataReceived, this, &ofApp::newDeviceData
+                  );
 }
 
 void ofApp::setupOSCReceiver()
@@ -176,7 +193,8 @@ void ofApp::setupData( string filename="" )
         bool midi = data.getValue("midi", 0);
         bool osc = data.getValue("osc", 0);
         int modeFlags = (int)data.getValue("mode", 0);
-        addClient(i,ip,port,name,r,m,s,live,hier,modeFlags, midi, osc);
+        bool vrt = data.getValue("vrtrackers", 0);
+        addClient(i,ip,port,name,r,m,s,live,vrt, hier, modeFlags, midi, osc);
         data.popTag();
     }
 
@@ -253,9 +271,12 @@ void ofApp::update()
 void ofApp::draw()
 {
     if ( this->guiVisible ) { gui.draw(); }
+
+    // Draw debug info to screen
+    ofDrawBitmapStringHighlight(out, 60, 300);
 }
 
-void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live, bool hierarchy, int modeFlags, bool midi, bool osc)
+void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live,bool vrt, bool hierarchy, int modeFlags, bool midi, bool osc)
 {
     // Check if we do not add a client with the same properties twice
     bool uniqueClient = true;
@@ -271,7 +292,7 @@ void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool 
     }
     
     if(uniqueClient){
-        client *c = new client(i,ip,p,n,r,m,s,live, hierarchy, modeFlags,midi,osc);
+        client *c = new client(i,ip,p,n,r,m,s,live,vrt, hierarchy, modeFlags, midi, osc);
         ofAddListener(c->deleteClient, this, &ofApp::deleteClient);
         clients.push_back(c);
         if(UserFeedback != "") UserFeedback = "";
@@ -335,6 +356,8 @@ void ofApp::sendOSC()
         if ( skeletonsReady && clients[i]->getSkeleton() )
             getSkeletons( clients[i], &bundle, sd );
 
+        //TODO: add vivetrackers data
+        
         //check if not empty & send
         if ( bundle.getMessageCount() > 0 )
         {
@@ -818,6 +841,7 @@ void ofApp::saveData(string filepath="")
         save.addValue("marker", clients[i]->getMarker());
         save.addValue("skeleton", clients[i]->getSkeleton());
         save.addValue("live", clients[i]->getLive());
+        save.addValue("vrtrackers",  clients[i]->getVRTrackersFlag());
         save.addValue("hierarchy", clients[i]->getHierarchy());
         save.addValue("midi", clients[i]->getMidiFlag());
         save.addValue("mode", clients[i]->getModeFlags());
@@ -840,6 +864,80 @@ void ofApp::saveData(string filepath="")
     ofLogNotice("Save Data Finished");
 }
 
+//--------------------------------------------------------------
+// --> VRTRackers
+void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
+
+    // Save debug info
+    string tmp = "";
+    for (int i = 0; i < (*args.devices->getTrackers()).size(); i++) {
+        tmp += (*args.devices->getTrackers())[i]->getDebugString() + "\n";
+    }
+    out = tmp;
+
+    if((*args.devices->getTrackers()).size()>0){
+        float x = (*args.devices->getTrackers())[0]->position.x;
+        float y = (*args.devices->getTrackers())[0]->position.y;
+        float z = (*args.devices->getTrackers())[0]->position.z;
+        cout << "position" << x << y << z << endl;
+    }
+    ofLogWarning("NewData");
+
+    // Loop through clients
+    for( int i = 0; i < clients.size(); ++i )
+    {
+        if(clients[i]->getVRTrackersFlag()){
+
+            ofxOscBundle bundle;
+            // Loop through trackers
+            for (int k = 0; k < (*args.devices->getTrackers()).size(); k++){
+
+                // FIXME: add hiarchy toggle ?
+                // send messsage per tracker
+                //create OSC message
+                ofxOscMessage m;
+                m.setAddress("/vrtrackers");
+
+                // name
+                m.addStringArg(ofToString((*args.devices->getTrackers())[k]->serialNumber));
+
+                // position
+                m.addFloatArg((*args.devices->getTrackers())[k]->position.x);
+                m.addFloatArg((*args.devices->getTrackers())[k]->position.y);
+                m.addFloatArg((*args.devices->getTrackers())[k]->position.z);
+
+                //orientation
+                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.x);
+                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.y);
+                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.z);
+                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.w);
+
+                // velocity
+                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.x);
+                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.y);
+                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.z);
+
+                // angular velocity
+                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.x);
+                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.y);
+                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.z);
+
+                bundle.addMessage(m);
+
+            }
+
+            //check if not empty & send
+            if ( bundle.getMessageCount() > 0 )
+            {
+                clients[i]->sendBundle(bundle);
+            }
+
+        }
+
+    }
+
+}
+
 
 void ofApp::exit()
 {
@@ -847,6 +945,13 @@ void ofApp::exit()
     {
         delete clients[i];
     }
+
+    // VRTRacker stuff -----------------------------------------------------
+    // Remove listener for new device data
+    ofRemoveListener(openvr.newDataReceived, this, &ofApp::newDeviceData);
+
+    // disconnect from the server
+    openvr.disconnect();
 }
 
 static bool version_popup = false;
@@ -934,8 +1039,7 @@ void ofApp::doGui() {
             ImGui::InputInt("client port", &client_port);
             if ( ImGui::Button(ICON_FA_DESKTOP " Add Client") )
             {
-                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, 0, false, false);
-
+                addClient(clients.size(), ofToString(client_ip), client_port, ofToString(client_name), false, false, false, true, false, false, 0, false, false);
             }
 
             ImGui::Spacing();
