@@ -79,7 +79,6 @@
 # TODO: should this be a default setting?
 # PROJECT_LDFLAGS=-Wl,-rpath=./libs
 PROJECT_LDFLAGS = $(PY_LDFLAGS)
-PROJECT_LDFLAGS +=-LC:/msys64/mingw32/lib -lopenvr_api
 
 ################################################################################
 # PROJECT DEFINES
