@@ -3,6 +3,12 @@
 #include "ofLog.h"
 #include "ect_helpers.h"
 
+std::string space2underscore(std::string text)
+{
+    std::replace(text.begin(), text.end(), ' ', '_');
+    return text;
+}
+
 std::string getAppConfigDir()
 {
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
