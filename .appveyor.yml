@@ -55,7 +55,7 @@ build_script:
 - '%MSYS2_PATH%\usr\bin\bash -lc "make python_win && rm bin/libcrypto*.dll bin/libssl*.dll"'
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "make Debug && make copy_dlls"
 # workaround for OpenVR dll
-- '%MSYS2_PATH%\usr\bin\bash -lc "cp ../../addons/ofxOpenVRTracker/libs/OpenVR/bin/win32/openvr_api.dll bin/"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "cp ../../../addons/ofxOpenVRTracker/libs/OpenVR/bin/win32/openvr_api.dll bin/"'
 - if "%BUILDER%"=="VS" echo "BOE"
 
 after_build:
