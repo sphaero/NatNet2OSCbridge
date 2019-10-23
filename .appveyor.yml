@@ -35,8 +35,6 @@ init:
 - if "%BUILDER%"=="MSYS2" (%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Su")
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Su --needed unzip rsync libopenssl mingw-w64-i686-openssl mingw-w64-i686-ntldd-git"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
-# python, openvr deps
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S --needed mingw-w64-i686-python3-virtualenv python3-pip python3-setuptools mingw-w64-i686-openvr"'
 install:
 - git submodule update --init --recursive
 - cd ..
@@ -50,13 +48,15 @@ install:
 - git clone --depth=1 --branch=173stdlib https://github.com/sphaero/ofxImGui.git
 - git clone --depth=1 https://github.com/hku-ect/ofxNatNet.git
 - git clone --depth=1 https://github.com/danomatika/ofxMidi.git
-- git clone --depth=1 --branch=msys2 https://github.com/sphaero/ofxOpenVRTracker.git
+- git clone --depth=1 --branch=msys2 --recursive https://github.com/sphaero/ofxOpenVRTracker.git
 - cd ..\apps\myapps\%APPVEYOR_PROJECT_NAME%
 
 build_script:
 - '%MSYS2_PATH%\usr\bin\bash -lc "make python_win && rm bin/libcrypto*.dll bin/libssl*.dll"'
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "make Debug && make copy_dlls"
-- if "%BUILDER%"=="VS" echo "BOE" 
+# workaround for OpenVR dll
+- '%MSYS2_PATH%\usr\bin\bash -lc "cp ../../../addons/ofxOpenVRTracker/libs/OpenVR/bin/win32/openvr_api.dll bin/"'
+- if "%BUILDER%"=="VS" echo "BOE"
 
 after_build:
 # windows batch sucks :S this gets git describe info into a var

@@ -11,6 +11,8 @@
 #include "Poco/Net/IPAddress.h"
 #include "Poco/Net/NetworkInterface.h"
 
+std::string space2underscore(std::string text);
+
 // return the path to where the user can save application data
 std::string getAppConfigDir();
 // opens a file browser to the app config dir (so people can find their setups)

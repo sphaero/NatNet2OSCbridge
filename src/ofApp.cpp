@@ -380,7 +380,7 @@ void ofApp::sendMidi()
                 ofxOscMessage m;
                 if ( midiIn.sendRaw )
                 {
-                    m.setAddress( midiIn.currentDeviceName );
+                    m.setAddress( "/" + midiIn.currentDeviceName );
                     for (unsigned int j=0;j<message.bytes.size();j++ )
                     {
                         m.addCharArg(message.bytes[j]);
@@ -388,7 +388,7 @@ void ofApp::sendMidi()
                 }
                 else if (message.status < MIDI_SYSEX)
                 {
-                    m.setAddress( string(midiIn.currentDeviceName) + "/" + ofToString( message.channel ) + "/" + message.getStatusString(message.status) );
+                    m.setAddress( "/" + string(midiIn.currentDeviceName) + "/" + ofToString( message.channel ) + "/" + space2underscore(message.getStatusString(message.status)) );
                     switch (message.status) {
                     case MIDI_NOTE_OFF:
                     case MIDI_NOTE_ON:
@@ -1089,10 +1089,13 @@ void ofApp::doGui() {
                 midiIn.midiIn.openPort( midiIn.currentDevice - 1 );
                 if ( midiIn.currentDeviceName == "" )
                 {
-                    midiIn.currentDeviceName = midiIn.midiDevices[midiIn.currentDevice];
+                    midiIn.currentDeviceName = space2underscore(midiIn.midiDevices[midiIn.currentDevice]);
                 }
             }
-            ImGui::InputText("Custom name", &midiIn.currentDeviceName, ImGuiInputTextFlags_EnterReturnsTrue);
+            if ( ImGui::InputText("Custom name", &midiIn.currentDeviceName, ImGuiInputTextFlags_EnterReturnsTrue) )
+            {
+                midiIn.currentDeviceName = space2underscore(midiIn.currentDeviceName);
+            }
             ImGui::Columns(2, NULL, false);
 
             if ( ImGui::Checkbox("Ignore Sysex", &midiIn.ignoreSysex ) )
