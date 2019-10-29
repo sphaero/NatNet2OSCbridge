@@ -389,15 +389,17 @@ void ofApp::sendMidi()
                 }
                 else if (message.status < MIDI_SYSEX)
                 {
-                    m.setAddress( "/" + string(midiIn.currentDeviceName) + "/" + ofToString( message.channel ) + "/" + space2underscore(message.getStatusString(message.status)) );
+                    string address = "/" + string(midiIn.currentDeviceName) + "/" + ofToString( message.channel ) + "/" + space2underscore(message.getStatusString(message.status));
                     switch (message.status) {
                     case MIDI_NOTE_OFF:
                     case MIDI_NOTE_ON:
-                        m.addIntArg( message.pitch );
+                        address.append( "/" + ofToString(message.pitch ) );
+                        m.setAddress( address );
                         m.addIntArg( message.velocity );
                         break;
                     case MIDI_CONTROL_CHANGE:
-                        m.addIntArg( message.control );
+                        address.append( "/" + ofToString(message.control ) );
+                        m.setAddress( address );
                         m.addIntArg( message.value );
                         break;
                     case MIDI_PROGRAM_CHANGE:
@@ -406,16 +408,20 @@ void ofApp::sendMidi()
                         m.addIntArg( message.value );
                         break;
                     case MIDI_PITCH_BEND:
+                        m.setAddress( address );
                         m.addIntArg( message.value );
                         break;
                     case MIDI_POLY_AFTERTOUCH: // aka key pressure
-                        m.addIntArg( message.pitch );
+                        address.append( "/" + ofToString(message.pitch ) );
+                        m.setAddress( address );
                         m.addIntArg( message.value );
                         break;
                     case MIDI_SONG_POS_POINTER:
+                        m.setAddress( address );
                         m.addIntArg( message.value );
                         break;
                     default:
+                        ofLogError() << "sendMidi unkown status";
                         break;
                     /* not handled
                         // system messages
