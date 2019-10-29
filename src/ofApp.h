@@ -82,6 +82,8 @@ public:
     void newDeviceData(ofxOpenVRTrackerEventArgs& args);
     ofxOpenVRTracker openvr;
     string out = "";
+    int numConnectedVRTrackers;
+    map<string,vector<string>> VRTrackerInfo;
 
     
 private:

@@ -90,6 +90,7 @@ void ofApp::setup()
     // VRTracker stuff -----------------------------------------------
     // Setup OpenVR and connect to the SteamVR server.
     openvr.connect();
+    numConnectedVRTrackers = 0;
 
     // Add a listener to receive new data
     ofAddListener(openvr.newDataReceived, this, &ofApp::newDeviceData
@@ -273,7 +274,7 @@ void ofApp::draw()
     if ( this->guiVisible ) { gui.draw(); }
 
     // Draw debug info to screen
-    ofDrawBitmapStringHighlight(out, 60, 300);
+    //ofDrawBitmapStringHighlight(out, 60, 300);
 }
 
 void ofApp::addClient(int i,string ip,int p,string n,bool r,bool m,bool s, bool live,bool vrt, bool hierarchy, int modeFlags, bool midi, bool osc)
@@ -872,16 +873,35 @@ void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
     string tmp = "";
     for (int i = 0; i < (*args.devices->getTrackers()).size(); i++) {
         tmp += (*args.devices->getTrackers())[i]->getDebugString() + "\n";
+
+        string name = ofToString((*args.devices->getTrackers())[i]->serialNumber);
+
+        vector<string> trackerInfo;
+        trackerInfo.push_back(ofToString((*args.devices->getTrackers())[i]->serialNumber));
+        trackerInfo.push_back(ofToString((*args.devices->getTrackers())[i]->bConnected));
+        trackerInfo.push_back(ofToString((*args.devices->getTrackers())[i]->batteryFraction));
+        trackerInfo.push_back(ofToString((*args.devices->getTrackers())[i]->trackedIndex));
+
+        map<string,vector<string>>::iterator it;
+        it = VRTrackerInfo.find(name);
+        // Update values
+        if (it != VRTrackerInfo.end())
+        {
+            it->second = trackerInfo;
+        }
+        // insert values
+        else{
+            VRTrackerInfo.insert( std::pair<string,vector<string>>(name,trackerInfo));
+        }
+
+
+
+
     }
     out = tmp;
 
-    if((*args.devices->getTrackers()).size()>0){
-        float x = (*args.devices->getTrackers())[0]->position.x;
-        float y = (*args.devices->getTrackers())[0]->position.y;
-        float z = (*args.devices->getTrackers())[0]->position.z;
-        cout << "position" << x << y << z << endl;
-    }
-    ofLogWarning("NewData");
+    // update for gui
+    numConnectedVRTrackers = (*args.devices->getTrackers()).size();
 
     // Loop through clients
     for( int i = 0; i < clients.size(); ++i )
@@ -896,10 +916,10 @@ void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
                 // send messsage per tracker
                 //create OSC message
                 ofxOscMessage m;
-                m.setAddress("/vrtrackers");
+                m.setAddress("/vrtrackers/"+ofToString((*args.devices->getTrackers())[k]->serialNumber));
 
                 // name
-                m.addStringArg(ofToString((*args.devices->getTrackers())[k]->serialNumber));
+                //m.addStringArg(ofToString((*args.devices->getTrackers())[k]->serialNumber));
 
                 // position
                 m.addFloatArg((*args.devices->getTrackers())[k]->position.x);
@@ -1176,6 +1196,44 @@ void ofApp::doGui() {
                 ImGui::PopTextWrapPos();
                 ImGui::EndTooltip();
             }
+        }
+        // VR trackers
+        if ( ImGui::CollapsingHeader("VRTrackers Settings", NULL, ImGuiTreeNodeFlags_None) ){
+
+            ImGui::Columns(2, "VRTrackers info");
+            ImGui::Text("Num. VRTrackers: "); ImGui::NextColumn();
+            ImGui::Text(ofToString(numConnectedVRTrackers).c_str());
+            ImGui::NextColumn();
+            ImGui::Columns(1);
+
+
+            string labels[4] = {"","connected:","batteryStatus:","trackedIndex:"};
+
+            ofLogWarning("numTrackers: "+ofToString(VRTrackerInfo.size()));
+            //for(int i=0;i<VRTrackerInfo.size();i++){
+
+            for (auto const& vrt : VRTrackerInfo){
+                vector<string> info = vrt.second;
+
+
+                if (ImGui::TreeNode(info[0].c_str()))
+                {
+                    ImGui::Columns(2);
+                    for(int j=1;j<info.size();j++){
+                        ImGui::Text(labels[j].c_str());
+                        ImGui::NextColumn();
+                        ImGui::Text(info[j].c_str());
+                        ImGui::NextColumn();
+
+                    }
+                    ImGui::Columns(1);
+                    ImGui::TreePop();
+                }
+            }
+
+
+            ImGui::Columns(1);
+
         }
         if ( ImGui::CollapsingHeader("NatNet statistics", NULL, ImGuiTreeNodeFlags_DefaultOpen ) )
         {
