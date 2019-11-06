@@ -913,37 +913,38 @@ void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
             for (int k = 0; k < (*args.devices->getTrackers()).size(); k++){
 
                 // FIXME: add hiarchy toggle ?
-                // send messsage per tracker
-                //create OSC message
-                ofxOscMessage m;
-                m.setAddress("/vrtrackers/"+ofToString((*args.devices->getTrackers())[k]->serialNumber));
+                // send messsage per tracker if connected
+                if( (*args.devices->getTrackers())[i]->bConnected == true){
+                    //create OSC message
+                    ofxOscMessage m;
+                    m.setAddress("/vrtrackers/"+ofToString((*args.devices->getTrackers())[k]->serialNumber));
 
-                // name
-                //m.addStringArg(ofToString((*args.devices->getTrackers())[k]->serialNumber));
+                    // name
+                    //m.addStringArg(ofToString((*args.devices->getTrackers())[k]->serialNumber));
 
-                // position
-                m.addFloatArg((*args.devices->getTrackers())[k]->position.x);
-                m.addFloatArg((*args.devices->getTrackers())[k]->position.y);
-                m.addFloatArg((*args.devices->getTrackers())[k]->position.z);
+                    // position
+                    m.addFloatArg((*args.devices->getTrackers())[k]->position.x);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->position.y);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->position.z);
 
-                //orientation
-                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.x);
-                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.y);
-                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.z);
-                m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.w);
+                    //orientation
+                    m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.x);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.y);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.z);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->quaternion.w);
 
-                // velocity
-                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.x);
-                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.y);
-                m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.z);
+                    // velocity
+                    m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.x);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.y);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->linearVelocity.z);
 
-                // angular velocity
-                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.x);
-                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.y);
-                m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.z);
+                    // angular velocity
+                    m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.x);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.y);
+                    m.addFloatArg((*args.devices->getTrackers())[k]->angularVelocity.z);
 
-                bundle.addMessage(m);
-
+                    bundle.addMessage(m);
+                }
             }
 
             //check if not empty & send
@@ -1208,10 +1209,6 @@ void ofApp::doGui() {
 
 
             string labels[4] = {"","connected:","batteryStatus:","trackedIndex:"};
-
-            ofLogWarning("numTrackers: "+ofToString(VRTrackerInfo.size()));
-            //for(int i=0;i<VRTrackerInfo.size();i++){
-
             for (auto const& vrt : VRTrackerInfo){
                 vector<string> info = vrt.second;
 
