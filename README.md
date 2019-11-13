@@ -160,6 +160,10 @@ The OSC message consist of a message with the label `/skeleton/<NameOfSkeleton>/
 
 The units are floats and can either be in meters or centimeters depending on the recording.
 
+# Latest development builds
+
+CI Development builds are pushed to http://pong.hku.nl/~buildbot/nightly
+
 # Build instructions
 
 This application is build upon [OpenFrameworks](https://github.com/openframeworks/openframeworks). In order to build this application you will need openframeworks installed.
