@@ -920,7 +920,7 @@ void ofApp::newDeviceData(ofxOpenVRTrackerEventArgs& args) {
 
                 // FIXME: add hiarchy toggle ?
                 // send messsage per tracker if connected
-                if( (*args.devices->getTrackers())[i]->bConnected == true){
+                if( (*args.devices->getTrackers())[k]->bConnected == true){
                     //create OSC message
                     ofxOscMessage m;
                     m.setAddress("/vrtrackers/"+ofToString((*args.devices->getTrackers())[k]->serialNumber));
