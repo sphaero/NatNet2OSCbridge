@@ -5,15 +5,24 @@ Windows: [![Build status](https://ci.appveyor.com/api/projects/status/5skubwdkuo
 
 <img align="right" width="450" src="https://i.imgur.com/zGxigBk.png">
 
-MOCAP data to OSC.
 
 Download the latests version for your platform at the [releases tab](https://github.com/hku-ect/NatNet2OSCbridge/releases)
 
 ## Feature overview
 
+#### Natnet to OSC translation
 The NatNet2OSCbridge decodes a NatNet stream from Motive into OSC, which it can then send to clients.
-
 Clients are simply added by an ipaddress/hostname and port number combination.
+
+#### Midi to OSC translation
+If a midi device is connected to the machine running the NatNet2OSC bridge recieved data can then optionally be send out to clients as OSC data.
+This is currently only tested with the Korg Nano Kontrol 2
+
+#### OSC to OSC
+OSC data can be received by the NatNet2OSC bridge on a port specified by the user. This data can then optionally be send out to the clients as OSC data
+
+#### HTC Vive Tracker to OSC
+If the machine running the NatNET2OSC bridge is a Windows machine with steamVR installed and HTC Vive Trackers connected then the data of these trackers can then optionally be send out to the clients as OSC data.
 
 ### Client Settings
 
@@ -43,14 +52,14 @@ Setups of clients and global settings can be loaded and saved by using the "Save
 
 https://drive.google.com/drive/u/0/folders/0BzwxZounZTt9bjYxWmlnRGZYRE0
 
-## OSC Data Structure
+## MOCAP OSC Data Structure
 
 In the NatNet2OSCbridge there are two modes of sending the data over OSC. 
 
 * Mode ONE with Hierarchy **unchecked**
 * Mode TWO with Hierarchy **checked**
 
-## Mode ONE with Hierarchy switched <b>OFF</b>
+### Mode ONE with Hierarchy switched <b>OFF</b>
 
 #### Rigidbody message: `/rigidbody`
 
@@ -105,7 +114,7 @@ The OSC message consist of a message with the label `/skeleton/<NameOfSkeleton>/
 
 The units are floats and can either be in meters or centimeters depending on the recording.
 
-## Mode TWO with Hierarchy switched <b>ON</b>
+### Mode TWO with Hierarchy switched <b>ON</b>
 
 #### Rigidbody message: `/rigidbody/<NameRigidBody>`
 
@@ -159,6 +168,33 @@ The OSC message consist of a message with the label `/skeleton/<NameOfSkeleton>/
 `/skeleton/Jan/Ab Ab -2.34777 0.940245 -0.599119 0.071686 0.996859 0.00257 0.033565`
 
 The units are floats and can either be in meters or centimeters depending on the recording.
+
+
+## HTC Vive Tracker OSC Data Structure
+
+#### HTC Vive Tracker message: `/vrtrackers/<SerialVRTracker>`
+
+The OSC message consist of a message with the label `/vrtrackers/<SerialVRTracker>` and contains 13 values:
+
+- Value 00: X position of Vive Tracker
+- Value 01: Y position of Vive Tracker
+- Value 02: Z position of Vive Tracker
+- Value 03: X rotation of Vive Tracker (Quarternion)
+- Value 04: Y rotation of Vive Tracker (Quarternion)
+- Value 05: Z rotation of Vive Tracker (Quarternion)
+- Value 06: W rotation of Vive Tracker (Quarternion)
+- Value 07: X position velocity of Vive Tracker
+- Value 08: Y position velocity of Vive Tracker
+- Value 09: Z position velocity of Vive Tracker
+- Value 10: X rotation velocity of Vive Tracker (Euler)
+- Value 11: Y rotation velocity of Vive Tracker (Euler)
+- Value 12: Z rotation velocity of Vive Tracker (Euler)
+
+#### Example:
+
+`/vrtrackers/LHR-A459K2B1 -0.69236 0.7159 -0.7153 0.6207 0.32758 -0.34163 0.62505 0.00248 -0.0013178 -0.0022626 -0.0011252 -0.0016089 -0.0017630`
+
+The units are floats. The rotation is expressed in radians and the position is expressed in meters.
 
 # Latest development builds
 
