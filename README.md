@@ -1,4 +1,4 @@
-√OSX/Linux: [![Build Status](https://api.travis-ci.org/hku-ect/NatNet2OSCbridge.png?branch=master)](https://travis-ci.org/hku-ect/NatNet2OSCbridge)
+OSX/Linux: [![Build Status](https://api.travis-ci.org/hku-ect/NatNet2OSCbridge.png?branch=master)](https://travis-ci.org/hku-ect/NatNet2OSCbridge)
 Windows: [![Build status](https://ci.appveyor.com/api/projects/status/5skubwdkuoe1uly9?svg=true)](https://ci.appveyor.com/project/sphaero/natnet2oscbridge)
 
 # NatNet2OSCbridge
@@ -15,11 +15,11 @@ The NatNet2OSCbridge decodes a NatNet stream from Motive into OSC, which it can 
 Clients are simply added by an ipaddress/hostname and port number combination.
 
 #### Midi to OSC translation
-If a midi device is connected to the machine running the NatNet2OSC bridge revcieved data can then optionally be send out to clients as OSC data.
+If a midi device is connected to the machine running the NatNet2OSC bridge recieved data can then optionally be send out to clients as OSC data.
 This is currently only tested with the Korg Nano Kontrol 2
 
 #### OSC to OSC
-OSC data can be recieved by the NatNet2OSC bridge on a port specified by the user. This data can then optionally be send out to the clients as OSC data
+OSC data can be received by the NatNet2OSC bridge on a port specified by the user. This data can then optionally be send out to the clients as OSC data
 
 #### HTC Vive Tracker to OSC
 If the machine running the NatNET2OSC bridge is a Windows machine with steamVR installed and HTC Vive Trackers connected then the data of these trackers can then optionally be send out to the clients as OSC data.
