@@ -24,7 +24,7 @@ matrix:
 
 # Linux 64bit, OF master
   - os: linux
-    dist: xenial
+    dist: bionic
     sudo: required
     env: TARGET="linux64" OF_BRANCH="master"
     addons:
@@ -42,7 +42,7 @@ matrix:
 
 # Linux 64bit, OF stable
   - os: linux
-    dist: xenial
+    dist: bionic
     sudo: required
     env: TARGET="linux64" OF_BRANCH="stable"
     addons:
