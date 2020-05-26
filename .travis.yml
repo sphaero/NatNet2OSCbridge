@@ -28,7 +28,6 @@ matrix:
     sudo: required
     env: TARGET="linux64" OF_BRANCH="master"
     addons:
-      ssh_known_hosts: pong.hku.nl
       apt:
         sources:
           - ubuntu-toolchain-r-test
@@ -46,7 +45,6 @@ matrix:
     sudo: required
     env: TARGET="linux64" OF_BRANCH="stable"
     addons:
-      ssh_known_hosts: pong.hku.nl
       apt:
         sources:
           - ubuntu-toolchain-r-test
@@ -266,6 +264,7 @@ after_success:
 
     fi
   - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then export SSHPASS=$BBPWD; fi
+  - echo '|1|AurlN3z7WhvxYbuNdsouT5s7FYs=|cjTFODbUXIXKeWihh1BjnfXgARw= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFxUlmYnS6gItSE4QuXpJxVFqhatyadmYaSQ+GPYwna9bs3KoWxfYl2j0ijA4aVAPPZLjLAjNbxd26fIrocW5fQ=' >> $HOME/.ssh/known_hosts
   - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sshpass -e scp *.zip buildbot@pong.hku.nl:public_html/nightly/; fi
   - cd ..
 
