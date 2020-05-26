@@ -38,6 +38,7 @@ matrix:
           - libssl-dev
           - openssl
 #          - gdb
+          - libpoco-dev
 
 # Linux 64bit, OF stable
   - os: linux
@@ -54,6 +55,7 @@ matrix:
           - sshpass
           - libssl-dev
           - openssl
+          - libpoco-dev
 
 # OSX, OF master
   - os: osx
@@ -225,6 +227,10 @@ install:
   - git clone --depth=1 https://github.com/danomatika/ofxMidi.git
   - git clone --depth=1 --branch=173stdlib https://github.com/sphaero/ofxImGui.git
   - git clone --depth=1 --branch=msys2 --recursive https://github.com/sphaero/ofxOpenVRTracker.git
+# fix poco on linux
+  - if [ "$TARGET" == "linux64" ]; then
+      rm -rf ofxPoco/libs;
+    fi
 
 script:
 #  - scripts/ci/addons/build.sh
