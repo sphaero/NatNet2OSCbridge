@@ -89,12 +89,14 @@ void ofApp::setup()
 
     // VRTracker stuff -----------------------------------------------
     // Setup OpenVR and connect to the SteamVR server.
+#if defined(_WIN32) || defined(_WIN64)
     openvr.connect();
+    // Add a listener to receive new data
+    ofAddListener(openvr.newDataReceived, this, &ofApp::newDeviceData);
+#endif
     numConnectedVRTrackers = 0;
 
-    // Add a listener to receive new data
-    ofAddListener(openvr.newDataReceived, this, &ofApp::newDeviceData
-                  );
+    
 }
 
 void ofApp::setupOSCReceiver()
@@ -973,12 +975,14 @@ void ofApp::exit()
         delete clients[i];
     }
 
+#if defined(_WIN32) || defined(_WIN64)
     // VRTRacker stuff -----------------------------------------------------
     // Remove listener for new device data
     ofRemoveListener(openvr.newDataReceived, this, &ofApp::newDeviceData);
-
     // disconnect from the server
     openvr.disconnect();
+#endif
+   
 }
 
 static bool version_popup = false;
