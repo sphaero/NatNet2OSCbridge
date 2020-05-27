@@ -40,6 +40,7 @@ init:
 - '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-make-4.2.1-4-any.pkg.tar.xz && pacman --noconfirm -U mingw-w64-x86_64-make-4.2.1-4-any.pkg.tar.xz"'
 - '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/mingw/i686/mingw-w64-i686-make-4.2.1-4-any.pkg.tar.xz && pacman --noconfirm -U mingw-w64-i686-make-4.2.1-4-any.pkg.tar.xz"'
 - '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/msys/x86_64/make-4.2.1-1-x86_64.pkg.tar.xz && pacman --noconfirm -U make-4.2.1-1-x86_64.pkg.tar.xz"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "rm -f *.tar.xz"'
 
 install:
 - git submodule update --init --recursive
