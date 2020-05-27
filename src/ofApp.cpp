@@ -41,9 +41,11 @@ void ofApp::setup()
 
     //fill the interface list
     auto niclist = listNetworkInterfaces( ANY, NetworkInterface::IPv4_ONLY );
-    for (const auto& interface: niclist )
+    auto itr = niclist.begin();
+    while( itr != niclist.end() )
     {
-        iface_list.push_back( interface.name() );
+        iface_list.push_back( itr->name() );
+        *itr++;
     }
     // and set the current iface to last found (first is probably lo)
     current_iface_idx = iface_list.size() - 1;
