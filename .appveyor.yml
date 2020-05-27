@@ -45,7 +45,7 @@ install:
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/install_dependencies.sh --noconfirm"
 - if "%BUILDER%"=="MSYS2" %MSYS2_PATH%\usr\bin\bash -lc "scripts/msys2/download_libs.sh --silent"
 - cd addons
-- git clone --depth=1 --branch=173stdlib https://github.com/sphaero/ofxImGui.git
+- git clone --depth=1 --branch=stackfix https://github.com/sphaero/ofxImGui.git
 - git clone --depth=1 https://github.com/hku-ect/ofxNatNet.git
 - git clone --depth=1 https://github.com/danomatika/ofxMidi.git
 - git clone --depth=1 --branch=msys2 --recursive https://github.com/sphaero/ofxOpenVRTracker.git
