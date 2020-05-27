@@ -36,7 +36,11 @@ init:
 - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Su --needed unzip rsync libopenssl mingw-w64-i686-openssl mingw-w64-i686-ntldd-git"'
 - if "%BUILDER%"=="VS" set PATH=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin;%PATH%
 # downgrade make
-- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S make=4.2.1-4"'
+#- '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -S make=4.2.1-4"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-make-4.2.1-4-any.pkg.tar.xz && pacman -U mingw-w64-x86_64-make-4.2.1-4-any.pkg.tar.xz"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/mingw/i686/mingw-w64-i686-make-4.2.1-4-any.pkg.tar.xz && pacman -U mingw-w64-i686-make-4.2.1-4-any.pkg.tar.xz"'
+- '%MSYS2_PATH%\usr\bin\bash -lc "wget http://repo.msys2.org/msys/x86_64/make-4.2.1-1-x86_64.pkg.tar.xz && pacman -U make-4.2.1-1-x86_64.pkg.tar.xz"'
+
 install:
 - git submodule update --init --recursive
 - cd ..
