@@ -38,7 +38,7 @@ init:
 install:
 - git submodule update --init --recursive
 - cd ..
-- git clone --depth=1 --branch=master https://github.com/openframeworks/openFrameworks
+- git clone --depth=1 --branch=patch-release https://github.com/openframeworks/openFrameworks
 - mkdir openFrameworks\apps\myapps
 - move %APPVEYOR_PROJECT_SLUG% openFrameworks\apps\myapps\%APPVEYOR_PROJECT_NAME%
 - cd openFrameworks
