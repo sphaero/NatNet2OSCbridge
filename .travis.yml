@@ -24,38 +24,34 @@ matrix:
 
 # Linux 64bit, OF master
   - os: linux
-    dist: xenial
+    dist: bionic
     sudo: required
     env: TARGET="linux64" OF_BRANCH="master"
     addons:
-      ssh_known_hosts: pong.hku.nl
       apt:
         sources:
-          - ubuntu-toolchain-r-test
+#          - ubuntu-toolchain-r-test
         packages:
-          - gcc-4.9
-          - g++-4.9
           - sshpass
           - libssl-dev
           - openssl
 #          - gdb
+          - libpoco-dev
 
 # Linux 64bit, OF stable
   - os: linux
-    dist: xenial
+    dist: bionic
     sudo: required
     env: TARGET="linux64" OF_BRANCH="stable"
     addons:
-      ssh_known_hosts: pong.hku.nl
       apt:
         sources:
-          - ubuntu-toolchain-r-test
+ #         - ubuntu-toolchain-r-test
         packages:
-          - gcc-4.9
-          - g++-4.9
           - sshpass
           - libssl-dev
           - openssl
+          - libpoco-dev
 
 # OSX, OF master
   - os: osx
@@ -227,6 +223,10 @@ install:
   - git clone --depth=1 https://github.com/danomatika/ofxMidi.git
   - git clone --depth=1 --branch=173stdlib https://github.com/sphaero/ofxImGui.git
   - git clone --depth=1 --branch=msys2 --recursive https://github.com/sphaero/ofxOpenVRTracker.git
+# fix poco on linux
+  - if [ "$TARGET" == "linux64" ]; then
+      rm -rf ofxPoco/libs;
+    fi
 
 script:
 #  - scripts/ci/addons/build.sh
@@ -266,6 +266,7 @@ after_success:
 
     fi
   - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then export SSHPASS=$BBPWD; fi
+  - echo '|1|AurlN3z7WhvxYbuNdsouT5s7FYs=|cjTFODbUXIXKeWihh1BjnfXgARw= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFxUlmYnS6gItSE4QuXpJxVFqhatyadmYaSQ+GPYwna9bs3KoWxfYl2j0ijA4aVAPPZLjLAjNbxd26fIrocW5fQ=' >> $HOME/.ssh/known_hosts
   - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sshpass -e scp *.zip buildbot@pong.hku.nl:public_html/nightly/; fi
   - cd ..
 
